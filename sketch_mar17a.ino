@@ -10,8 +10,22 @@
 #define IR_LED_L 10
 #define SENSOR A0
 
-#define SIGNAL_MAX_FREQ 50 // Hz
-#define SAMPLING_FREQ 200 // Hz
+#define SIGNAL_MAX_FREQ 100 // Hz - the led flashing frequency
+
+/**
+ * The sampling frequency must be high enough to be able to read the signal multiple times, and
+ * must be low enough to be able to read enough samples to see an entire period of the signal:
+ * 
+ *  · SAMPLING_FREQ  >=  2 * SIGNAL_MAX_FREQ
+ *  · 1/SAMPLING_FREQ * FFT_N  >=  2 * 1/SIGNAL_MIN_FREQ
+ *  
+ *  In other terms, you must satisfy these two inequalities:
+ *  
+ *  · SAMPLING_FREQ  >=  2 * SIGNAL_MAX_FREQ
+ *  · SAMPLING_FREQ  <=  SIGNAL_MIN_FREQ * FFT_N / 2
+ *  
+ */
+#define SAMPLING_FREQ 800 // Hz
 
 void flash() {
   static boolean output = HIGH;
