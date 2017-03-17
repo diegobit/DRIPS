@@ -6,22 +6,36 @@
 #include <FFT.h>
 #include <MsTimer2.h>
 
-#define IR_LED 8
+#define IR_LED_R 8
+#define IR_LED_L 10
 #define SENSOR A0
 
 void flash() {
   static boolean output = HIGH;
-
-  digitalWrite(IR_LED, output);
+  static uint8_t countL = 0;
+  
+  digitalWrite(IR_LED_R, output);
   output = !output;
+
+  if (countL == 0) {
+    digitalWrite(IR_LED_L, HIGH);
+  } else if (countL == 2) {
+    digitalWrite(IR_LED_L, LOW);
+  }
+
+  if (countL == 3) {
+    countL = 0;
+  } else {
+    countL++;
+  }
 }
 
 
 void setup() {
   Serial.begin(9600);
   pinMode(SENSOR, INPUT);
-  pinMode(IR_LED, OUTPUT);
-  digitalWrite(IR_LED, HIGH);
+  pinMode(IR_LED_L, OUTPUT);
+  pinMode(IR_LED_R, OUTPUT);
 
   MsTimer2::set(25, flash); // 500ms period
   MsTimer2::start();
