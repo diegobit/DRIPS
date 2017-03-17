@@ -10,6 +10,9 @@
 #define IR_LED_L 10
 #define SENSOR A0
 
+#define SIGNAL_MAX_FREQ 50 // Hz
+#define SAMPLING_FREQ 200 // Hz
+
 void flash() {
   static boolean output = HIGH;
   static uint8_t countL = 0;
@@ -37,7 +40,8 @@ void setup() {
   pinMode(IR_LED_L, OUTPUT);
   pinMode(IR_LED_R, OUTPUT);
 
-  MsTimer2::set(25, flash); // 500ms period
+  unsigned long halfperiod = 500 / SIGNAL_MAX_FREQ;
+  MsTimer2::set(halfperiod, flash); //ms
   MsTimer2::start();
 }
 
@@ -47,7 +51,7 @@ void loop() {
   for (int i = 0 ; i < FFT_N*2 ; i += 2) { // save 256 samples
     fft_input[i] = analogRead(SENSOR); // put real data into even bins
     fft_input[i+1] = 0; // set odd bins to 0
-    delay(5);
+    delayMicroseconds(1000000 / SAMPLING_FREQ); // in micros
   }
   /*for (uint8_t i = 0; i < samples; i++) {
     vReal[i] = analogRead(SENSOR);
@@ -62,11 +66,10 @@ void loop() {
   fft_run(); // process the data in the fft
   fft_mag_lin(); // take the output of the fft
   //Serial.write(255); // send a start byte
-  float Fs = 200;
   for (int i = 0; i < FFT_N/2; i++) {
-    Serial.print(i * Fs/FFT_N);
+    Serial.print(i * (float)SAMPLING_FREQ / FFT_N);
     Serial.print(" -> ");
-    Serial.print((i+1) * Fs/FFT_N);
+    Serial.print((i+1) * (float)SAMPLING_FREQ / FFT_N);
     Serial.print(" = ");
     Serial.println(fft_lin_out[i]);
   }
