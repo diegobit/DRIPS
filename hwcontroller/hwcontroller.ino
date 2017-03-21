@@ -4,13 +4,13 @@
 #define LIN_OUT 1
 
 #include <FFT.h>
-#include <MsTimer2.h>
+#include <FlexiTimer2.h>
 
 #define IR_LED_R 8
 #define IR_LED_L 10
 #define SENSOR A0
 
-#define SIGNAL_MAX_FREQ 100 // Hz - the led flashing frequency
+#define SIGNAL_MAX_FREQ 2000 // Hz - the led flashing frequency
 
 /**
  * The sampling frequency must be high enough to be able to read the signal multiple times, and
@@ -25,7 +25,7 @@
  *  · SAMPLING_FREQ  <=  SIGNAL_MIN_FREQ * FFT_N / 2
  *  
  */
-#define SAMPLING_FREQ 800 // Hz
+#define SAMPLING_FREQ 1000 // Hz
 
 void flash() {
   static boolean output = HIGH;
@@ -54,9 +54,10 @@ void setup() {
   pinMode(IR_LED_L, OUTPUT);
   pinMode(IR_LED_R, OUTPUT);
 
-  unsigned long halfperiod = 500 / SIGNAL_MAX_FREQ;
-  MsTimer2::set(halfperiod, flash); //ms
-  MsTimer2::start();
+  unsigned long halfperiod = (10000 / SIGNAL_MAX_FREQ) / 2;
+  // FIXME Use dynamic resolution. The lower the more precise.
+  FlexiTimer2::set(halfperiod, 1.0/10000, flash); // max resolution appears to be 100 µs. 10 µs is distorted, while 1 µs is broken.
+  FlexiTimer2::start();
 }
 
 void loop() {
@@ -89,4 +90,6 @@ void loop() {
   }
   //Serial.write(fft_log_out, 128); // send out the data
 
+  // Avoid choking the serial buffer
+  delay(1000);
 }
