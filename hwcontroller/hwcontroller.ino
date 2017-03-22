@@ -80,7 +80,9 @@ void loop() {
   fft_reorder(); // reorder the data before doing the fft
   fft_run(); // process the data in the fft
   fft_mag_lin(); // take the output of the fft
-  //Serial.write(255); // send a start byte
+
+  Serial.println(F("--begin-fft--"));
+
   for (int i = 0; i < FFT_N/2; i++) {
     Serial.print(i * (float)SAMPLING_FREQ / FFT_N);
     Serial.print(" -> ");
@@ -88,8 +90,11 @@ void loop() {
     Serial.print(" = ");
     Serial.println(fft_lin_out[i]);
   }
+
+  Serial.println(F("--end-fft--"));
+
   //Serial.write(fft_log_out, 128); // send out the data
 
   // Avoid choking the serial buffer
-  delay(1000);
+  delay(500);
 }
