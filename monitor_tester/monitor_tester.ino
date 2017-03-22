@@ -3,20 +3,27 @@ void setup() {
 
   /* ARDUINO-MONITOR MESSAGE FORMAT:
    *
-   * ROAD-MESSAGE:
-   * Field Name     Dim.
-   * Road_ID        1B
-   * Manufacturer   8B
-   * Model          8B
-   * Orientation    1B
-   * Priority       1B
+   * INFO-MESSAGE:
    * 
-   * ACTION-MESSAGE:
+   * FIELD NAME         DIM   LETTER    
+   * Road_ID            1B    A
+   * Manufacturer       8B    B
+   * Model              8B    C
+   * Orientation        3B    D
+   * Priority           1B    E
+   * RequestedAction    1B    F   // The action the car wants to accomplish
+   * CurrentAction      1B    G   // The action the car is doing to comply with what the network requires
+   * 
+   * ABBBBBBBBCCCCCCCCDDDEFG\n
+   * 
+   * 
+   * FREQUENCY-SPECTRUM-MESSAGE:
+   * Bins*Int
    * 
    */
 }
 
 void loop() {
-  delay(2000) // 2 seconds
-  Serial.write("Serial connected. \n");
+  delay(2000); // 2 seconds
+  Serial.write("---MESSAGE---\n");
 }
