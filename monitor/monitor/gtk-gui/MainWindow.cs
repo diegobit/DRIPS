@@ -3,9 +3,11 @@
 
 public partial class MainWindow
 {
-	private global::Gtk.Table table1;
+	private global::Gtk.VBox vbox;
 
-	private global::Gtk.Button button2;
+	private global::Gtk.HBox hbox5;
+
+	private global::Gtk.HBox hbox7;
 
 	protected virtual void Build()
 	{
@@ -15,25 +17,24 @@ public partial class MainWindow
 		this.Title = global::Mono.Unix.Catalog.GetString("MainWindow");
 		this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 		// Container child MainWindow.Gtk.Container+ContainerChild
-		this.table1 = new global::Gtk.Table(((uint)(3)), ((uint)(3)), false);
-		this.table1.Name = "table1";
-		this.table1.RowSpacing = ((uint)(6));
-		this.table1.ColumnSpacing = ((uint)(6));
-		// Container child table1.Gtk.Table+TableChild
-		this.button2 = new global::Gtk.Button();
-		this.button2.CanFocus = true;
-		this.button2.Name = "button2";
-		this.button2.UseUnderline = true;
-		this.button2.Label = global::Mono.Unix.Catalog.GetString("Bottone!");
-		this.table1.Add(this.button2);
-		global::Gtk.Table.TableChild w1 = ((global::Gtk.Table.TableChild)(this.table1[this.button2]));
-		w1.TopAttach = ((uint)(1));
-		w1.BottomAttach = ((uint)(2));
-		w1.LeftAttach = ((uint)(1));
-		w1.RightAttach = ((uint)(2));
-		w1.XOptions = ((global::Gtk.AttachOptions)(4));
-		w1.YOptions = ((global::Gtk.AttachOptions)(4));
-		this.Add(this.table1);
+		this.vbox = new global::Gtk.VBox();
+		this.vbox.Name = "vbox";
+		this.vbox.Spacing = 6;
+		// Container child vbox.Gtk.Box+BoxChild
+		this.hbox5 = new global::Gtk.HBox();
+		this.hbox5.Name = "hbox5";
+		this.hbox5.Spacing = 6;
+		this.vbox.Add(this.hbox5);
+		global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox[this.hbox5]));
+		w1.Position = 0;
+		// Container child vbox.Gtk.Box+BoxChild
+		this.hbox7 = new global::Gtk.HBox();
+		this.hbox7.Name = "hbox7";
+		this.hbox7.Spacing = 6;
+		this.vbox.Add(this.hbox7);
+		global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox[this.hbox7]));
+		w2.Position = 1;
+		this.Add(this.vbox);
 		if ((this.Child != null))
 		{
 			this.Child.ShowAll();
@@ -42,6 +43,5 @@ public partial class MainWindow
 		this.DefaultHeight = 300;
 		this.Show();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler(this.OnDeleteEvent);
-		this.button2.Clicked += new global::System.EventHandler(this.onButtonClick);
 	}
 }
