@@ -16,6 +16,32 @@ void setup() {
    * 
    * ABBBBBBBBCCCCCCCCDDDEFG\n
    * 
+   * FIELDS:
+   * Road_ID:
+   *          M   my road
+   *          L   road to my left
+   *          A   road ahead
+   *          R   road to my right
+   * Manufacturer:
+   *          ____Alfa
+   *          ____Fiat
+   * Model:
+   *          __Giulia
+   *          _____500
+   * Orientation:
+   *          0   degress
+   *          .
+   *          .
+   *          360 
+   * Priority:
+   *          Y   regular car
+   *          N   priority car (ambulance, police)
+   * RequestedAction / CurrentAction:
+   *          S   Stay still
+   *          L   turn left
+   *          A   go straight ahead
+   *          R   turn right
+   * 
    * 
    * FREQUENCY-SPECTRUM-MESSAGE:
    * Bins*Int
@@ -25,5 +51,5 @@ void setup() {
 
 void loop() {
   delay(2000); // 2 seconds
-  Serial.write("---MESSAGE---\n");
+  Serial.write("R    Alfa  Giulia270NL\n");
 }
