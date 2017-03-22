@@ -11,6 +11,7 @@ namespace monitor
 			Application.Init();
 			Monitor m = new Monitor();
 			MainWindow w = new MainWindow(m);
+
 			Serial s = new Serial(w);
 			w.ShowAll();
 
@@ -21,35 +22,29 @@ namespace monitor
 	class Serial
 	{
 		MainWindow w;
-		// Create the serial port with basic settings
-		SerialPort port = new SerialPort("COM1", 9600, Parity.None, 8, StopBits.One);
+		//SerialPort port = new SerialPort("/dev/tty.usbmodem1D121", 9600, Parity.None, 19, StopBits.One);
+		SerialPort sp;
 
 		public Serial(MainWindow window)
 		{
 			w = window;
 
-			// Attach a method to be called when there is data waiting in the port's buffer
-			port.DataReceived += new SerialDataReceivedEventHandler(dataReceivedHandler);
+			// Create the serial port with basic settings
+			sp = new SerialPort("/dev/tty.usbmodem1D111", 9600);
+			//sp.ReadTimeout = 400;
 
-			// Begin communications
-			//port.Open(); //FIXME: exception
+			sp.Open();
 
-			// Enter an application loop to keep this thread alive
-			Application.Run(); //TODO ????
-		}
+			Console.Write(sp.ReadLine()); // removes the \n
+			Console.Write(sp.ReadLine());
+			Console.Write(sp.ReadLine());
+			Console.Write(sp.ReadLine());
 
-		void dataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
-		{
-			// Show all the incoming data in the port's buffer
-			string data = port.ReadExisting();
-
-			Console.WriteLine(data);
-
-			// Ensure interface updates are executed on main loop
-			Gtk.Application.Invoke(delegate
-			{
-				w.UpdateActionText(data);
-			});
+			//// Ensure interface updates are executed on main loop
+			//Gtk.Application.Invoke(delegate
+			//{
+			//	w.UpdateActionText(data);
+			//});
 		}
 	}
 }
