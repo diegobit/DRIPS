@@ -27,10 +27,10 @@
  *                    L           road to my left
  *                    A           road ahead
  *                    R           road to my right
- * Manufacturer:      ⎵⎵⎵⎵Alfa
- *                    ⎵⎵⎵⎵Fiat
- * Model:             ⎵⎵Giulia
- *                    ⎵⎵⎵⎵⎵500
+ * Manufacturer:      Alfa⎵⎵⎵⎵
+ *                    Fiat⎵⎵⎵⎵
+ * Model:             Giulia⎵⎵
+ *                    500⎵⎵⎵⎵⎵
  * Orientation:       [0..360]    degrees clockwise
  * Priority:          N           regular car
  *                    Y           priority car (ambulance, police)
@@ -65,20 +65,20 @@ void loop() {
   delay(2000); // 2 seconds
   
   // The car just arrived, it thinks it is alone
-  Serial.write("M    Alfa  Giulia  0NLS\n");
+  Serial.write("MAlfa    Giulia    0NLS\n");
 
   delay(2000); // 2 seconds
   
   // The car sees 3 cars, it has not joined the network
-  Serial.write("M    Alfa  Giulia  0NLS\n");
-  Serial.write("L0000000000000000 90000\n");
-  Serial.write("A0000000000000000180000\n");
-  Serial.write("R0000000000000000270000\n");
+  Serial.write("MAlfa    Giulia    0NLS\n");
+  Serial.write("L                 90   \n");
+  Serial.write("A                180   \n");
+  Serial.write("R                270   \n");
 
   delay(2000); // 2 seconds
   
   // The car sees 2 cars and joined the network
-  Serial.write("M    Alfa  Giulia  0NLS\n");
-  Serial.write("L    Fiat     500 90NAS\n");
-  Serial.write("R    Alfa  Giulia270NLL\n");
+  Serial.write("MAlfa    Giulia    0NLS\n");
+  Serial.write("LFiat    500      90NAS\n");
+  Serial.write("RAlfa    Giulia  270NLL\n");
 }
