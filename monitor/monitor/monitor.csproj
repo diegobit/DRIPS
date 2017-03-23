@@ -59,6 +59,7 @@
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="Monitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serial.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
