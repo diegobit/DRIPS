@@ -1,19 +1,51 @@
 #define _us 1
 
+/**
+ * FFT Parameters
+ */
 #define LOG_OUT 0
 #define FFT_N 128 // Numero samples
 #define WINDOW 0
 #define LIN_OUT 1
 
+/**
+ * Includes
+ */
 #include <FFT.h>
 #include <FlexiTimer2.h>
 
+/**
+ * Ports
+ */
 #define IR_LED_1 8
 #define IR_LED_2 10
 #define IR_LED_3 9
 #define IR_LED_4 9
 #define IR_LED_5 9
 #define SENSOR   A0
+
+/**
+ * analogRead() is slow (more than 100 µs per call).
+ * We try to make it faster by setting the prescale to 16. In this way we get a speed of 16 µs per call, which
+ * means a sample rate of ~62.5KHz. We lose, however, on accuracy.
+ * More info: http://forum.arduino.cc/index.php?topic=6549.0
+ *
+ *  Prescaler   Maximum sampling frequency
+ *     16            62.5 kHz
+ *     32            33.2 kHz
+ *     64            17.8 kHz
+ *    128             8.9 kHz
+ *
+ * To disable, set FASTADC to 0
+ */
+#define FASTADC 1
+// defines for setting and clearing register bits
+#ifndef cbi
+#define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
+#endif
+#ifndef sbi
+#define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+#endif
 
 /**
  * The sampling frequency must be high enough to be able to read the signal multiple times, and
@@ -113,6 +145,13 @@ void flash() {
 
 
 void setup() {
+  #if FASTADC
+   // set prescale to 16
+   sbi(ADCSRA,ADPS2) ;
+   cbi(ADCSRA,ADPS1) ;
+   cbi(ADCSRA,ADPS0) ;
+  #endif
+
   Serial.begin(9600);
   pinMode(SENSOR, INPUT);
   pinMode(IR_LED_1, OUTPUT);
