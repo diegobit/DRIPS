@@ -8,11 +8,12 @@
  *********************************
  *
  ********* INFO-MESSAGE:**********
- * Size: 24 Bytes
- * ABBBBBBBBCCCCCCCCDDDEFG\n
+ * Size: 25 Bytes
+ * TABBBBBBBBCCCCCCCCDDDEFG\n
  *
  *     
  *      FIELD NAME        DIM
+ * T    MessageType       1B
  * A    RoadID            1B
  * B    Manufacturer      8B
  * C    Model             8B
@@ -23,7 +24,9 @@
  *                                cooperate with the network
  * 
  * FIELD              VALUE       DESCRIPTION
- * Road_ID:           M           my road
+ * MessageType:       I           info message (this message)
+ *                    F           frequency spectrum message
+ * RoadID:            M           my road
  *                    L           road to my left
  *                    A           road ahead
  *                    R           road to my right
@@ -41,48 +44,80 @@
  *                    R           turn right
  * 
  *** FREQUENCY-SPECTRUM-MESSAGE ***
- * Size: 385 Bytes (Assuming FFT_N = 128 = 2 * number of bins)
- * AA...AABB...BBCC...CC\n
- * |_____||_____||_____|
- *   128    128    128
+ * Size: 386-1922 Bytes (Assuming FFT_N = 128 = 2 * number of bins)
+ * TA,A,...,A,A;B,B,...,B,B;C,C,...,C,C\n
+ *  |_________| |_________| |_________|
+ *      128         128         128
  *     
  * A..A   The sensor data relative to the leftmost IR receiver
  * B..B   The sensor data relative to the front IR receiver
  * C..C   The sensor data relative to the rightmost IR receiver
  * 
- *        FIELD NAME         DIM
- * A,B,C  BinFreqIntensity   2B
+ *        FIELD NAME          DIM
+ * T      MessageType         1B
+ * A B C  BinFreqIntensity    1-5B
+ * ,      BinsSeparator       1B    // separates each pair of bins
+ * ;      ReceiverSeparator   1B    // separates data from different receivers 
  * 
  * Each bin represents the intensity of a frequency range. The
  * frequencies go from 0 to sampling_frequency / 2. Bin i represents //TODO: check the end of the range
  * the range [i * sampling_frequency / 128, (i+1) * sampling_frequency / 128]
  * 
- * The intensity (2 Bytes) goes from 0 to 65535
+ * The intensity goes from 0 to 65535, it is sent as a decimal string, so it may be sent with a variable 
+ * number of Bytes: from 1 Byte (eg. '6') up to 5 Bytes (eg. '65535')
  */
+
+uint16_t bins1[64];
+uint16_t bins2[64];
+uint16_t bins3[64];
 
 void setup() {
   Serial.begin(9600);
+
+  for (uint16_t i = 0; i < 64; i++) {
+    bins1[i] = i;
+    bins2[i] = i;
+    bins3[i] = i;
+  }
 }
 
 void loop() {
   delay(2000); // 2 seconds
   
-  // The car just arrived, it thinks it is alone
-  Serial.println("MAlfa    Giulia    0NLS\n");
-  // Serial.println("");
+  // The car just arrived, it thinks it is alone (its sensors see nothing)
+  Serial.write("IMAlfa    Giulia    0NLS\n");
+  Serial.write('F');
+  for(uint8_t i = 0; i < 63; i++) {
+    Serial.print(bins1[i]);
+    Serial.write(',');
+  }
+  Serial.print(bins1[63]);
+  Serial.write(';');
+  for(uint8_t i = 0; i < 63; i++) {
+    Serial.print(bins2[i]);
+    Serial.write(',');
+  }
+  Serial.print(bins2[63]);
+  Serial.write(';');
+  for(uint8_t i = 0; i < 63; i++) {
+    Serial.print(bins3[i]);
+    Serial.write(',');
+  }
+  Serial.print(bins3[63]);
+  Serial.write('\n');
 
   delay(2000); // 2 seconds
   
   // The car sees 3 cars, it has not joined the network
-  Serial.println("MAlfa    Giulia    0NLS\n");
-  Serial.println("L                 90   \n");
-  Serial.println("A                180   \n");
-  Serial.println("R                270   \n");
+  Serial.write("IMAlfa    Giulia    0NLS\n");
+  Serial.write("IL                 90   \n");
+  Serial.write("IA                180   \n");
+  Serial.write("IR                270   \n");
 
   delay(2000); // 2 seconds
   
   // The car sees 2 cars and joined the network
-  Serial.println("MAlfa    Giulia    0NLS\n");
-  Serial.println("LFiat    500      90NAS\n");
-  Serial.println("RAlfa    Giulia  270NLL\n");
+  Serial.write("IMAlfa    Giulia    0NLS\n");
+  Serial.write("ILFiat    500      90NAS\n");
+  Serial.write("IRAlfa    Giulia  270NLL\n");
 }
