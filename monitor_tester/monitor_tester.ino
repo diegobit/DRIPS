@@ -41,18 +41,21 @@
  *                    R           turn right
  * 
  *** FREQUENCY-SPECTRUM-MESSAGE ***
- * Size: 258 Bytes (Assuming FFT_N = 128 = number of bins)
- * ABBB...BBB\n
- *  |_______|
- *     256
+ * Size: 385 Bytes (Assuming FFT_N = 128 = 2 * number of bins)
+ * AA...AABB...BBCC...CC\n
+ * |_____||_____||_____|
+ *   128    128    128
  *     
- *     FIELD NAME         DIM
- * A   RoadID             1B
- * B   BinFreqIntensity   2B
+ * A..A   The sensor data relative to the leftmost IR receiver
+ * B..B   The sensor data relative to the front IR receiver
+ * C..C   The sensor data relative to the rightmost IR receiver
+ * 
+ *        FIELD NAME         DIM
+ * A,B,C  BinFreqIntensity   2B
  * 
  * Each bin represents the intensity of a frequency range. The
- * frequencies go from 0 to SAMPLING_FREQ. Bin i represents
- * the range [i * SAMPLING_FREQ / 128, (i+1) * SAMPLING_FREQ / 128]
+ * frequencies go from 0 to sampling_frequency / 2. Bin i represents //TODO: check the end of the range
+ * the range [i * sampling_frequency / 128, (i+1) * sampling_frequency / 128]
  * 
  * The intensity (2 Bytes) goes from 0 to 65535
  */
@@ -65,20 +68,21 @@ void loop() {
   delay(2000); // 2 seconds
   
   // The car just arrived, it thinks it is alone
-  Serial.write("MAlfa    Giulia    0NLS\n");
+  Serial.println("MAlfa    Giulia    0NLS\n");
+  // Serial.println("");
 
   delay(2000); // 2 seconds
   
   // The car sees 3 cars, it has not joined the network
-  Serial.write("MAlfa    Giulia    0NLS\n");
-  Serial.write("L                 90   \n");
-  Serial.write("A                180   \n");
-  Serial.write("R                270   \n");
+  Serial.println("MAlfa    Giulia    0NLS\n");
+  Serial.println("L                 90   \n");
+  Serial.println("A                180   \n");
+  Serial.println("R                270   \n");
 
   delay(2000); // 2 seconds
   
   // The car sees 2 cars and joined the network
-  Serial.write("MAlfa    Giulia    0NLS\n");
-  Serial.write("LFiat    500      90NAS\n");
-  Serial.write("RAlfa    Giulia  270NLL\n");
+  Serial.println("MAlfa    Giulia    0NLS\n");
+  Serial.println("LFiat    500      90NAS\n");
+  Serial.println("RAlfa    Giulia  270NLL\n");
 }
