@@ -19,12 +19,15 @@
 /**
  * Ports
  */
-#define IR_LED_1 8
-#define IR_LED_2 10
-#define IR_LED_3 9
-#define IR_LED_4 9
-#define IR_LED_5 9
-#define SENSOR   A0
+#define IR_LED_1 2
+#define IR_LED_2 3
+#define IR_LED_3 4
+#define IR_LED_4 5
+#define IR_LED_5 6
+#define TURN_L   7
+#define TURN_R   8
+#define SENSOR   A1
+#define BUTTON   A0
 
 /**
  * analogRead() is slow (more than 100 µs per call).
@@ -51,6 +54,17 @@
 
 // Singleton instance of the radio driver
 RH_NRF24 nrf24(10, 9); // CE, CS
+
+enum ACTIONS {
+  NONE = 0,
+  TURN_LEFT = 1,
+  TURN_RIGHT = 2,
+  PRIORITY = 3
+};
+
+uint8_t requestedAction = NONE; // Actual action advertised by the car
+uint8_t visibleAction = NONE; // Action shown by the turn leds
+bool buttonPressed = false;
 
 /**
  * The sampling frequency must be high enough to be able to read the signal multiple times, and
@@ -81,31 +95,20 @@ RH_NRF24 nrf24(10, 9); // CE, CS
  *
  * (between each number there is a delay of TIMER_PERIOD)
 */
-#define SAMPLING_PERIOD 2
-#define LED1_PERIOD     10
-#define LED2_PERIOD     20
-#define LED3_PERIOD     30
-#define LED4_PERIOD     40
-#define LED5_PERIOD     50
+#define SAMPLING_PERIOD   2
+#define LED1_PERIOD       2
+#define LED2_PERIOD       20
+#define LED3_PERIOD       30
+#define LED4_PERIOD       40
+#define LED5_PERIOD       50
+#define LED_TURN_PERIOD   10000
 
 uint8_t LED1_COUNTER = 0;
 uint8_t LED2_COUNTER = 0;
 uint8_t LED3_COUNTER = 0;
 uint8_t LED4_COUNTER = 0;
 uint8_t LED5_COUNTER = 0;
-
-inline void flashIrLed_8(uint8_t counter, uint8_t period, uint8_t pin) __attribute__((always_inline));
-inline void flashIrLed_8(uint8_t counter, uint8_t period, uint8_t pin) {
-  if (counter == (period/2) - 1) {
-    digitalWrite(pin, HIGH);
-    counter++;
-  } else if (counter == period - 1) {
-    digitalWrite(pin, LOW);
-    counter = 0;
-  } else {
-    counter++;
-  }
-}
+uint16_t LED_TURN_COUNTER = 0;
 
 #define FLASH_IR_LED(counter, period, pin) {\
   if (counter == ((period)/2) - 1) {\
@@ -113,6 +116,42 @@ inline void flashIrLed_8(uint8_t counter, uint8_t period, uint8_t pin) {
     counter++;\
   } else if (counter == (period) - 1) {\
     digitalWrite((pin), LOW);\
+    counter = 0;\
+  } else {\
+    counter++;\
+  }\
+}
+
+#define FLASH_TURN_LED(counter, period, pinL, pinR) {\
+  if (counter == ((period)/2) - 1) {\
+    if (visibleAction == TURN_LEFT) {\
+      digitalWrite((pinL), HIGH);\
+      digitalWrite((pinR), LOW);\
+    } else if (visibleAction == TURN_RIGHT) {\
+      digitalWrite((pinL), LOW);\
+      digitalWrite((pinR), HIGH);\
+    } else if (visibleAction == PRIORITY) {\
+      digitalWrite((pinL), HIGH);\
+      digitalWrite((pinR), HIGH);\
+    } else {\
+      digitalWrite((pinL), LOW);\
+      digitalWrite((pinR), LOW);\
+    }\
+    counter++;\
+  } else if (counter == (period) - 1) {\
+    if (visibleAction == TURN_LEFT) {\
+      digitalWrite((pinL), LOW);\
+      digitalWrite((pinR), LOW);\
+    } else if (visibleAction == TURN_RIGHT) {\
+      digitalWrite((pinL), LOW);\
+      digitalWrite((pinR), LOW);\
+    } else if (visibleAction == PRIORITY) {\
+      digitalWrite((pinL), HIGH);\
+      digitalWrite((pinR), HIGH);\
+    } else {\
+      digitalWrite((pinL), LOW);\
+      digitalWrite((pinR), LOW);\
+    }\
     counter = 0;\
   } else {\
     counter++;\
@@ -127,6 +166,7 @@ void timerHandler() {
   FLASH_IR_LED(LED4_COUNTER, LED4_PERIOD, IR_LED_4);
   FLASH_IR_LED(LED5_COUNTER, LED5_PERIOD, IR_LED_5);
 
+  FLASH_TURN_LED(LED_TURN_COUNTER, LED_TURN_PERIOD, TURN_L, TURN_R);
 }
 
 
@@ -144,11 +184,17 @@ void setup() {
     Serial.println(F("Radio init failed!"));
   
   pinMode(SENSOR, INPUT);
+  pinMode(BUTTON, INPUT);
   pinMode(IR_LED_1, OUTPUT);
   pinMode(IR_LED_2, OUTPUT);
   pinMode(IR_LED_3, OUTPUT);
   pinMode(IR_LED_4, OUTPUT);
   pinMode(IR_LED_5, OUTPUT);
+  pinMode(TURN_L, OUTPUT);
+  pinMode(TURN_R, OUTPUT);
+
+  // Enable internal pull-up resistor
+  digitalWrite(BUTTON, HIGH);
 
   unsigned long semiperiod = TIMER_PERIOD / 2;
   FlexiTimer2::set(semiperiod / 100, 1.0/10000, timerHandler); // max resolution appears to be 100 µs. 10 µs is distorted, while 1 µs is broken.
@@ -185,6 +231,8 @@ void test_radio() {
 }
 
 void loop() {
+  static uint8_t buttonMillis = 0;
+
   Serial.println("\n *** Reading start ***\n");
 
   // FIXME Move to flash()
@@ -202,7 +250,7 @@ void loop() {
   fft_run(); // process the data in the fft
   fft_mag_lin(); // take the output of the fft
 
-  Serial.println(F("--begin-fft--"));
+  /*Serial.println(F("--begin-fft--"));
 
   for (int i = 0; i < FFT_N/2; i++) {
     Serial.print(i * (float)SAMPLING_FREQ / FFT_N);
@@ -212,7 +260,20 @@ void loop() {
     Serial.println(fft_lin_out[i]);
   }
 
-  Serial.println(F("--end-fft--"));
+  Serial.println(F("--end-fft--"));*/
+  if (analogRead(BUTTON) < 512) {
+    buttonPressed = true;
+    //buttonMillis = (millis() / 100) TODO
+    visibleAction++;
+    if (visibleAction > PRIORITY) {
+      visibleAction = NONE;
+    }
+  } else {
+    if (buttonPressed) {
+      requestedAction = visibleAction;
+      buttonPressed = false;
+    }
+  }
 
   //Serial.write(fft_log_out, 128); // send out the data
 
