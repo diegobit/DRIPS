@@ -2,7 +2,7 @@
 #include <RH_NRF24.h>
 
 // Singleton instance of the radio driver
-RH_NRF24 rf24; // CE, CS
+RH_NRF24 rf24(10, 9); // CE, CS
 
 void setup() {
   Serial.begin(9600);
