@@ -25,7 +25,9 @@
  * 
  * FIELD              VALUE       DESCRIPTION
  * MessageType:       I           info message (this message)
- *                    F           frequency spectrum message
+ *                    L           frequency spectrum message from leftmost receiver
+ *                    F           frequency spectrum message from front receiver
+ *                    R           frequency spectrum message from rightmost receiver
  * RoadID:            M           my road
  *                    L           road to my left
  *                    A           road ahead
@@ -44,20 +46,17 @@
  *                    R           turn right
  * 
  *** FREQUENCY-SPECTRUM-MESSAGE ***
- * Size: 386-1922 Bytes (Assuming FFT_N = 128 = 2 * number of bins)
- * TA,A,...,A,A;B,B,...,B,B;C,C,...,C,C\n
- *  |_________| |_________| |_________|
- *      128         128         128
+ * Size: 257-769 Bytes (Assuming FFT_N = 128 = number of bins)
+ * TA,A,...,A,A\n
+ *  |_________|
+ *      128    
  *     
- * A..A   The sensor data relative to the leftmost IR receiver
- * B..B   The sensor data relative to the front IR receiver
- * C..C   The sensor data relative to the rightmost IR receiver
+ * A,A,...,A,A   The sensor data relative to the IR receiver
  * 
  *        FIELD NAME          DIM
  * T      MessageType         1B
- * A B C  BinFreqIntensity    1-5B
+ * A      BinFreqIntensity    1-5B
  * ,      BinsSeparator       1B    // separates each pair of bins
- * ;      ReceiverSeparator   1B    // separates data from different receivers 
  * 
  * Each bin represents the intensity of a frequency range. The
  * frequencies go from 0 to sampling_frequency / 2. Bin i represents //TODO: check the end of the range
@@ -86,19 +85,23 @@ void loop() {
   
   // The car just arrived, it thinks it is alone (its sensors see nothing)
   Serial.write("IMAlfa    Giulia    0NLS\n");
-  Serial.write('F');
+  Serial.write('L');
   for(uint8_t i = 0; i < 63; i++) {
     Serial.print(bins1[i]);
     Serial.write(',');
   }
   Serial.print(bins1[63]);
-  Serial.write(';');
+  Serial.write('\n');
+
+  Serial.write('F');
   for(uint8_t i = 0; i < 63; i++) {
     Serial.print(bins2[i]);
     Serial.write(',');
   }
   Serial.print(bins2[63]);
-  Serial.write(';');
+  Serial.write('\n');
+
+  Serial.write('R');
   for(uint8_t i = 0; i < 63; i++) {
     Serial.print(bins3[i]);
     Serial.write(',');
