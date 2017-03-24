@@ -158,7 +158,7 @@ uint16_t LED_TURN_COUNTER = 0;
   }\
 }
 
-void timerHandler() {
+__attribute__((optimize("O3"))) void timerHandler() {
 
   FLASH_IR_LED(LED1_COUNTER, LED1_PERIOD, IR_LED_1);
   FLASH_IR_LED(LED2_COUNTER, LED2_PERIOD, IR_LED_2);
