@@ -158,6 +158,14 @@ uint16_t LED_TURN_COUNTER = 0;
   }\
 }
 
+/**
+ * Timer handler which get called every TIMER_PERIOD. This function is executed as
+ * the handler of an interrupt, so it is essential to return as quickly as possible.
+ *
+ * Current GCC optimization level is O3 (optimized for speed).
+ * Further speed improvement can be obtained by using direct port manipulation instead of
+ * digitalWrite(), as described here: https://www.arduino.cc/en/Reference/PortManipulation
+ */
 __attribute__((optimize("O3"))) void timerHandler() {
 
   FLASH_IR_LED(LED1_COUNTER, LED1_PERIOD, IR_LED_1);
@@ -209,22 +217,18 @@ void test_radio() {
     uint8_t len = sizeof(buf);
     if (nrf24.recv(buf, &len))
     {
-//      RF24::printBuffer("request: ", buf, len);
+      // RF24::printBuffer("request: ", buf, len);
       Serial.print(F("got request: "));
       Serial.println((char*)buf);
-//      Serial.print("RSSI: ");
-//      Serial.println((uint8_t)rf24.lastRssi(), DEC);
+      // Serial.print("RSSI: ");
+      // Serial.println((uint8_t)rf24.lastRssi(), DEC);
       
       // Send a reply
       uint8_t data[] = "Hello Back";
-      //uint8_t data[100];
-      //String(millis()).toCharArray(data, 100);
       nrf24.send(data, sizeof(data));
       nrf24.waitPacketSent();
       Serial.println(F("Sent a reply"));
-    }
-    else
-    {
+    } else {
       Serial.println(F("recv failed"));
     }
   }  
@@ -235,7 +239,7 @@ void loop() {
 
   Serial.println("\n *** Reading start ***\n");
 
-  // FIXME Move to flash()
+  // FIXME Move to timerHandler()
   for (int i = 0 ; i < FFT_N*2 ; i += 2) { // save 256 samples
     fft_input[i] = analogRead(SENSOR); // put real data into even bins
     fft_input[i+1] = 0; // set odd bins to 0
