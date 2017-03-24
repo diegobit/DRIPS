@@ -1,8 +1,8 @@
 #include <SPI.h>
-#include <RH_RF24.h>
+#include <RH_NRF24.h>
 
 // Singleton instance of the radio driver
-RH_RF24 rf24(10,9); // CE, CS
+RH_NRF24 rf24(10, 9); // CE, CS
 
 void setup() {
   Serial.begin(9600);
@@ -20,31 +20,35 @@ void setup() {
 void loop() {
   Serial.println("Sending to rf24_server");
   // Send a message to rf24_server
-  //unsigned long now = millis();
+//  uint8_t data[100];
+//  unsigned long now = millis();
+//  String(now).toCharArray(data, 100);
+//  Serial.write(data, 100);
+//  Serial.write('\n');
+  uint8_t data[] = "Hello Da!";
   
-  uint8_t data[] = "Hello World!";
   rf24.send(data, sizeof(data));
   
   rf24.waitPacketSent();
   // Now wait for a reply
-//  uint8_t buf[RH_RF24_MAX_MESSAGE_LEN];
-//  uint8_t len = sizeof(buf);
-//  if (rf24.waitAvailableTimeout(500))
-//  { 
-//    // Should be a reply message for us now   
-//    if (rf24.recv(buf, &len))
-//    {
-//      Serial.print("got reply: ");
-//      Serial.println((char*)buf);
-//    }
-//    else
-//    {
-//      Serial.println("recv failed");
-//    }
-//  }
-//  else
-//  {
-//    Serial.println("No reply, is rf24_server running?");
-//  }
+  uint8_t buf[RH_NRF24_MAX_MESSAGE_LEN];
+  uint8_t len = sizeof(buf);
+  if (rf24.waitAvailableTimeout(2000))
+  { 
+    // Should be a reply message for us now   
+    if (rf24.recv(buf, &len))
+    {
+      Serial.print("Got reply: ");
+      Serial.println((char*)buf);
+    }
+    else
+    {
+      Serial.println("recv failed");
+    }
+  }
+  else
+  {
+    Serial.println("[No reply, is rf24_server running?]");
+  }
   delay(400);
 }
