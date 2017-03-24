@@ -13,6 +13,8 @@
  */
 #include <FFT.h>
 #include <FlexiTimer2.h>
+#include <SPI.h>       // nRF24L01+
+#include <RH_NRF24.h>  // nRF24L01+
 
 /**
  * Ports
@@ -46,6 +48,9 @@
 #ifndef sbi
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
+
+// Singleton instance of the radio driver
+RH_NRF24 nrf24(10, 9); // CE, CS
 
 /**
  * The sampling frequency must be high enough to be able to read the signal multiple times, and
@@ -134,6 +139,10 @@ void setup() {
   #endif
 
   Serial.begin(9600);
+
+  if (!nrf24.init())
+    Serial.println(F("Radio init failed!"));
+  
   pinMode(SENSOR, INPUT);
   pinMode(IR_LED_1, OUTPUT);
   pinMode(IR_LED_2, OUTPUT);
@@ -144,6 +153,35 @@ void setup() {
   unsigned long semiperiod = TIMER_PERIOD / 2;
   FlexiTimer2::set(semiperiod / 100, 1.0/10000, timerHandler); // max resolution appears to be 100 µs. 10 µs is distorted, while 1 µs is broken.
   FlexiTimer2::start();
+}
+
+void test_radio() {
+  if (nrf24.available())
+  {
+    // Should be a message for us now   
+    uint8_t buf[RH_NRF24_MAX_MESSAGE_LEN];
+    uint8_t len = sizeof(buf);
+    if (nrf24.recv(buf, &len))
+    {
+//      RF24::printBuffer("request: ", buf, len);
+      Serial.print(F("got request: "));
+      Serial.println((char*)buf);
+//      Serial.print("RSSI: ");
+//      Serial.println((uint8_t)rf24.lastRssi(), DEC);
+      
+      // Send a reply
+      uint8_t data[] = "Hello Back";
+      //uint8_t data[100];
+      //String(millis()).toCharArray(data, 100);
+      nrf24.send(data, sizeof(data));
+      nrf24.waitPacketSent();
+      Serial.println(F("Sent a reply"));
+    }
+    else
+    {
+      Serial.println(F("recv failed"));
+    }
+  }  
 }
 
 void loop() {
@@ -177,6 +215,8 @@ void loop() {
   Serial.println(F("--end-fft--"));
 
   //Serial.write(fft_log_out, 128); // send out the data
+
+  test_radio();
 
   // Avoid choking the serial buffer
   delay(500);
