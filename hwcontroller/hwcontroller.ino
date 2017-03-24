@@ -89,57 +89,38 @@ uint8_t LED3_COUNTER = 0;
 uint8_t LED4_COUNTER = 0;
 uint8_t LED5_COUNTER = 0;
 
-void flash() {
-
-  if (LED1_COUNTER == (LED1_PERIOD/2) - 1) {
-    digitalWrite(IR_LED_1, HIGH);
-    LED1_COUNTER++;
-  } else if (LED1_COUNTER == LED1_PERIOD - 1) {
-    digitalWrite(IR_LED_1, LOW);
-    LED1_COUNTER = 0;
+inline void flashIrLed_8(uint8_t counter, uint8_t period, uint8_t pin) __attribute__((always_inline));
+inline void flashIrLed_8(uint8_t counter, uint8_t period, uint8_t pin) {
+  if (counter == (period/2) - 1) {
+    digitalWrite(pin, HIGH);
+    counter++;
+  } else if (counter == period - 1) {
+    digitalWrite(pin, LOW);
+    counter = 0;
   } else {
-    LED1_COUNTER++;
+    counter++;
   }
+}
 
-  if (LED2_COUNTER == (LED2_PERIOD/2) - 1) {
-    digitalWrite(IR_LED_2, HIGH);
-    LED2_COUNTER++;
-  } else if (LED2_COUNTER == LED2_PERIOD - 1) {
-    digitalWrite(IR_LED_2, LOW);
-    LED2_COUNTER = 0;
-  } else {
-    LED2_COUNTER++;
-  }
+#define FLASH_IR_LED(counter, period, pin) {\
+  if (counter == ((period)/2) - 1) {\
+    digitalWrite((pin), HIGH);\
+    counter++;\
+  } else if (counter == (period) - 1) {\
+    digitalWrite((pin), LOW);\
+    counter = 0;\
+  } else {\
+    counter++;\
+  }\
+}
 
-  if (LED3_COUNTER == (LED3_PERIOD/2) - 1) {
-    digitalWrite(IR_LED_3, HIGH);
-    LED3_COUNTER++;
-  } else if (LED3_COUNTER == LED3_PERIOD - 1) {
-    digitalWrite(IR_LED_3, LOW);
-    LED3_COUNTER = 0;
-  } else {
-    LED3_COUNTER++;
-  }
+void timerHandler() {
 
-  if (LED4_COUNTER == (LED4_PERIOD/2) - 1) {
-    digitalWrite(IR_LED_4, HIGH);
-    LED4_COUNTER++;
-  } else if (LED4_COUNTER == LED4_PERIOD - 1) {
-    digitalWrite(IR_LED_4, LOW);
-    LED4_COUNTER = 0;
-  } else {
-    LED4_COUNTER++;
-  }
-
-  if (LED5_COUNTER == (LED5_PERIOD/2) - 1) {
-    digitalWrite(IR_LED_5, HIGH);
-    LED5_COUNTER++;
-  } else if (LED5_COUNTER == LED5_PERIOD - 1) {
-    digitalWrite(IR_LED_5, LOW);
-    LED5_COUNTER = 0;
-  } else {
-    LED5_COUNTER++;
-  }
+  FLASH_IR_LED(LED1_COUNTER, LED1_PERIOD, IR_LED_1);
+  FLASH_IR_LED(LED2_COUNTER, LED2_PERIOD, IR_LED_2);
+  FLASH_IR_LED(LED3_COUNTER, LED3_PERIOD, IR_LED_3);
+  FLASH_IR_LED(LED4_COUNTER, LED4_PERIOD, IR_LED_4);
+  FLASH_IR_LED(LED5_COUNTER, LED5_PERIOD, IR_LED_5);
 
 }
 
@@ -161,7 +142,7 @@ void setup() {
   pinMode(IR_LED_5, OUTPUT);
 
   unsigned long semiperiod = TIMER_PERIOD / 2;
-  FlexiTimer2::set(semiperiod / 100, 1.0/10000, flash); // max resolution appears to be 100 µs. 10 µs is distorted, while 1 µs is broken.
+  FlexiTimer2::set(semiperiod / 100, 1.0/10000, timerHandler); // max resolution appears to be 100 µs. 10 µs is distorted, while 1 µs is broken.
   FlexiTimer2::start();
 }
 
