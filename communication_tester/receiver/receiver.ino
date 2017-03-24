@@ -1,8 +1,8 @@
 #include <SPI.h>
-#include <RH_RF24.h>
+#include <RH_NRF24.h>
 
 // Singleton instance of the radio driver
-RH_RF24 rf24; // CE, CS
+RH_NRF24 rf24; // CE, CS
 
 void setup() {
   Serial.begin(9600);
@@ -21,7 +21,7 @@ void loop() {
   if (rf24.available())
   {
     // Should be a message for us now   
-    uint8_t buf[RH_RF24_MAX_MESSAGE_LEN];
+    uint8_t buf[RH_NRF24_MAX_MESSAGE_LEN];
     uint8_t len = sizeof(buf);
     if (rf24.recv(buf, &len))
     {
