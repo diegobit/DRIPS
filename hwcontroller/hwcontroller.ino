@@ -186,7 +186,7 @@ void setup() {
    cbi(ADCSRA,ADPS0) ;
   #endif
 
-  Serial.begin(9600);
+  Serial.begin(230400);
 
   if (!nrf24.init())
     Serial.println(F("Radio init failed!"));

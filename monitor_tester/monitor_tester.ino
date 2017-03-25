@@ -71,7 +71,7 @@ uint16_t bins2[64];
 uint16_t bins3[64];
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(230400);
 
   for (uint16_t i = 0; i < 64; i++) {
     bins1[i] = i;
