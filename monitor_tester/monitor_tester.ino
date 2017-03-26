@@ -48,17 +48,19 @@
  *                    R           turn right
  * 
  *** FREQUENCY-SPECTRUM-MESSAGE ***
- * Size: 257-769 Bytes (Assuming FFT_N = 128 = number of bins)
- * TA,A,...,A,A\n
- *  |_________|
- *      128    
+ * Size: 263-775 Bytes (Assuming FFT_N = 128 = number of bins)
+ * TM;A,A,...,A,A\n
+ *    |_________|
+ *       128    
  *     
  * A,A,...,A,A   The sensor data relative to the IR receiver
  * 
  *        FIELD NAME          DIM
  * T      MessageType         1B
+ * M      MaximumFrequency    1-5B  // the end of the frequency range of the last bin
  * A      BinFreqIntensity    1-5B
  * ,      BinsSeparator       1B    // separates each pair of bins
+ * ;      headerSeparator     1B    // separates the header from the frequency data
  * 
  * Each bin represents the intensity of a frequency range. The
  * frequencies go from 0 to sampling_frequency / 2. Bin i represents //TODO: check the end of the range
@@ -107,6 +109,8 @@ void sendInfoMessage(uint8_t roadId, String manufacturer, String model,
 
 void sendFrequencyMessage(char type, uint16_t fft_bins[]) {
   Serial.write(type);
+  Serial.print(10000);
+  Serial.write(';');
   for(uint8_t i = 0; i < 63; i++) {
     Serial.print(fft_bins[i]);
     Serial.write(',');
@@ -175,7 +179,8 @@ void loop() {
  * TESTS
  ************
  * Time to send 8 Info-messages and 3 frequency-spectrum-messages: 30,812 ms
- * Time to send a single frequency-spectrum-message: 7,496 ms
+ * Time to send a single frequency-spectrum-message: 7,496 ms 
+ * (slightly old message format)
  * 
  * 'Serial.write("IMAlfa    Giulia    0NLS\n");' 500 times takes 559604 us
  * sendInfoMessage(...)                                    takes 562504 us
