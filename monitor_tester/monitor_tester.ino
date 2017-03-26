@@ -70,6 +70,19 @@ uint16_t bins1[64];
 uint16_t bins2[64];
 uint16_t bins3[64];
 
+
+void sendFrequencyMessage(char type, uint16_t fft_bins[]) {
+  Serial.write(type);
+  for(uint8_t i = 0; i < 63; i++) {
+    Serial.print(fft_bins[i]);
+    Serial.write(',');
+  }
+  Serial.print(fft_bins[63]);
+  Serial.write('\n');
+}
+
+
+
 void setup() {
   Serial.begin(230400);
 
@@ -92,29 +105,9 @@ void loop() {
    **********/
   Serial.write("IMAlfa    Giulia    0NLS\n");
   
-  Serial.write('L');
-  for(uint8_t i = 0; i < 63; i++) {
-    Serial.print(bins1[i]);
-    Serial.write(',');
-  }
-  Serial.print(bins1[63]);
-  Serial.write('\n');
-
-  Serial.write('F');
-  for(uint8_t i = 0; i < 63; i++) {
-    Serial.print(bins2[i]);
-    Serial.write(',');
-  }
-  Serial.print(bins2[63]);
-  Serial.write('\n');
-
-  Serial.write('R');
-  for(uint8_t i = 0; i < 63; i++) {
-    Serial.print(bins3[i]);
-    Serial.write(',');
-  }
-  Serial.print(bins3[63]);
-  Serial.write('\n');
+  sendFrequencyMessage('L', bins1);
+  sendFrequencyMessage('F', bins2);
+  sendFrequencyMessage('R', bins3);
 
 //  delay(2000); // 2 seconds
   
