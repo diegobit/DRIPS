@@ -7,7 +7,6 @@ namespace monitor
 	public class Serial
 	{
 		MainWindow w;
-		//SerialPort port = new SerialPort("/dev/tty.usbmodem1D121", 9600, Parity.None, 19, StopBits.One);
 		string port = "";
 		int baudRate;
 		SerialPort sp;
@@ -18,16 +17,8 @@ namespace monitor
 			this.port = port;
 			this.baudRate = baudRate;
 
-			// Create the serial port with basic settings
-			sp = new SerialPort(port, baudRate); //TODO: better port choice
-																 //sp.ReadTimeout = 400;
+			sp = new SerialPort(port, baudRate);
 			sp.Open();
-
-			//// Ensure interface updates are executed on main loop
-			//Gtk.Application.Invoke(delegate
-			//{
-			//	w.UpdateActionText(data);
-			//});
 		}
 
 		public void startListening()
@@ -38,6 +29,12 @@ namespace monitor
 				{
 					string a = sp.ReadLine();
 					Console.Write(a.Length + "-" + a + "\n");
+
+					//// Ensure interface updates are executed on main loop
+					//Gtk.Application.Invoke(delegate
+					//{
+					//	w.UpdateActionText(data);
+					//});
 				}
 			});
 			t.Start();
