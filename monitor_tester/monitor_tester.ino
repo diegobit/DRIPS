@@ -70,20 +70,22 @@
  * number of Bytes: from 1 Byte (eg. '6') up to 5 Bytes (eg. '65535')
  */
 
-uint16_t bins1[64];
-uint16_t bins2[64];
-uint16_t bins3[64];
+#define FFT_N 128 // number of samples
 
-//Serial.write("IMAlfa    Giulia    0NLS\n");
+uint16_t bins1[FFT_N];
+uint16_t bins2[FFT_N];
+uint16_t bins3[FFT_N];
 
-void sendPartialInfoMessage(char type, uint16_t roadId, uint16_t orientation) {
-  Serial.write(type);
+
+
+void sendPartialInfoMessage(uint16_t roadId, uint16_t orientation) {
   Serial.write('I');
   Serial.write(roadId);
   Serial.write("                "); // 16 spaces
   if (orientation < 10) Serial.print(F("  "));
   else if (orientation < 100) Serial.write(' ');
   Serial.print(orientation);
+  Serial.print("   ");
   Serial.write('\n');
 }
 
@@ -111,11 +113,11 @@ void sendFrequencyMessage(char type, uint16_t fft_bins[]) {
   Serial.write(type);
   Serial.print(10000);
   Serial.write(';');
-  for(uint8_t i = 0; i < 63; i++) {
+  for(uint8_t i = 0; i < FFT_N-1; i++) {
     Serial.print(fft_bins[i]);
     Serial.write(',');
   }
-  Serial.print(fft_bins[63]);
+  Serial.print(fft_bins[FFT_N-1]);
   Serial.write('\n');
 }
 
@@ -124,7 +126,7 @@ void sendFrequencyMessage(char type, uint16_t fft_bins[]) {
 void setup() {
   Serial.begin(230400);
 
-  for (uint16_t i = 0; i < 64; i++) {
+  for (uint16_t i = 0; i < FFT_N; i++) {
     bins1[i] = i;
     bins2[i] = i;
     bins3[i] = i;
@@ -140,9 +142,8 @@ void loop() {
   
   /**********
    * The car just arrived, it thinks it is alone (its sensors see nothing)
-   **********/
-  Serial.write("IMAlfa    Giulia    0NLS\n");
-  sendInfoMessage('I', 'M', "Alfa    ", "Giulia  ", 0, 'N', 'L', 'S');
+   **********/   
+  sendInfoMessage('M', "Alfa    ", "Giulia  ", 0, 'N', 'L', 'S');
   sendFrequencyMessage('L', bins1);
   sendFrequencyMessage('F', bins2);
   sendFrequencyMessage('R', bins3);
@@ -150,18 +151,30 @@ void loop() {
   delay(2000); // 2 seconds
   
   /**********
-   * The car sees 3 cars, it has not joined the network
+   * The car sees 3 other cars, it has not joined the network
    **********/
-
   sendInfoMessage('M', "Alfa    ", "Giulia  ", 0, 'N', 'L', 'S');
   sendPartialInfoMessage('L', 90);
   sendPartialInfoMessage('A', 180);
   sendPartialInfoMessage('R', 270);
 
+  bins1[9] = 200;
+  bins1[10] = 700;
+  bins1[11] = 300;
+  bins2[20] = 250;
+  bins2[21] = 800;
+  bins2[22] = 400;
+  bins3[30] = 700;
+  bins3[31] = 900;
+  bins3[32] = 650;
+  sendFrequencyMessage('L', bins1);
+  sendFrequencyMessage('F', bins2);
+  sendFrequencyMessage('R', bins3);
+
   delay(2000); // 2 seconds
   
   /**********
-   * The car sees 2 cars and joined the network
+   * The car sees 3 other cars and joined the network
    **********/
   sendInfoMessage('M', "Alfa    ", "Giulia  ",   0, 'N', 'L', 'S');
   sendInfoMessage('L', "Fiat    ", "500     ",  90, 'N', 'A', 'S');
