@@ -31,6 +31,11 @@
 #define BUTTON   A0
 
 /**
+ * Configuration parameters
+ */
+#define TURN_BUTTON_DELAY 30  // Delay of the turn button, in tenths of a second.
+
+/**
  * analogRead() is slow (more than 100 µs per call).
  * We try to make it faster by setting the prescale to 16. In this way we get a speed of 16 µs per call, which
  * means a sample rate of ~62.5KHz. We lose, however, on accuracy.
@@ -52,8 +57,6 @@
 #ifndef sbi
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
-
-#define TURN_BUTTON_DELAY 30  // Delay of the turn button, in tenth of a second.
 
 // Singleton instance of the radio driver
 RH_NRF24 nrf24(10, 9); // CE, CS
@@ -250,7 +253,7 @@ inline uint8_t positive_modulo(uint8_t i, uint8_t n) {
 void handleTurnButton() {
   static uint8_t buttonMillis = 0;
 
-  if (analogRead(BUTTON) < 512) {
+  if (digitalRead(BUTTON) == LOW) {
     // Button is currently held down
 
     // This variable is declared to optimize for speed.
