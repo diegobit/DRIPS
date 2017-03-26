@@ -7,15 +7,11 @@ namespace monitor
 	public class Serial
 	{
 		MainWindow w;
-		string port = "";
-		int baudRate;
 		SerialPort sp;
 
 		public Serial(MainWindow window, string port, int baudRate)
 		{
 			w = window;
-			this.port = port;
-			this.baudRate = baudRate;
 
 			sp = new SerialPort(port, baudRate);
 			sp.Open();
