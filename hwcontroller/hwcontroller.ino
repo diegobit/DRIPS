@@ -1,3 +1,4 @@
+#pragma GCC optimize ("O3")
 #define _us 1
 
 /**
