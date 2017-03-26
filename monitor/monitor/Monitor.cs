@@ -11,7 +11,7 @@ namespace monitor
 			Monitor m = new Monitor();
 			MainWindow w = new MainWindow(m);
 
-			Serial s = new Serial(w, "/dev/tty.usbmodem1D121");
+			Serial s = new Serial(w, "/dev/tty.usbmodem1D121", 230400);
 			s.startListening();
 			w.ShowAll();
 

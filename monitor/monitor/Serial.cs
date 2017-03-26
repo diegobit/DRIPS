@@ -9,15 +9,17 @@ namespace monitor
 		MainWindow w;
 		//SerialPort port = new SerialPort("/dev/tty.usbmodem1D121", 9600, Parity.None, 19, StopBits.One);
 		string port = "";
+		int baudRate;
 		SerialPort sp;
 
-		public Serial(MainWindow window, string port)
+		public Serial(MainWindow window, string port, int baudRate)
 		{
 			w = window;
 			this.port = port;
+			this.baudRate = baudRate;
 
 			// Create the serial port with basic settings
-			sp = new SerialPort(port, 345600); //TODO: better port choice
+			sp = new SerialPort(port, baudRate); //TODO: better port choice
 																 //sp.ReadTimeout = 400;
 			sp.Open();
 
