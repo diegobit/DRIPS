@@ -34,8 +34,10 @@
  *                    R           road to my right
  * Manufacturer:      Alfa⎵⎵⎵⎵
  *                    Fiat⎵⎵⎵⎵
+ *                    Tesla⎵⎵⎵
  * Model:             Giulia⎵⎵
  *                    500⎵⎵⎵⎵⎵
+ *                    Model S⎵
  * Orientation:       [0..360]    degrees clockwise
  * Priority:          N           regular car
  *                    Y           priority car (ambulance, police)
