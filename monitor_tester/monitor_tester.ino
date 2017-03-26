@@ -101,7 +101,6 @@ void loop() {
   }
   Serial.print(bins1[63]);
   Serial.write('\n');
-  unsigned long time = micros() - startTime;  
 
   Serial.write('F');
   for(uint8_t i = 0; i < 63; i++) {
