@@ -70,6 +70,38 @@ uint16_t bins1[64];
 uint16_t bins2[64];
 uint16_t bins3[64];
 
+//Serial.write("IMAlfa    Giulia    0NLS\n");
+
+void sendPartialInfoMessage(char type, uint16_t roadId, uint16_t orientation) {
+  Serial.write(type);
+  Serial.write('I');
+  Serial.write(roadId);
+  Serial.write("                "); // 16 spaces
+  if (orientation < 10) Serial.print(F("  "));
+  else if (orientation < 100) Serial.write(' ');
+  Serial.print(orientation);
+  Serial.write('\n');
+}
+
+/*
+ * Sends an info-message to the serial port
+ * Manufacturer and model should be already padded
+ */
+void sendInfoMessage(uint8_t roadId, String manufacturer, String model,
+                     uint16_t orientation, char priority, char requestedAction, char currentAction) {
+
+  Serial.write('I');
+  Serial.write(roadId);
+  Serial.print(manufacturer);
+  Serial.print(model);
+  if (orientation < 10) Serial.print(F("  "));
+  else if (orientation < 100) Serial.write(' ');
+  Serial.print(orientation);
+  Serial.write(priority);
+  Serial.write(requestedAction);
+  Serial.write(currentAction);
+  Serial.write('\n');
+}
 
 void sendFrequencyMessage(char type, uint16_t fft_bins[]) {
   Serial.write(type);
@@ -94,7 +126,7 @@ void setup() {
 }
 
 void loop() {
-  delay(2000); // 2 seconds
+  delay(3000); // 2 seconds
   
 //  unsigned long startTime = micros();
 
@@ -104,40 +136,45 @@ void loop() {
    * The car just arrived, it thinks it is alone (its sensors see nothing)
    **********/
   Serial.write("IMAlfa    Giulia    0NLS\n");
-  
+  sendInfoMessage('I', 'M', "Alfa    ", "Giulia  ", 0, 'N', 'L', 'S');
   sendFrequencyMessage('L', bins1);
   sendFrequencyMessage('F', bins2);
   sendFrequencyMessage('R', bins3);
 
-//  delay(2000); // 2 seconds
+  delay(2000); // 2 seconds
   
   /**********
    * The car sees 3 cars, it has not joined the network
    **********/
-   
-  Serial.write("IMAlfa    Giulia    0NLS\n");
-  Serial.write("IL                 90   \n");
-  Serial.write("IA                180   \n");
-  Serial.write("IR                270   \n");
 
-//  delay(2000); // 2 seconds
+  sendInfoMessage('M', "Alfa    ", "Giulia  ", 0, 'N', 'L', 'S');
+  sendPartialInfoMessage('L', 90);
+  sendPartialInfoMessage('A', 180);
+  sendPartialInfoMessage('R', 270);
+
+  delay(2000); // 2 seconds
   
   /**********
    * The car sees 2 cars and joined the network
    **********/
-  Serial.write("IMAlfa    Giulia    0NLS\n");
-  Serial.write("ILFiat    500      90NAS\n");
-  Serial.write("IRAlfa    Giulia  270NLL\n");
+  sendInfoMessage('M', "Alfa    ", "Giulia  ",   0, 'N', 'L', 'S');
+  sendInfoMessage('L', "Fiat    ", "500     ",  90, 'N', 'A', 'S');
+  sendInfoMessage('R', "Tesla   ", "Model S ", 270, 'N', 'L', 'L');
 
-
+  
 
 //  unsigned long time = micros() - startTime;
 //  Serial.write("STATS: Time passed is (us): ");
 //  Serial.println(time); 
   
-  /* TESTS:
-   * Time to send 8 Info-messages and 3 frequency-spectrum-messages: 30,812 ms
-   * Time to send a single frequency-spectrum-message: 7,496 ms
-   */
-  
 }
+
+/************
+ * TESTS
+ ************
+ * Time to send 8 Info-messages and 3 frequency-spectrum-messages: 30,812 ms
+ * Time to send a single frequency-spectrum-message: 7,496 ms
+ * 
+ * 'Serial.write("IMAlfa    Giulia    0NLS\n");' 500 times takes 559604 us
+ * sendInfoMessage(...)                                    takes 562504 us
+ */
