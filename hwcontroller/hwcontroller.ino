@@ -52,6 +52,8 @@
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
 
+#define TURN_BUTTON_DELAY 30  // Delay of the turn button, in tenth of a second.
+
 // Singleton instance of the radio driver
 RH_NRF24 nrf24(10, 9); // CE, CS
 
@@ -234,9 +236,51 @@ void test_radio() {
   }  
 }
 
-void loop() {
+inline uint8_t positive_modulo(uint8_t i, uint8_t n) {
+    return (i % n + n) % n;
+}
+
+/**
+ * Detects if the turn button has been pressed and controls
+ * the changes of the visibleAction and requestedAction.
+ *
+ * Must be called periodically.
+ */
+void handleTurnButton() {
   static uint8_t buttonMillis = 0;
 
+  if (analogRead(BUTTON) < 512) {
+    // Button is currently held down
+
+    // This variable is declared to optimize for speed.
+    // You can safely replace each occurrence of curMillis
+    // with its expression in order to save memory.
+    uint8_t curMillis = (millis() / 100) & 0xFF;
+
+    if (!buttonPressed) {
+      // Start counting. Subtract TURN_BUTTON_DELAY so that
+      // the user doesn't have to wait for the current action.
+      buttonMillis = curMillis - TURN_BUTTON_DELAY;
+      buttonPressed = true;
+    }
+
+    if (positive_modulo(curMillis - buttonMillis, 256) >= TURN_BUTTON_DELAY) {
+      buttonMillis = curMillis;
+      visibleAction++;
+      if (visibleAction > PRIORITY) {
+        visibleAction = NONE;
+      }
+    }
+  } else {
+    // Button is not currently held down
+    if (buttonPressed) {
+      requestedAction = visibleAction;
+      buttonPressed = false;
+    }
+  }
+}
+
+void loop() {
   Serial.println("\n *** Reading start ***\n");
 
   // FIXME Move to timerHandler()
@@ -265,22 +309,10 @@ void loop() {
   }
 
   Serial.println(F("--end-fft--"));*/
-  if (analogRead(BUTTON) < 512) {
-    buttonPressed = true;
-    //buttonMillis = (millis() / 100) TODO
-    visibleAction++;
-    if (visibleAction > PRIORITY) {
-      visibleAction = NONE;
-    }
-  } else {
-    if (buttonPressed) {
-      requestedAction = visibleAction;
-      buttonPressed = false;
-    }
-  }
 
   //Serial.write(fft_log_out, 128); // send out the data
 
+  handleTurnButton();
   test_radio();
 
   // Avoid choking the serial buffer
