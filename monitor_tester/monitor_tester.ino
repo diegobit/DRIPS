@@ -83,7 +83,7 @@ void setup() {
 void loop() {
   delay(2000); // 2 seconds
   
-  // unsigned long startTime = micros();
+//  unsigned long startTime = micros();
 
 
   
@@ -91,8 +91,6 @@ void loop() {
    * The car just arrived, it thinks it is alone (its sensors see nothing)
    **********/
   Serial.write("IMAlfa    Giulia    0NLS\n");
-  
-  //unsigned long startTime = micros();
   
   Serial.write('L');
   for(uint8_t i = 0; i < 63; i++) {
@@ -118,7 +116,7 @@ void loop() {
   Serial.print(bins3[63]);
   Serial.write('\n');
 
-  //delay(2000); // 2 seconds
+//  delay(2000); // 2 seconds
   
   /**********
    * The car sees 3 cars, it has not joined the network
@@ -129,7 +127,7 @@ void loop() {
   Serial.write("IA                180   \n");
   Serial.write("IR                270   \n");
 
-  //delay(2000); // 2 seconds
+//  delay(2000); // 2 seconds
   
   /**********
    * The car sees 2 cars and joined the network
@@ -140,9 +138,9 @@ void loop() {
 
 
 
-  //unsigned long time = micros() - startTime;
-  Serial.write("STATS: Time passed is (us): ");
-  Serial.println(time); 
+//  unsigned long time = micros() - startTime;
+//  Serial.write("STATS: Time passed is (us): ");
+//  Serial.println(time); 
   
   /* TESTS:
    * Time to send 8 Info-messages and 3 frequency-spectrum-messages: 30,812 ms

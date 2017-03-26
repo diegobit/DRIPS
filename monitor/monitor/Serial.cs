@@ -21,15 +21,16 @@ namespace monitor
 		{
 			Thread t = new Thread(delegate()
 			{
+				Console.WriteLine("--- START READING ---");
 				while (true)
 				{
-					string a = sp.ReadLine();
-					Console.Write(a.Length + "-" + a + "\n");
+					string msg = sp.ReadLine();
+					Console.WriteLine("\nRECEIVED MESSAGE. LENGTH: " + msg.Length + " B\n" + msg);
 
 					//// Ensure interface updates are executed on main loop
 					//Gtk.Application.Invoke(delegate
 					//{
-					//	w.UpdateActionText(data);
+					//	w.UpdateActionText(msg);
 					//});
 				}
 			});
