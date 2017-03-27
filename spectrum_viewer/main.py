@@ -100,6 +100,7 @@ def main():
     plotR = fig.add_subplot(224)
     plotLFR = fig.add_subplot(222)
     plt.tight_layout()
+    fig.subplots_adjust(hspace=.3)
     ani = animation.FuncAnimation(fig, animate, interval=100)
     plt.show()
 
