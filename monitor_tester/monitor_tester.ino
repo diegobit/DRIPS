@@ -49,18 +49,17 @@
  * 
  *** FREQUENCY-SPECTRUM-MESSAGE ***
  * Size: 263-775 Bytes (Assuming FFT_N = 128 = number of bins)
- * TM;A,A,...,A,A\n
- *    |_________|
+ * TMA,A,...,A,A\n
+ *   |_________|
  *       128    
  *     
  * A,A,...,A,A   The sensor data relative to the IR receiver
  * 
  *        FIELD NAME          DIM
  * T      MessageType         1B
- * M      MaximumFrequency    1-5B  // the end of the frequency range of the last bin
+ * M      MaximumFrequency    1B    // the end of the frequency range of the last bin is 2^M
  * A      BinFreqIntensity    1-5B
  * ,      BinsSeparator       1B    // separates each pair of bins
- * ;      headerSeparator     1B    // separates the header from the frequency data
  * 
  * Each bin represents the intensity of a frequency range. The
  * frequencies go from 0 to sampling_frequency / 2. Bin i represents //TODO: check the end of the range
@@ -111,8 +110,7 @@ void sendInfoMessage(uint8_t roadId, String manufacturer, String model,
 
 void sendFrequencyMessage(char type, uint16_t fft_bins[]) {
   Serial.write(type);
-  Serial.print(10000);
-  Serial.write(';');
+  Serial.print(7);
   for(uint8_t i = 0; i < FFT_N-1; i++) {
     Serial.print(fft_bins[i]);
     Serial.write(',');
