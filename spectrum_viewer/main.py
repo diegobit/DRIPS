@@ -87,12 +87,12 @@ def main():
         plotL.set_title("Left sensor")
         plotF.set_title("Front sensor")
         plotR.set_title("Right sensor")
-        plotL.set_xlabel("Frequency")
-        plotL.set_ylabel("Intensity")
-        plotF.set_xlabel("Frequency")
-        plotF.set_ylabel("Intensity")
-        plotR.set_xlabel("Frequency")
-        plotR.set_ylabel("Intensity")
+        plotLFR.set_title("All sensors")
+        
+        for plot in [plotL, plotF, plotR, plotLFR]:
+            plot.set_xlabel("Frequency")
+            plot.set_ylabel("Intensity")
+            plot.set_ylim([0, 1024])
 
     fig = plt.figure()
     plotL = fig.add_subplot(223)
