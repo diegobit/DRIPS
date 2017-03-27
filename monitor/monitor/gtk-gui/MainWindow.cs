@@ -3,12 +3,6 @@
 
 public partial class MainWindow
 {
-	private global::Gtk.VBox vbox;
-
-	private global::Gtk.HBox hbox5;
-
-	private global::Gtk.HBox hbox7;
-
 	protected virtual void Build()
 	{
 		global::Stetic.Gui.Initialize(this);
@@ -16,25 +10,6 @@ public partial class MainWindow
 		this.Name = "MainWindow";
 		this.Title = global::Mono.Unix.Catalog.GetString("MainWindow");
 		this.WindowPosition = ((global::Gtk.WindowPosition)(4));
-		// Container child MainWindow.Gtk.Container+ContainerChild
-		this.vbox = new global::Gtk.VBox();
-		this.vbox.Name = "vbox";
-		this.vbox.Spacing = 6;
-		// Container child vbox.Gtk.Box+BoxChild
-		this.hbox5 = new global::Gtk.HBox();
-		this.hbox5.Name = "hbox5";
-		this.hbox5.Spacing = 6;
-		this.vbox.Add(this.hbox5);
-		global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox[this.hbox5]));
-		w1.Position = 0;
-		// Container child vbox.Gtk.Box+BoxChild
-		this.hbox7 = new global::Gtk.HBox();
-		this.hbox7.Name = "hbox7";
-		this.hbox7.Spacing = 6;
-		this.vbox.Add(this.hbox7);
-		global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox[this.hbox7]));
-		w2.Position = 1;
-		this.Add(this.vbox);
 		if ((this.Child != null))
 		{
 			this.Child.ShowAll();

@@ -9,7 +9,10 @@ namespace monitor
 		{
 			Application.Init();
 			Monitor m = new Monitor();
-			MainWindow w = new MainWindow(m);
+			MainWindow w = new MainWindow();
+
+			//string a = Environment.CurrentDirectory;
+			//Console.Write(a);
 
 			Serial s = new Serial(w, "/dev/tty.usbmodem1D121", 230400); //TODO: better port choice
 			s.startListening();
