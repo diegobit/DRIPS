@@ -94,10 +94,10 @@ def main():
     plotR = plt.subplot2grid((5, 3), (3, 2), rowspan=2)
     plotLFR = plt.subplot2grid((5, 3), (0, 0), colspan=3, rowspan=3)
     
-    plotL.plot([0], [0], 'C0')
-    plotF.plot([0], [0], 'C1')
-    plotR.plot([0], [0], 'C2')
-    plotLFR.plot([0, 1], [0, 1], 'C0', [0, 1], [0, 1], 'C1', [0, 1], [0, 1], 'C2')
+    plotL.plot([], [], 'C0')
+    plotF.plot([], [], 'C1')
+    plotR.plot([], [], 'C2')
+    plotLFR.plot([], [], 'C0', [], [], 'C1', [], [], 'C2')
     
     plotL.set_title("Left sensor")
     plotF.set_title("Front sensor")
