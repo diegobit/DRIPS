@@ -61,23 +61,28 @@ def main():
         try:
             x, y = plotdataL.get(block=False, timeout=None)
             plotL.cla()
-            plotL.plot(x, y)
+            plotL.plot(x, y, 'C0')
         except queue.Empty:
             pass
 
         try:
             x, y = plotdataF.get(block=False, timeout=None)
             plotF.cla()
-            plotF.plot(x, y)
+            plotF.plot(x, y, 'C1')
         except queue.Empty:
             pass
 
         try:
             x, y = plotdataR.get(block=False, timeout=None)
             plotR.cla()
-            plotR.plot(x, y)
+            plotR.plot(x, y, 'C2')
         except queue.Empty:
             pass
+        
+        plotLFR.cla()
+        plotLFR.plot(plotL.lines[0].get_xdata(), plotL.lines[0].get_ydata(), 'C0',
+                     plotF.lines[0].get_xdata(), plotF.lines[0].get_ydata(), 'C1',
+                     plotR.lines[0].get_xdata(), plotR.lines[0].get_ydata(), 'C2')
         
         plotL.set_title("Left sensor")
         plotF.set_title("Front sensor")
@@ -93,6 +98,7 @@ def main():
     plotL = fig.add_subplot(223)
     plotF = fig.add_subplot(221)
     plotR = fig.add_subplot(224)
+    plotLFR = fig.add_subplot(222)
     plt.tight_layout()
     ani = animation.FuncAnimation(fig, animate, interval=100)
     plt.show()
