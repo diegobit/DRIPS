@@ -77,46 +77,46 @@ uint16_t bins3[FFT_N];
 
 
 
-void sendPartialInfoMessage(uint16_t roadId, uint16_t orientation) {
-  Serial.write('I');
-  Serial.write(roadId);
-  Serial.write("                "); // 16 spaces
+void sendPartialInfoMessage(char roadId, uint16_t orientation) {
+  Serial.print('I');
+  Serial.print(roadId);
+  Serial.print("                "); // 16 spaces
   if (orientation < 10) Serial.print(F("  "));
   else if (orientation < 100) Serial.write(' ');
   Serial.print(orientation);
   Serial.print("   ");
-  Serial.write('\n');
+  Serial.print('\n');
 }
 
 /*
  * Sends an info-message to the serial port
  * Manufacturer and model should be already padded
  */
-void sendInfoMessage(uint8_t roadId, String manufacturer, String model,
+void sendInfoMessage(char roadId, String manufacturer, String model,
                      uint16_t orientation, char priority, char requestedAction, char currentAction) {
 
-  Serial.write('I');
-  Serial.write(roadId);
+  Serial.print('I');
+  Serial.print(roadId);
   Serial.print(manufacturer);
   Serial.print(model);
   if (orientation < 10) Serial.print(F("  "));
   else if (orientation < 100) Serial.write(' ');
   Serial.print(orientation);
-  Serial.write(priority);
-  Serial.write(requestedAction);
-  Serial.write(currentAction);
-  Serial.write('\n');
+  Serial.print(priority);
+  Serial.print(requestedAction);
+  Serial.print(currentAction);
+  Serial.print('\n');
 }
 
 void sendFrequencyMessage(char type, uint16_t fft_bins[]) {
-  Serial.write(type);
-  Serial.print(7);
+  Serial.print(type);
+  Serial.print(200);
   for(uint8_t i = 0; i < FFT_N-1; i++) {
     Serial.print(fft_bins[i]);
-    Serial.write(',');
+    Serial.print(',');
   }
   Serial.print(fft_bins[FFT_N-1]);
-  Serial.write('\n');
+  Serial.print('\n');
 }
 
 
