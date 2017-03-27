@@ -90,7 +90,7 @@ def main():
         plotLFR.set_title("All sensors")
         
         for plot in [plotL, plotF, plotR, plotLFR]:
-            plot.set_xlabel("Frequency")
+            plot.set_xlabel("Frequency (Hz)")
             plot.set_ylabel("Intensity")
             plot.set_ylim([0, 1024])
 
