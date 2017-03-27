@@ -95,12 +95,12 @@ def main():
             plot.set_ylim([0, 1024])
 
     fig = plt.figure()
-    plotL = fig.add_subplot(223)
-    plotF = fig.add_subplot(221)
-    plotR = fig.add_subplot(224)
-    plotLFR = fig.add_subplot(222)
+    plotL = plt.subplot2grid((5, 3), (3, 0), rowspan=2)
+    plotF = plt.subplot2grid((5, 3), (3, 1), rowspan=2)
+    plotR = plt.subplot2grid((5, 3), (3, 2), rowspan=2)
+    plotLFR = plt.subplot2grid((5, 3), (0, 0), colspan=3, rowspan=3)
     plt.tight_layout()
-    fig.subplots_adjust(hspace=.3)
+    fig.subplots_adjust(hspace=1.5)
     ani = animation.FuncAnimation(fig, animate, interval=100)
     plt.show()
 
