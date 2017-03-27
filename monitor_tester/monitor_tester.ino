@@ -123,16 +123,11 @@ void sendFrequencyMessage(char type, uint16_t fft_bins[]) {
 
 void setup() {
   Serial.begin(230400);
-
-  for (uint16_t i = 0; i < FFT_N; i++) {
-    bins1[i] = i;
-    bins2[i] = i;
-    bins3[i] = i;
-  }
+  randomSeed(9357);
 }
 
 void loop() {
-  delay(3000); // 2 seconds
+  delay(5000); // 2 seconds
   
 //  unsigned long startTime = micros();
 
@@ -142,11 +137,14 @@ void loop() {
    * The car just arrived, it thinks it is alone (its sensors see nothing)
    **********/   
   sendInfoMessage('M', "Alfa    ", "Giulia  ", 0, 'N', 'L', 'S');
-  sendFrequencyMessage('L', bins1);
-  sendFrequencyMessage('F', bins2);
-  sendFrequencyMessage('R', bins3);
 
-  delay(2000); // 2 seconds
+  for (uint16_t i = 0; i < FFT_N; i++) {
+    bins1[i] = i + random(21);
+    bins2[i] = i + random(21);
+    bins3[i] = i + random(21);
+  }
+
+  //delay(2000); // 2 seconds
   
   /**********
    * The car sees 3 other cars, it has not joined the network
@@ -156,20 +154,20 @@ void loop() {
   sendPartialInfoMessage('A', 180);
   sendPartialInfoMessage('R', 270);
 
-  bins1[9] = 200;
-  bins1[10] = 700;
-  bins1[11] = 300;
-  bins2[20] = 250;
-  bins2[21] = 800;
-  bins2[22] = 400;
-  bins3[30] = 700;
-  bins3[31] = 900;
-  bins3[32] = 650;
+  bins1[9] = 700 + random(21);
+  bins1[10] = 700 + random(21);
+  bins1[11] = 700 + random(21);
+  bins2[20] = 400 + random(21);
+  bins2[21] = 400 + random(21);
+  bins2[22] = 400 + random(21);
+  bins3[30] = 900 + random(21);
+  bins3[31] = 900 + random(21);
+  bins3[32] = 900 + random(21);
   sendFrequencyMessage('L', bins1);
   sendFrequencyMessage('F', bins2);
   sendFrequencyMessage('R', bins3);
 
-  delay(2000); // 2 seconds
+  //delay(2000); // 2 seconds
   
   /**********
    * The car sees 3 other cars and joined the network
