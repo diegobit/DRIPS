@@ -48,16 +48,16 @@
  *                    R           turn right
  * 
  *** FREQUENCY-SPECTRUM-MESSAGE ***
- * Size: 263-775 Bytes (Assuming FFT_N = 128 = number of bins)
- * TMA,A,...,A,A\n
- *   |_________|
- *       128    
+ * Size: 258-776 Bytes (Assuming FFT_N = 128 = number of bins)
+ * TM;A,A,...,A,A\n
+ *    |_________|
+ *        128    
  *     
  * A,A,...,A,A   The sensor data relative to the IR receiver
  * 
  *        FIELD NAME          DIM
  * T      MessageType         1B
- * M      MaximumFrequency    1B    // the end of the frequency range of the last bin is 2^M
+ * M      SamplingPeriod      1-7B  // the sampling period used to build the frequency plot of the monitor
  * A      BinFreqIntensity    1-5B
  * ,      BinsSeparator       1B    // separates each pair of bins
  * 
