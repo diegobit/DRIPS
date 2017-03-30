@@ -19,10 +19,10 @@ Per fare ciò, l'auto A deve iniziare la procedura di CCS.
  2. L'auto attende X secondi.
  3. L'auto entra nella fase di rilevazione della risposta tramite sensori IR.
     L'auto si aspetta di osservare per una durata di altri X secondi una frequenza
-	di K Hz su uno o più sensori.
+    di K Hz su uno o più sensori.
  4. Dopo lo scadere degli X secondi, l'auto interpreta i dati rilevati e li associa
     al nodo a cui è stata fatta la richiesta. Dopodiché torna nello stato di
-	operatività standard.
+    operatività standard.
 
 In ogni momento della procedura di CCS, l'auto A rimane in ascolto di messaggi SCS. In
 caso di ricezione di tale messaggio, e in caso in cui il Pardoned Address del messaggio
@@ -34,11 +34,11 @@ Ogni altra auto nell'incrocio, alla ricezione del CCS di A:
 
  1. Determina se attualmente è impegnata in una procedura di CCS con un qualsiasi peer.
      a. Se sì, risponde in broadcast con un SCS con specificato l'indirizzo del peer con
-	    cui è in corso la procedura già avviata.
-	 b. Se no, determina se il CCS era destinato a lei.
-	      i. Se no, termina
-		 ii. Se sì, attende X secondi da quando ha rilevato il CCS, quindi inizia a far
-		     lampeggiare i led con una frequenza di K Hz per una durata di X secondi.
+        cui è in corso la procedura già avviata.
+     b. Se no, determina se il CCS era destinato a lei.
+          i. Se no, termina
+         ii. Se sì, attende X secondi da quando ha rilevato il CCS, quindi inizia a far
+             lampeggiare i led con una frequenza di K Hz per una durata di X secondi.
 
 Durante tutto il tempo in cui si trova nello stato 1.b.ii., l'auto rimane in ascolto di
 messaggi SCS. In caso di ricezione di tale messaggio, e in caso in cui il Pardoned Address
