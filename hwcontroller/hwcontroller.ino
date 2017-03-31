@@ -6,7 +6,7 @@
  */
 #define LOG_OUT 0
 #define FFT_N 128 // Numero samples
-#define WINDOW 0
+#define WINDOW 1
 #define LIN_OUT 1
 
 /**
@@ -324,7 +324,7 @@ void sendFrequencyMessage(char type) {
 void loop() {
   if (shouldDoFFT) {
     // window data, then reorder, then run, then take output
-    //fft_window(); // window the data for better frequency response
+    fft_window(); // window the data for better frequency response
     fft_reorder(); // reorder the data before doing the fft
     fft_run(); // process the data in the fft
     fft_mag_lin(); // take the output of the fft
