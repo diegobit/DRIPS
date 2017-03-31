@@ -101,7 +101,7 @@ bool buttonPressed = false;
  *
  * (between each number there is a delay of TIMER_PERIOD)
 */
-#define SAMPLING_PERIOD   200
+#define SAMPLING_PERIOD   100
 #define LED1_PERIOD       600
 #define LED2_PERIOD       800
 #define LED3_PERIOD       30
@@ -121,7 +121,8 @@ uint8_t SAMPLING_INDEX = 0;
 bool shouldDoFFT = false;
 
 #define DO_SAMPLING(counter, period, pin, sampling_index, should_do_fft) {\
-  if (!should_do_fft) {\
+  static bool isSemiperiod = true;\
+  if (!should_do_fft && !isSemiperiod) {\
     if (counter == (period) - 1) {\
       fft_input[2 * sampling_index] = analogRead(pin);\
       fft_input[2 * sampling_index + 1] = 0;\
@@ -137,6 +138,7 @@ bool shouldDoFFT = false;
       counter++;\
     }\
   }\
+  isSemiperiod = !isSemiperiod;\
 }
 
 #define FLASH_IR_LED(counter, period, pin) {\
