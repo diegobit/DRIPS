@@ -321,8 +321,20 @@ void sendFrequencyMessage(char type) {
   Serial.print('\n');
 }
 
+void fft_constant_detrend() {
+  uint16_t mean = 0;
+  for (uint16_t i = 0; i < FFT_N * 2; i += 2) {
+    mean += fft_input[i];
+  }
+  mean = mean / FFT_N;
+  for (uint16_t i = 0; i < FFT_N * 2; i += 2) {
+    fft_input[i] -= mean;
+  }
+}
+
 void loop() {
   if (shouldDoFFT) {
+    fft_constant_detrend();
     // window data, then reorder, then run, then take output
     fft_window(); // window the data for better frequency response
     fft_reorder(); // reorder the data before doing the fft
