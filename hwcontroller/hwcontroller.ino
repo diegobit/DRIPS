@@ -46,29 +46,6 @@ void __assert(bool success, String msg) {
  */
 #define TURN_BUTTON_DELAY 30  // Delay of the turn button, in tenths of a second.
 
-/**
- * analogRead() is slow (more than 100 µs per call).
- * We try to make it faster by setting the prescale to 16. In this way we get a speed of 16 µs per call, which
- * means a sample rate of ~62.5KHz. We lose, however, on accuracy.
- * More info: http://forum.arduino.cc/index.php?topic=6549.0
- *
- *  Prescaler   Maximum sampling frequency
- *     16            62.5 kHz
- *     32            33.2 kHz
- *     64            17.8 kHz
- *    128             8.9 kHz
- *
- * To disable, set FASTADC to 0
- */
-#define FASTADC 0
-// defines for setting and clearing register bits
-#ifndef cbi
-#define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
-#endif
-#ifndef sbi
-#define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
-#endif
-
 // Define various ADC prescaler
 const unsigned char PS_16 = (1 << ADPS2);
 const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
@@ -125,37 +102,12 @@ bool buttonPressed = false;
 #define LED5_PERIOD       50
 #define LED_TURN_PERIOD   10000
 
-uint16_t SAMPLING_COUNTER = 0;
 uint16_t LED1_COUNTER = 0;
 uint16_t LED2_COUNTER = 0;
 uint8_t LED3_COUNTER = 0;
 uint8_t LED4_COUNTER = 0;
 uint8_t LED5_COUNTER = 0;
 uint16_t LED_TURN_COUNTER = 0;
-
-uint8_t SAMPLING_INDEX = 0;
-bool shouldDoFFT = false;
-
-#define DO_SAMPLING(counter, period, pin, sampling_index, should_do_fft) {\
-  static bool isSemiperiod = true;\
-  if (!should_do_fft && !isSemiperiod) {\
-    if (counter == (period) - 1) {\
-      fft_input[2 * sampling_index] = analogRead(pin);\
-      fft_input[2 * sampling_index + 1] = 0;\
-      \
-      if (2 * sampling_index + 1 >= FFT_N - 1) {\
-        sampling_index = 0;\
-        shouldDoFFT = true;\
-      } else {\
-        sampling_index++;\
-      }\
-      counter = 0;\
-    } else {\
-      counter++;\
-    }\
-  }\
-  isSemiperiod = !isSemiperiod;\
-}
 
 #define FLASH_IR_LED(counter, period, pin) {\
   if (counter == ((period)/2) - 1) {\
@@ -222,18 +174,9 @@ __attribute__((optimize("O3"))) void timerHandler() {
   FLASH_IR_LED(LED5_COUNTER, LED5_PERIOD, IR_LED_5);
 
   FLASH_TURN_LED(LED_TURN_COUNTER, LED_TURN_PERIOD, TURN_L, TURN_R);
-
-  //DO_SAMPLING(SAMPLING_COUNTER, SAMPLING_PERIOD, SENSOR, SAMPLING_INDEX, shouldDoFFT);
 }
 
 void setup() {
-  #if FASTADC
-   // set prescale to 16
-   sbi(ADCSRA,ADPS2) ;
-   cbi(ADCSRA,ADPS1) ;
-   cbi(ADCSRA,ADPS0) ;
-  #endif
-
   // set up the ADC
   ADCSRA &= ~PS_128;  // remove bits set by Arduino library
 
