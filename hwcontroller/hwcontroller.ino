@@ -17,7 +17,7 @@ void __assert(bool success, String msg) {
  */
 #define LOG_OUT 0
 #define FFT_N 128 // Numero samples
-#define WINDOW 1
+#define WINDOW 0
 #define LIN_OUT 1
 
 /**
@@ -60,7 +60,7 @@ void __assert(bool success, String msg) {
  *
  * To disable, set FASTADC to 0
  */
-#define FASTADC 1
+#define FASTADC 0
 // defines for setting and clearing register bits
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
@@ -68,6 +68,12 @@ void __assert(bool success, String msg) {
 #ifndef sbi
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
+
+// Define various ADC prescaler
+const unsigned char PS_16 = (1 << ADPS2);
+const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
+const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);
+const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 
 // Singleton instance of the radio driver
 RH_NRF24 nrf24(10, 9); // CE, CS
@@ -84,6 +90,11 @@ uint8_t visibleAction = NONE; // Action shown by the turn leds
 bool buttonPressed = false;
 
 /**
+ * Basic frequency in µs for the timer.
+ */
+#define TIMER_PERIOD (100*_us)
+
+/**
  * The sampling frequency must be high enough to be able to read the signal multiple times, and
  * must be low enough to be able to read enough samples to see an entire period of the signal:
  * 
@@ -97,12 +108,6 @@ bool buttonPressed = false;
  *  
  */
 
-
-/**
- * Basic frequency in µs for the timer.
- */
-#define TIMER_PERIOD (100*_us)
-
 /*
  * Unit: TIMER_PERIOD. These values MUST be even.
  *
@@ -112,9 +117,9 @@ bool buttonPressed = false;
  *
  * (between each number there is a delay of TIMER_PERIOD)
 */
-#define SAMPLING_PERIOD   100
-#define LED1_PERIOD       600
-#define LED2_PERIOD       800
+#define SAMPLING_PERIOD   5
+#define LED1_PERIOD       10
+#define LED2_PERIOD       20
 #define LED3_PERIOD       30
 #define LED4_PERIOD       40
 #define LED5_PERIOD       50
@@ -218,9 +223,8 @@ __attribute__((optimize("O3"))) void timerHandler() {
 
   FLASH_TURN_LED(LED_TURN_COUNTER, LED_TURN_PERIOD, TURN_L, TURN_R);
 
-  DO_SAMPLING(SAMPLING_COUNTER, SAMPLING_PERIOD, SENSOR, SAMPLING_INDEX, shouldDoFFT);
+  //DO_SAMPLING(SAMPLING_COUNTER, SAMPLING_PERIOD, SENSOR, SAMPLING_INDEX, shouldDoFFT);
 }
-
 
 void setup() {
   #if FASTADC
@@ -229,6 +233,14 @@ void setup() {
    cbi(ADCSRA,ADPS1) ;
    cbi(ADCSRA,ADPS0) ;
   #endif
+
+  // set up the ADC
+  ADCSRA &= ~PS_128;  // remove bits set by Arduino library
+
+  // you can choose a prescaler from above.
+  // PS_16, PS_32, PS_64 or PS_128
+  ADCSRA |= PS_16;    // set our own prescaler to 64 
+
 
   Serial.begin(230400);
 
@@ -346,24 +358,29 @@ void fft_constant_detrend() {
 }
 
 void loop() {
-  if (shouldDoFFT) {
-    fft_constant_detrend();
-    // window data, then reorder, then run, then take output
-    fft_window(); // window the data for better frequency response
-    fft_reorder(); // reorder the data before doing the fft
-    fft_run(); // process the data in the fft
-    fft_mag_lin(); // take the output of the fft
+  unsigned long s1 = micros();
+  for (int i = 0 ; i < FFT_N*2 ; i += 2) { // save 256 samples
+    if (i > 0) {
+      //delayMicroseconds(SAMPLING_PERIOD * TIMER_PERIOD);
+      //delay(10);
+      delayMicroseconds(416); // Equivale a un periodo reale di 500us, ovvero 2000Hz
+    }
 
-    shouldDoFFT = false;
+    fft_input[i] = analogRead(SENSOR); // put real data into even bins
+    fft_input[i+1] = 0; // set odd bins to 0
   }
-
+  
+  //fft_constant_detrend();
+  // window data, then reorder, then run, then take output
+  //fft_window(); // window the data for better frequency response
+  fft_reorder(); // reorder the data before doing the fft
+  fft_run(); // process the data in the fft
+  fft_mag_lin(); // take the output of the fft
+  
   sendFrequencyMessage('L');
 
   //Serial.write(fft_log_out, 128); // send out the data
 
   handleTurnButton();
   test_radio();
-
-  // Avoid choking the serial buffer
-  delay(500);
 }
