@@ -22,13 +22,13 @@ def update_xyvals(spectrum_message):
     yvals = [float(v) for v in yvals]
 
     # Remove low frequencies
-    yvals[0] = 0
-    yvals[1] = 0
-    yvals[2] = 0
+    #yvals[0] = 0
+    #yvals[1] = 0
+    #yvals[2] = 0
 
-    N = len(yvals)
+    FFT_N = 2 * len(yvals)
     # ((i*Fs/N) + ((i+1)*Fs/N)) / 2
-    xvals = [((i*Fs/N) + ((i+1)*Fs/N)) / 2.0 for i in range(N)]
+    xvals = [((i*Fs/FFT_N) + ((i+1)*Fs/FFT_N)) / 2.0 for i in range(len(yvals))]
 
     if strline[0] == 'L':
         plotdataL.put((xvals, yvals))
@@ -83,7 +83,7 @@ def main():
         for plot in [plotL, plotF, plotR, plotLFR]:
             if len(plot.lines) > 0 and len(plot.lines[0].get_xdata()) > 0:
                 plot.set_xlim([0, plot.lines[0].get_xdata()[-1]])
-            plot.set_ylim([0, 1024])
+            plot.set_ylim([0, 200])
         
         return plotL.lines[0], plotF.lines[0], plotR.lines[0], plotLFR.lines[0], plotLFR.lines[1], plotLFR.lines[2]
 
@@ -107,7 +107,6 @@ def main():
     for plot in [plotL, plotF, plotR, plotLFR]:
         plot.set_xlabel("Frequency (Hz)")
         plot.set_ylabel("Intensity")
-        plot.set_ylim([0, 1024])
     
     plt.tight_layout()
     fig.subplots_adjust(hspace=1.5)
