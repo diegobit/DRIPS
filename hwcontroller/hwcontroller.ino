@@ -117,7 +117,7 @@ bool buttonPressed = false;
  *
  * (between each number there is a delay of TIMER_PERIOD)
 */
-#define SAMPLING_PERIOD   5
+#define SAMPLING_PERIOD   5     // WARNING: If you change this, remember to actually change it in the sampling code. Yeah, I know this is stupid, but you have to. Sorry.
 #define LED1_PERIOD       10
 #define LED2_PERIOD       20
 #define LED3_PERIOD       30
@@ -362,7 +362,6 @@ void loop() {
   for (int i = 0 ; i < FFT_N*2 ; i += 2) { // save 256 samples
     if (i > 0) {
       //delayMicroseconds(SAMPLING_PERIOD * TIMER_PERIOD);
-      //delay(10);
       delayMicroseconds(416); // Equivale a un periodo reale di 500us, ovvero 2000Hz
     }
 
