@@ -85,7 +85,7 @@ bool buttonPressed = false;
  *  · SAMPLING_FREQ  <=  SIGNAL_MIN_FREQ * FFT_N / 2
  *  
  */
-#define SAMPLING_FREQ 1000 // Hz
+
 
 /**
  * Basic frequency in µs for the timer.
@@ -101,20 +101,43 @@ bool buttonPressed = false;
  *
  * (between each number there is a delay of TIMER_PERIOD)
 */
-#define SAMPLING_PERIOD   2
-#define LED1_PERIOD       2
-#define LED2_PERIOD       20
+#define SAMPLING_PERIOD   200
+#define LED1_PERIOD       600
+#define LED2_PERIOD       800
 #define LED3_PERIOD       30
 #define LED4_PERIOD       40
 #define LED5_PERIOD       50
 #define LED_TURN_PERIOD   10000
 
-uint8_t LED1_COUNTER = 0;
-uint8_t LED2_COUNTER = 0;
+uint16_t SAMPLING_COUNTER = 0;
+uint16_t LED1_COUNTER = 0;
+uint16_t LED2_COUNTER = 0;
 uint8_t LED3_COUNTER = 0;
 uint8_t LED4_COUNTER = 0;
 uint8_t LED5_COUNTER = 0;
 uint16_t LED_TURN_COUNTER = 0;
+
+uint8_t SAMPLING_INDEX = 0;
+bool shouldDoFFT = false;
+
+#define DO_SAMPLING(counter, period, pin, sampling_index, should_do_fft) {\
+  if (!should_do_fft) {\
+    if (counter == (period) - 1) {\
+      fft_input[2 * sampling_index] = analogRead(pin);\
+      fft_input[2 * sampling_index + 1] = 0;\
+      \
+      if (2 * sampling_index + 1 >= FFT_N - 1) {\
+        sampling_index = 0;\
+        shouldDoFFT = true;\
+      } else {\
+        sampling_index++;\
+      }\
+      counter = 0;\
+    } else {\
+      counter++;\
+    }\
+  }\
+}
 
 #define FLASH_IR_LED(counter, period, pin) {\
   if (counter == ((period)/2) - 1) {\
@@ -181,6 +204,8 @@ __attribute__((optimize("O3"))) void timerHandler() {
   FLASH_IR_LED(LED5_COUNTER, LED5_PERIOD, IR_LED_5);
 
   FLASH_TURN_LED(LED_TURN_COUNTER, LED_TURN_PERIOD, TURN_L, TURN_R);
+
+  DO_SAMPLING(SAMPLING_COUNTER, SAMPLING_PERIOD, SENSOR, SAMPLING_INDEX, shouldDoFFT);
 }
 
 
@@ -297,34 +322,15 @@ void sendFrequencyMessage(char type) {
 }
 
 void loop() {
-  Serial.println("\n *** Reading start ***\n");
+  if (shouldDoFFT) {
+    // window data, then reorder, then run, then take output
+    //fft_window(); // window the data for better frequency response
+    fft_reorder(); // reorder the data before doing the fft
+    fft_run(); // process the data in the fft
+    fft_mag_lin(); // take the output of the fft
 
-  // FIXME Move to timerHandler()
-  for (int i = 0 ; i < FFT_N*2 ; i += 2) { // save 256 samples
-    fft_input[i] = analogRead(SENSOR); // put real data into even bins
-    fft_input[i+1] = 0; // set odd bins to 0
-    delayMicroseconds(1000000 / SAMPLING_FREQ); // in micros
+    shouldDoFFT = false;
   }
-
-  Serial.println("\n *** Reading end ***\n");
-  
-  // window data, then reorder, then run, then take output
-  //fft_window(); // window the data for better frequency response
-  fft_reorder(); // reorder the data before doing the fft
-  fft_run(); // process the data in the fft
-  fft_mag_lin(); // take the output of the fft
-
-  /*Serial.println(F("--begin-fft--"));
-
-  for (int i = 0; i < FFT_N/2; i++) {
-    Serial.print(i * (float)SAMPLING_FREQ / FFT_N);
-    Serial.print(" -> ");
-    Serial.print((i+1) * (float)SAMPLING_FREQ / FFT_N);
-    Serial.print(" = ");
-    Serial.println(fft_lin_out[i]);
-  }
-
-  Serial.println(F("--end-fft--"));*/
 
   sendFrequencyMessage('L');
 
