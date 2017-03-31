@@ -19,7 +19,11 @@ def update_xyvals(spectrum_message):
     Fs = 1 / (float(strline[1:].split(';')[0]) * pow(10, -6))
 
     yvals = strline[1:].split(';')[1].split(',')
-    yvals = [float(v) for v in yvals]
+    try:
+        yvals = [float(v) for v in yvals]
+    except:
+        print(yvals)
+        return
 
     # Remove low frequencies
     #yvals[0] = 0
