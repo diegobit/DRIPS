@@ -284,6 +284,18 @@ void handleTurnButton() {
   }
 }
 
+void sendFrequencyMessage(char type) {
+  Serial.print(type);
+  Serial.print(SAMPLING_PERIOD * TIMER_PERIOD);
+  Serial.print(';');
+  for(uint8_t i = 0; i < FFT_N / 2 - 1; i++) {
+    Serial.print(fft_lin_out[i]);
+    Serial.print(',');
+  }
+  Serial.print(fft_lin_out[FFT_N / 2 - 1]);
+  Serial.print('\n');
+}
+
 void loop() {
   Serial.println("\n *** Reading start ***\n");
 
@@ -313,6 +325,8 @@ void loop() {
   }
 
   Serial.println(F("--end-fft--"));*/
+
+  sendFrequencyMessage('L');
 
   //Serial.write(fft_log_out, 128); // send out the data
 
