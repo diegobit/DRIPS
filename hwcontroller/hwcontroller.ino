@@ -176,38 +176,6 @@ __attribute__((optimize("O3"))) void timerHandler() {
   FLASH_TURN_LED(LED_TURN_COUNTER, LED_TURN_PERIOD, TURN_L, TURN_R);
 }
 
-void setup() {
-  // set up the ADC
-  ADCSRA &= ~PS_128;  // remove bits set by Arduino library
-
-  // you can choose a prescaler from above.
-  // PS_16, PS_32, PS_64 or PS_128
-  ADCSRA |= PS_16;    // set our own prescaler to 64 
-
-
-  Serial.begin(230400);
-
-  if (!nrf24.init())
-    Serial.println(F("Radio init failed!"));
-  
-  pinMode(SENSOR, INPUT);
-  pinMode(BUTTON, INPUT);
-  pinMode(IR_LED_1, OUTPUT);
-  pinMode(IR_LED_2, OUTPUT);
-  pinMode(IR_LED_3, OUTPUT);
-  pinMode(IR_LED_4, OUTPUT);
-  pinMode(IR_LED_5, OUTPUT);
-  pinMode(TURN_L, OUTPUT);
-  pinMode(TURN_R, OUTPUT);
-
-  // Enable internal pull-up resistor
-  digitalWrite(BUTTON, HIGH);
-
-  unsigned long semiperiod = TIMER_PERIOD / 2;
-  FlexiTimer2::set(semiperiod / 100, 1.0/10000, timerHandler); // max resolution appears to be 100 µs. 10 µs is distorted, while 1 µs is broken.
-  FlexiTimer2::start();
-}
-
 void test_radio() {
   if (nrf24.available())
   {
@@ -298,6 +266,41 @@ void fft_constant_detrend() {
   for (uint16_t i = 0; i < FFT_N * 2; i += 2) {
     fft_input[i] -= mean;
   }
+}
+
+
+
+
+void setup() {
+  // set up the ADC
+  ADCSRA &= ~PS_128;  // remove bits set by Arduino library
+
+  // you can choose a prescaler from above.
+  // PS_16, PS_32, PS_64 or PS_128
+  ADCSRA |= PS_16;    // set our own prescaler to 64 
+
+
+  Serial.begin(230400);
+
+  if (!nrf24.init())
+    Serial.println(F("Radio init failed!"));
+  
+  pinMode(SENSOR, INPUT);
+  pinMode(BUTTON, INPUT);
+  pinMode(IR_LED_1, OUTPUT);
+  pinMode(IR_LED_2, OUTPUT);
+  pinMode(IR_LED_3, OUTPUT);
+  pinMode(IR_LED_4, OUTPUT);
+  pinMode(IR_LED_5, OUTPUT);
+  pinMode(TURN_L, OUTPUT);
+  pinMode(TURN_R, OUTPUT);
+
+  // Enable internal pull-up resistor
+  digitalWrite(BUTTON, HIGH);
+
+  unsigned long semiperiod = TIMER_PERIOD / 2;
+  FlexiTimer2::set(semiperiod / 100, 1.0/10000, timerHandler); // max resolution appears to be 100 µs. 10 µs is distorted, while 1 µs is broken.
+  FlexiTimer2::start();
 }
 
 void loop() {
