@@ -358,7 +358,6 @@ void fft_constant_detrend() {
 }
 
 void loop() {
-  unsigned long s1 = micros();
   for (int i = 0 ; i < FFT_N*2 ; i += 2) { // save 256 samples
     if (i > 0) {
       //delayMicroseconds(SAMPLING_PERIOD * TIMER_PERIOD);
@@ -368,8 +367,8 @@ void loop() {
     fft_input[i] = analogRead(SENSOR); // put real data into even bins
     fft_input[i+1] = 0; // set odd bins to 0
   }
-  
-  //fft_constant_detrend();
+
+  fft_constant_detrend();
   // window data, then reorder, then run, then take output
   //fft_window(); // window the data for better frequency response
   fft_reorder(); // reorder the data before doing the fft
