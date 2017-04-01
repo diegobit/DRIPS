@@ -3,11 +3,11 @@
  *  to test the communication and the monitor
  */
 
-#define FFT_N 128 // number of samples
+#define FFT_N 128 // 2 * number of samples
 
-uint16_t bins1[FFT_N];
-uint16_t bins2[FFT_N];
-uint16_t bins3[FFT_N];
+uint16_t bins1[FFT_N / 2];
+uint16_t bins2[FFT_N / 2];
+uint16_t bins3[FFT_N / 2];
 
 
 
@@ -44,12 +44,13 @@ void sendInfoMessage(char roadId, String manufacturer, String model,
 
 void sendFrequencyMessage(char type, uint16_t fft_bins[]) {
   Serial.print(type);
-  Serial.print(200);
-  for(uint8_t i = 0; i < FFT_N-1; i++) {
+  Serial.print(500);
+  Serial.print(';');
+  for(uint8_t i = 0; i < FFT_N / 2 - 1; i++) {
     Serial.print(fft_bins[i]);
     Serial.print(',');
   }
-  Serial.print(fft_bins[FFT_N-1]);
+  Serial.print(fft_bins[FFT_N / 2 - 1]);
   Serial.print('\n');
 }
 
@@ -61,7 +62,7 @@ void setup() {
 }
 
 void loop() {
-  delay(100000); // 2 seconds
+  delay(2000); // 2 seconds
   
 //  unsigned long startTime = micros();
 
@@ -72,7 +73,7 @@ void loop() {
    **********/   
   sendInfoMessage('M', "Alfa    ", "Giulia  ", 0, 'N', 'L', 'S');
 
-  for (uint16_t i = 0; i < FFT_N; i++) {
+  for (uint16_t i = 0; i < FFT_N / 2; i++) {
     bins1[i] = i + random(21);
     bins2[i] = i + random(21);
     bins3[i] = i + random(21);
