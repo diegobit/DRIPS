@@ -322,8 +322,6 @@ void loop() {
   
   sendFrequencyMessage('L');
 
-  //Serial.write(fft_log_out, 128); // send out the data
-
   handleTurnButton();
   test_radio();
 }
