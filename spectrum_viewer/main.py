@@ -64,18 +64,24 @@ def main():
     def animate(i):
         try:
             x, y = plotdataL.get(block=False, timeout=None)
+            while not plotdataL.empty():
+                plotdataL.get()
             plotL.lines[0].set_data(x, y)
         except queue.Empty:
             pass
 
         try:
             x, y = plotdataF.get(block=False, timeout=None)
+            while not plotdataF.empty():
+                plotdataF.get()
             plotF.lines[0].set_data(x, y)
         except queue.Empty:
             pass
 
         try:
             x, y = plotdataR.get(block=False, timeout=None)
+            while not plotdataR.empty():
+                plotdataR.get()
             plotR.lines[0].set_data(x, y)
         except queue.Empty:
             pass
