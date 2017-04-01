@@ -16,14 +16,14 @@ void __assert(bool success, String msg) {
  * FFT Parameters
  */
 #define LOG_OUT 0
-#define FFT_N 128 // Numero samples
+#define FHT_N 128 // Numero samples
 #define WINDOW 0
 #define LIN_OUT 1
 
 /**
  * Includes
  */
-#include <FFT.h>
+#include <FHT.h>
 #include <FlexiTimer2.h>
 #include <SPI.h>       // nRF24L01+
 #include <RH_NRF24.h>  // nRF24L01+
@@ -249,22 +249,22 @@ void sendFrequencyMessage(char type) {
   Serial.print(type);
   Serial.print(SAMPLING_PERIOD * TIMER_PERIOD);
   Serial.print(';');
-  for(uint8_t i = 0; i < FFT_N / 2 - 1; i++) {
-    Serial.print(fft_lin_out[i]);
+  for(uint8_t i = 0; i < FHT_N / 2 - 1; i++) {
+    Serial.print(fht_lin_out[i]);
     Serial.print(',');
   }
-  Serial.print(fft_lin_out[FFT_N / 2 - 1]);
+  Serial.print(fht_lin_out[FHT_N / 2 - 1]);
   Serial.print('\n');
 }
 
-void fft_constant_detrend() {
+void fht_constant_detrend() {
   uint16_t mean = 0;
-  for (uint16_t i = 0; i < FFT_N * 2; i += 2) {
-    mean += fft_input[i];
+  for (uint16_t i = 0; i < FHT_N; i++) {
+    mean += fht_input[i];
   }
-  mean = mean / FFT_N;
-  for (uint16_t i = 0; i < FFT_N * 2; i += 2) {
-    fft_input[i] -= mean;
+  mean = mean / FHT_N;
+  for (uint16_t i = 0; i < FHT_N; i++) {
+    fht_input[i] -= mean;
   }
 }
 
@@ -304,22 +304,21 @@ void setup() {
 }
 
 void loop() {
-  for (int i = 0 ; i < FFT_N*2 ; i += 2) { // save 256 samples
+  for (int i = 0 ; i < FHT_N ; i++) {
     if (i > 0) {
       //delayMicroseconds(SAMPLING_PERIOD * TIMER_PERIOD);
       delayMicroseconds(416); // Equivale a un periodo reale di 500us, ovvero 2000Hz
     }
 
-    fft_input[i] = analogRead(SENSOR); // put real data into even bins
-    fft_input[i+1] = 0; // set odd bins to 0
+    fht_input[i] = analogRead(SENSOR);
   }
 
-  fft_constant_detrend();
+  fht_constant_detrend();
   // window data, then reorder, then run, then take output
-  //fft_window(); // window the data for better frequency response
-  fft_reorder(); // reorder the data before doing the fft
-  fft_run(); // process the data in the fft
-  fft_mag_lin(); // take the output of the fft
+  //fht_window(); // window the data for better frequency response
+  fht_reorder(); // reorder the data before doing the fft
+  fht_run(); // process the data in the fft
+  fht_mag_lin(); // take the output of the fft
   
   sendFrequencyMessage('L');
 
