@@ -52,7 +52,7 @@ public partial class MainWindow : Gtk.Window
 	//	crossroadImage.SetSizeRequest(Allocation.Width, Allocation.Height);
 	//}
 
-	public void UpdateActionText(String text)
+	public void Update(String text)
 	{
 		actionText.Buffer.Text = text;
 		ShowAll();

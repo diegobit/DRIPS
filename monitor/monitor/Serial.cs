@@ -6,35 +6,120 @@ namespace monitor
 {
 	public class Serial
 	{
-		MainWindow w;
-		SerialPort sp;
+		MainWindow window;
+		SerialPort port;
+		Thread reader;
+		volatile bool shouldTerminate = false;
 
-		public Serial(MainWindow window, string port, int baudRate)
+
+
+		public Serial(MainWindow window, string portAddress, int baudRate)
 		{
-			w = window;
+			this.window = window;
 
-			sp = new SerialPort(port, baudRate);
-			sp.Open();
+			port = new SerialPort(portAddress, baudRate);
 		}
 
-		public void startListening()
-		{
-			Thread t = new Thread(delegate()
-			{
-				Console.WriteLine("--- START READING ---");
-				while (true)
-				{
-					string msg = sp.ReadLine();
-					Console.WriteLine("\nRECEIVED MESSAGE. LENGTH: " + msg.Length + " B\n" + msg);
 
-					//// Ensure interface updates are executed on main loop
-					//Gtk.Application.Invoke(delegate
-					//{
-					//	w.UpdateActionText(msg);
-					//});
+
+		/*
+		 * Start the thread reading the data from the serial port,
+		 * then it triggers and update of the UI
+		 */
+		public void startReading()
+		{
+			shouldTerminate = false;
+
+			reader = new Thread(delegate ()
+			{
+				port.ReadTimeout = 1000;
+				int i = 1;
+				// Try to open the port every second
+				while (!port.IsOpen && !shouldTerminate)
+				{
+					try
+					{
+						if (!openPort())
+						{
+							Thread.Sleep(1000 * i);
+							i++;
+						}
+						else
+							Console.WriteLine("--- PORT OPEN, READING... ---");
+					}
+					catch (ThreadInterruptedException) { }
 				}
+
+				// The port is open, read
+				while (!shouldTerminate)
+				{
+					try
+					{
+						string msg = port.ReadLine();
+						Console.WriteLine("--> RECEIVED MESSAGE. LENGTH: " + msg.Length + " B\n" + msg);
+
+						// Ensure interface updates are executed on main loop
+						Gtk.Application.Invoke(delegate
+						{
+							window.Update(msg);
+						});
+					}
+					catch (TimeoutException) { }
+				}
+
+				Console.WriteLine("Thread terminating...");
+				closePort();
 			});
-			t.Start();
+
+			reader.IsBackground = true;
+			reader.Start();
+		}
+
+		/*
+		 * Terminate the thread reading data from the serial port (and close the port)
+		 */
+		public void stopReading()
+		{
+			if (reader != null)
+			{
+				shouldTerminate = true;
+				reader.Interrupt();
+				reader.Join();
+				reader = null;
+				Console.WriteLine("Serial port closed.");
+			}
+			else
+			{
+				Console.WriteLine("Cannot run stopReading() before startReading()");
+			}
+		}
+
+
+
+		private bool openPort()
+		{
+			if (!port.IsOpen)
+			{
+				try
+				{
+					port.Open();
+				}
+				catch (System.IO.IOException)
+				{
+					Console.WriteLine("Serial port unavailable");
+				}
+			}
+			return port.IsOpen;
+		}
+
+		private void closePort()
+		{
+			port.Close();
+		}
+
+		private void decodeMessage(string msg)
+		{
+			//TODO
 		}
 	}
 }
