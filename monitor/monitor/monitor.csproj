@@ -52,10 +52,11 @@
     <EmbeddedResource Include="gtk-gui\gui.stetic">
       <LogicalName>gui.stetic</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources\crossroad.png">
+    <EmbeddedResource Include="resources\crossroadOLD.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="resources\crossroad2.png" />
+    <EmbeddedResource Include="resources\crossroad.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="Monitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serial.cs" />
+    <Compile Include="ResizableFixed.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="resources\" />
