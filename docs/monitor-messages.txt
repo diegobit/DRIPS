@@ -1,65 +1,67 @@
-/*********************************
- * ARDUINO-MONITOR MESSAGE FORMAT:
- *********************************
- *
- ********* INFO-MESSAGE:**********
- * Size: 25 Bytes
- * TABBBBBBBBCCCCCCCCDDDEFG\n
- *
- *
- *      FIELD NAME        DIM
- * T    MessageType       1B
- * A    RoadID            1B
- * B    Manufacturer      8B
- * C    Model             8B
- * D    Orientation       3B
- * E    Priority          1B
- * F    RequestedAction   1B   // The action the car wants to do
- * G    CurrentAction     1B   // The action the car is doing to
- *                                cooperate with the network
- *
- * FIELD              VALUE       DESCRIPTION
- * MessageType:       I           info message (this message)
- *                    L           frequency spectrum message from leftmost receiver
- *                    F           frequency spectrum message from front receiver
- *                    R           frequency spectrum message from rightmost receiver
- * RoadID:            M           my road
- *                    L           road to my left
- *                    A           road ahead
- *                    R           road to my right
- * Manufacturer:      Alfa⎵⎵⎵⎵
- *                    Fiat⎵⎵⎵⎵
- *                    Tesla⎵⎵⎵
- * Model:             Giulia⎵⎵
- *                    500⎵⎵⎵⎵⎵
- *                    Model S⎵
- * Orientation:       [0..360]    degrees clockwise
- * Priority:          N           regular car
- *                    Y           priority car (ambulance, police)
- * RequestedAction,
- * CurrentAction:     S           Stay still
- *                    L           turn left
- *                    A           go straight ahead
- *                    R           turn right
- *
- *** FREQUENCY-SPECTRUM-MESSAGE ***
- * Size: 258-776 Bytes (Assuming FFT_N = 128 = number of bins)
- * TM;A,A,...,A,A\n
- *    |_________|
- *        128
- *
- * A,A,...,A,A   The sensor data relative to the IR receiver
- *
- *        FIELD NAME          DIM
- * T      MessageType         1B
- * M      SamplingPeriod      1-7B  // the sampling period used to build the frequency plot of the monitor
- * A      BinFreqIntensity    1-5B
- * ,      BinsSeparator       1B    // separates each pair of bins
- *
- * Each bin represents the intensity of a frequency range. The
- * frequencies go from 0 to sampling_frequency / 2. Bin i represents //TODO: check the end of the range
- * the range [i * sampling_frequency / 128, (i+1) * sampling_frequency / 128]
- *
- * The intensity goes from 0 to 65535, it is sent as a decimal string, so it may be sent with a variable
- * number of Bytes: from 1 Byte (eg. '6') up to 5 Bytes (eg. '65535')
- */
+# ARDUINO-MONITOR MESSAGE FORMAT:
+
+
+## INFO-MESSAGE
+
+Size: 25 Bytes
+TABBBBBBBBCCCCCCCCDDDEFG\n
+
+      FIELD NAME        DIM
+ T    MessageType       1B
+ A    RoadID            1B
+ B    Manufacturer      8B
+ C    Model             8B
+ D    Orientation       3B
+ E    Priority          1B
+ F    RequestedAction   1B   // The action the car wants to do
+ G    CurrentAction     1B   // The action the car is doing to cooperate with the network
+
+ FIELD              VALUE       DESCRIPTION
+ MessageType:       I           info message (this message)
+                    L           frequency spectrum message from leftmost receiver
+                    F           frequency spectrum message from front receiver
+                    R           frequency spectrum message from rightmost receiver
+
+ RoadID:            M           my road
+                    L           road to my left
+                    A           road ahead
+                    R           road to my right
+
+ Manufacturer:      Alfa⎵⎵⎵⎵
+                    Fiat⎵⎵⎵⎵
+                    Tesla⎵⎵⎵
+
+ Model:             Giulia⎵⎵
+                    500⎵⎵⎵⎵⎵
+                    Model S⎵
+
+ Orientation:       [0..360]    degrees clockwise
+
+ Priority:          N           regular car
+                    Y           priority car (ambulance, police)
+
+ RequestedAction,
+ CurrentAction:     S           Stay still
+                    L           turn left
+                    A           go straight ahead
+                    R           turn right
+
+
+## FREQUENCY-SPECTRUM-MESSAGE
+
+Size: 130-395 Bytes (Assuming FFT_N = 128 = 2 * number of bins)
+TM;A,A,...,A,A\n
+   |_________|
+       64
+
+A,A,...,A,A     is the sensor data relative to the IR receiver
+
+       FIELD NAME          DIM      Notes
+T      MessageType         1B
+M      SamplingPeriod      1-10B    (us) the sampling period used in the X-axis of the plot
+A      BinFreqIntensity    1-5B
+,      BinsSeparator       1B       separates each pair of bins
+;      headerSeparator     1B       separates the header from the data
+
+Each bin represents the intensity of a frequency range. The frequencies go from 0 to samplingFrequency / 2 (where samplingFrequency = 1 / samplingPeriod * 1000000).
+Bin i represents the range [i * sampling_frequency / 128, (i+1) * sampling_frequency / 128].
