@@ -52,10 +52,6 @@
     <EmbeddedResource Include="gtk-gui\gui.stetic">
       <LogicalName>gui.stetic</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="resources\crossroadOLD.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources\crossroad2.png" />
     <EmbeddedResource Include="resources\crossroad.png" />
   </ItemGroup>
   <ItemGroup>

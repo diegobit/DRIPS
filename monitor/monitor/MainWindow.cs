@@ -28,7 +28,7 @@ public partial class MainWindow : Gtk.Window
 		actionText = new TextView();
 		actionText.Editable = false;
 		actionText.SetSizeRequest(505, 195);
-		//actionText.ModifyBase(StateType.Normal, new Gdk.Color(255, 255, 255));
+		actionText.ModifyBase(StateType.Normal, new Gdk.Color(230, 230, 230));
 		actionText.ModifyFont(Pango.FontDescription.FromString("Arial 20"));
 		actionText.Buffer.Text = "I'm a cereal Listener\n";
 
