@@ -17,9 +17,10 @@ Per fare ciò, l'auto A deve iniziare la procedura di CCS.
  1. L'auto invia in broadcast un pacchetto CCS con specificato l'indirizzo dell'auto
     che A vuole associare.
  2. L'auto attende X secondi.
- 3. L'auto entra nella fase di rilevazione della risposta tramite sensori IR.
+ 3. L'auto entra nella fase di rilevamento della frequenza tramite sensori IR.
     L'auto si aspetta di osservare per una durata di altri X secondi una frequenza
-    di K Hz su uno o più sensori.
+    di K Hz su uno o più sensori. Contemporaneamente, inizia anch'essa a far
+    lampeggiare i led con una frequenza di K Hz per una durata di X secondi.
  4. Dopo lo scadere degli X secondi, l'auto interpreta i dati rilevati e li associa
     al nodo a cui è stata fatta la richiesta. Dopodiché torna nello stato di
     operatività standard.
@@ -37,7 +38,10 @@ Ogni altra auto nell'incrocio, alla ricezione del CCS di A:
         cui è in corso la procedura già avviata.
      b. Se no, determina se il CCS era destinato a lei.
           i. Se no, termina
-         ii. Se sì, attende X secondi da quando ha rilevato il CCS, quindi inizia a far
+         ii. Se sì, attende X secondi da quando ha rilevato il CCS, quindi entra
+             nella fase di rilevamento della frequenza tramite sensori IR.
+             L'auto si aspetta di osservare per una durata di altri X secondi una frequenza
+             di K Hz su uno o più sensori. Contemporaneamente, inizia anch'essa a far
              lampeggiare i led con una frequenza di K Hz per una durata di X secondi.
 
 Durante tutto il tempo in cui si trova nello stato 1.b.ii., l'auto rimane in ascolto di
@@ -48,14 +52,15 @@ del messaggio sia diverso da quello dell'auto corrente, la procedura viene inter
 
 ### CCS
 
-  0                   1
-  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
- +---------------+---------------+
- | Msg Type (C)  | Receiver Addr |
- +---------------+---------------+
+  0                   1                   2
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3
+ +---------------+---------------+---------------+
+ | Msg Type (C)  | Receiver Addr | Sender Addr   |
+ +---------------+---------------+---------------+
  
  Msg Type = 67 (carattere C)
  Receiver Addr = l'indirizzo che identifica l'auto è cui è rivolto il CCS.
+ Sender Addr = l'indirizzo che identifica l'auto che ha emesso il CCS.
 
 ### SCS
 
