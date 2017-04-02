@@ -19,6 +19,9 @@ TABBBBBBBBCCCCCCCCDDDEFG\n
 
  FIELD              VALUE       DESCRIPTION  
  MessageType:       I           info message (this message)  
+                    l           sampled data from leftmost receiver (for debug)
+                    f           sampled data from front receiver (for debug)
+                    r           sampled data from rightmost receiver (for debug)
                     L           frequency spectrum message from leftmost receiver  
                     F           frequency spectrum message from front receiver  
                     R           frequency spectrum message from rightmost receiver
@@ -48,6 +51,23 @@ TABBBBBBBBCCCCCCCCDDDEFG\n
                     R           turn right
 
 
+## SAMPLED-DATA-MESSAGE
+
+Size: 131-396 Bytes (Assuming FFT_N = 128 = 2 * number of bins)
+TM;A,A,...,A,A\n
+   |_________|
+       64
+
+A,A,...,A,A     is the sensor data relative to the IR receiver
+
+       FIELD NAME          DIM      Notes
+T      MessageType         1B       one of `l`, `f`, `r`
+M      SamplingPeriod      1-10B    (us) the sampling period used in the X-axis of the plot
+A      SampleValue         1-5B
+,      SampleSeparator     1B       separates each pair of samples
+;      headerSeparator     1B       separates the header from the data
+
+
 ## FREQUENCY-SPECTRUM-MESSAGE
 
 Size: 131-396 Bytes (Assuming FFT_N = 128 = 2 * number of bins)  
@@ -58,7 +78,7 @@ TM;A,A,...,A,A\n
 A,A,...,A,A     is the sensor data relative to the IR receiver
 
        FIELD NAME          DIM      Notes  
-T      MessageType         1B  
+T      MessageType         1B       one of `L`, `F`, `R`
 M      SamplingPeriod      1-10B    (us) the sampling period used in the X-axis of the plot  
 A      BinFreqIntensity    1-5B  
 ,      BinsSeparator       1B       separates each pair of bins  
