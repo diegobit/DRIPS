@@ -53,10 +53,10 @@ TABBBBBBBBCCCCCCCCDDDEFG\n
 
 ## SAMPLED-DATA-MESSAGE
 
-Size: 131-396 Bytes (Assuming FFT_N = 128 = 2 * number of bins)
+Size: 259-780 Bytes (Assuming FFT_N = 128 = number of samples)
 TM;A,A,...,A,A\n
    |_________|
-       64
+       128
 
 A,A,...,A,A     is the sensor data relative to the IR receiver
 
