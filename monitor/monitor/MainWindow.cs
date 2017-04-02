@@ -34,7 +34,7 @@ public partial class MainWindow : Gtk.Window
 
 		// Put the Widgets inside the container
 		container.Put(crossroadImage, 0, 0);
-		container.Put(actionText, 1364/2+160, 5);
+		container.Put(actionText, 1364 / 2 + 160, 5);
 
 		// Put the container in the window
 		Add(container);
@@ -72,9 +72,9 @@ public partial class MainWindow : Gtk.Window
 	//	Console.Write("OnSizeRequested");
 	//}
 
-	public void Update(String text)
+	public void Update(monitor.RoadID roadID, string manufacturer, string model, int orientation, Priority priority, monitor.Action requestedAction, monitor.Action currentAction )
 	{
-		actionText.Buffer.Text += '\n' + text;
-		ShowAll();
+		//actionText.Buffer.Text += '\n' + text;
+		//ShowAll();
 	}
 }
