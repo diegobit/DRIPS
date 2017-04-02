@@ -53,7 +53,7 @@ TABBBBBBBBCCCCCCCCDDDEFG\n
 
 ## SAMPLED-DATA-MESSAGE
 
-Size: 259-780 Bytes (Assuming FFT_N = 128 = number of samples)
+Size: 259-652 Bytes (Assuming FFT_N = 128 = number of samples)
 TM;A,A,...,A,A\n
    |_________|
        128
@@ -63,7 +63,7 @@ A,A,...,A,A     is the sensor data relative to the IR receiver
        FIELD NAME          DIM      Notes
 T      MessageType         1B       one of `l`, `f`, `r`
 M      SamplingPeriod      1-10B    (us) the sampling period used in the X-axis of the plot
-A      SampleValue         1-5B
+A      SampleValue         1-4B     values are from 0 to 1023
 ,      SampleSeparator     1B       separates each pair of samples
 ;      headerSeparator     1B       separates the header from the data
 
