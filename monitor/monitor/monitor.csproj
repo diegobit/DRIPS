@@ -66,5 +66,12 @@
   <ItemGroup>
     <Folder Include="resources\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\TeslaModelS_blue.png" />
+    <None Include="resources\TeslaModelS_green.png" />
+    <None Include="resources\TeslaModelS_red.png" />
+    <None Include="resources\TeslaModelS_white.png" />
+    <None Include="resources\TeslaModelS_yellow.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
