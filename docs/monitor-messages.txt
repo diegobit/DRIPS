@@ -49,7 +49,7 @@ TABBBBBBBBCCCCCCCCDDDEFG\n
 
 ## FREQUENCY-SPECTRUM-MESSAGE
 
-Size: 130-395 Bytes (Assuming FFT_N = 128 = 2 * number of bins)
+Size: 131-396 Bytes (Assuming FFT_N = 128 = 2 * number of bins)
 TM;A,A,...,A,A\n
    |_________|
        64
