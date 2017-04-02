@@ -26,19 +26,20 @@ This is the format which is used by all the messages.
 
 ## INFO-MESSAGE
 
-Size: 25 Bytes
-TABBBBBBBBCCCCCCCCDDDEFG\n
+Size: 26 Bytes
+TABCCCCCCCCDDDDDDDDEEEFGH\n
 
 |   |  FIELD NAME       | DIM |
 |---|-------------------|-----|
 | T |  MessageType      | 1B  |
 | A |  RoadID           | 1B  |
-| B |  Manufacturer     | 8B  |
-| C |  Model            | 8B  |
-| D |  Orientation      | 3B  |
-| E |  Priority         | 1B  |
-| F |  RequestedAction  | 1B  | // The action the car wants to do
-| G |  CurrentAction    | 1B  | // The action the car is doing to cooperate with the network
+| B |  Address          | 1B  |
+| C |  Manufacturer     | 8B  |
+| D |  Model            | 8B  |
+| E |  Orientation      | 3B  |
+| F |  Priority         | 1B  |
+| G |  RequestedAction  | 1B  | // The action the car wants to do
+| H |  CurrentAction    | 1B  | // The action the car is doing to cooperate with the network
 
  FIELD              VALUE       DESCRIPTION
  MessageType:       I           info message
