@@ -16,6 +16,8 @@ public partial class MainWindow : Gtk.Window
 
 		// The global container
 		container = new Fixed();
+		//ModifyBase(StateType.Normal, new Gdk.Color(255,255,255));
+		//container.ModifyBase(StateType.Normal, new Gdk.Color(255, 255, 255));
 
 		// Create Widgets to put into the Fixed container
 		crossroadImage = Image.LoadFromResource("monitor.resources.crossroad.png");
@@ -26,9 +28,9 @@ public partial class MainWindow : Gtk.Window
 		actionText = new TextView();
 		actionText.Editable = false;
 		actionText.SetSizeRequest(505, 195);
+		//actionText.ModifyBase(StateType.Normal, new Gdk.Color(255, 255, 255));
+		actionText.ModifyFont(Pango.FontDescription.FromString("Arial 20"));
 		actionText.Buffer.Text = "I'm a cereal Listener\n";
-
-		//crossroadImage.File = "resources/crossroad.png";
 
 		// Put the Widgets inside the container
 		container.Put(crossroadImage, 0, 0);
