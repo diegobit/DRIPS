@@ -1,6 +1,9 @@
 # ARDUINO-MONITOR MESSAGE FORMAT
 
-## COMMON MESSAGE HEADER
+## COMMON MESSAGE FORMAT
+
+Size: >= 1 Byte
+TP...P\n
 
 |   |  FIELD NAME       | DIM |
 |---|-------------------|-----|
@@ -18,7 +21,7 @@
 
  Payload:           custom      Data specific to the current message type (see detailed specs below)
 
-This is the header which is used by all the messages.
+This is the format which is used by all the messages.
 
 
 ## INFO-MESSAGE
