@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using Gtk;
 using monitor;
 
@@ -13,6 +13,7 @@ public partial class MainWindow : Gtk.Window
 	Fixed container;
 	TextView actionText; // The textview with the text with the actions to show;
 	Image crossroadImage;
+	Dictionary<RoadID, Image> roads;
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
@@ -50,6 +51,45 @@ public partial class MainWindow : Gtk.Window
 		a.RetVal = true;
 	}
 
+	public void UpdateRoad(Road road)
+	{
+		bool shouldAttach = false;
+		Image car;
+		if (!roads.TryGetValue(road.Id, out car))
+		{
+			// Image not present, I create it
+			shouldAttach = true;
+			car = Image.LoadFromResource("monitor.resources.TeslaModelS_" + roads.Count + imageExtension);
+			roads.Add(road.Id, car);
+		}
+
+		// TODO: INFO CAR UPDATE 
+
+		if (shouldAttach)
+		{
+			int crWidth = crossroadImage.Allocation.Width;
+			int crHeight = crossroadImage.Allocation.Height;
+			switch (road.Id)
+			{
+				case RoadID.Bottom:
+					container.Put(car, crWidth / 2 + 10, crHeight / 2 + 200);
+					break;
+				case RoadID.Left:
+					car.Pixbuf.RotateSimple(Gdk.PixbufRotation.Clockwise);
+					container.Put(car, crWidth / 2 + 10, crHeight / 2 + 200);
+					break;
+				case RoadID.Top:
+					car.Pixbuf.RotateSimple(Gdk.PixbufRotation.Upsidedown);
+					container.Put(car, crWidth / 2 - 100, crHeight / 2 - 200);
+					break;
+				case RoadID.Right:
+					car.Pixbuf.RotateSimple(Gdk.PixbufRotation.Counterclockwise);
+					container.Put(car, crWidth / 2 + 100, crHeight / 2 + 200);
+					break;
+			}
+		}
+
+	}
 
 	//protected override void OnSizeAllocated(Gdk.Rectangle allocation)
 	//{

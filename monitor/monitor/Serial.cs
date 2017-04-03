@@ -6,16 +6,16 @@ namespace monitor
 {
 	public class Serial
 	{
-		MainWindow window;
+		Monitor monitor;
 		SerialPort port;
 		Thread reader;
 		volatile bool shouldTerminate = false;
 
 
 
-		public Serial(MainWindow window, string portAddress, int baudRate)
+		public Serial(Monitor monitor, string portAddress, int baudRate)
 		{
-			this.window = window;
+			this.monitor = monitor;
 
 			port = new SerialPort(portAddress, baudRate);
 		}
@@ -120,7 +120,7 @@ namespace monitor
 
 
 		/*
-		 * Decode the message and update the UI
+		 * Decode the message and update the monitor
 		 */
 		bool handleMessage(string msg)
 		{
@@ -143,19 +143,33 @@ namespace monitor
 			if (msg.Length == 24)
 			{
 				RoadID roadID = (RoadID)Convert.ToInt32(msg.Substring(1, 1));
-				string manufacturer = msg.Substring(2, 8).Trim();
-				string model = msg.Substring(10, 8).Trim();
-				int orientation = Convert.ToInt32(msg.Substring(18, 3).Trim());
-				Priority priority = (Priority)Convert.ToInt32(msg.Substring(21, 1));
-				Action requestedAction = (Action)Convert.ToInt32(msg.Substring(22, 1));
-				Action currentAction = (Action)Convert.ToInt32(msg.Substring(23, 1));
 
-				if (Enum.IsDefined(typeof(RoadID), roadID) ||
-					Enum.IsDefined(typeof(Priority), priority) ||
-					Enum.IsDefined(typeof(Action), priority) ||
-					Enum.IsDefined(typeof(Action), priority))
+				if (Enum.IsDefined(typeof(RoadID), roadID))
 				{
-					window.Update(roadID, manufacturer, model, orientation, priority, requestedAction, currentAction);	
+					int orientation = Convert.ToInt32(msg.Substring(18, 3).Trim());
+
+					string manufacturer = msg.Substring(2, 8).Trim(); //TODO: better to specify the type (partial, complete) in the message format
+					if (manufacturer != "")
+					{
+						// Complete info message
+						string model = msg.Substring(10, 8).Trim();
+						Priority priority = (Priority)Convert.ToInt32(msg.Substring(21, 1));
+						Action requestedAction = (Action)Convert.ToInt32(msg.Substring(22, 1));
+						Action currentAction = (Action)Convert.ToInt32(msg.Substring(23, 1));
+
+						if (Enum.IsDefined(typeof(Priority), priority) ||
+							Enum.IsDefined(typeof(Action), priority) ||
+							Enum.IsDefined(typeof(Action), priority))
+						{
+							monitor.UpdateRoad(roadID, orientation, manufacturer, model,
+											   priority, requestedAction, currentAction);
+						}
+					}
+					else
+					{
+						// partial info message
+						monitor.UpdateRoad(roadID, orientation);
+					}
 				}
 			}
 
