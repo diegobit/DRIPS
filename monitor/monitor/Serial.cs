@@ -4,38 +4,6 @@ using System.Threading;
 
 namespace monitor
 {
-	public enum Type
-	{
-		Info = 'I',
-		FrequencyLeft = 'L',
-		FrequencyFront = 'F',
-		FrequencyRight = 'R'
-	}
-
-	public enum RoadID
-	{
-		My = 'M',
-		Left = 'L',
-		Front = 'F',
-		Right = 'R'
-	}
-
-	public enum Priority
-	{
-		Normal = 'N',
-		High = 'Y'
-	}
-
-	public enum Action
-	{
-		Still = 'S',
-		Left = 'L',
-		Straight = 'A',
-		Right = 'R'
-	}
-
-
-
 	public class Serial
 	{
 		MainWindow window;
