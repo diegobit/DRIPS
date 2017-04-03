@@ -4,6 +4,12 @@ using monitor;
 
 public partial class MainWindow : Gtk.Window
 {
+	// FIXED WINDOW PARAMETERS //TODO: that's shit
+	int width = 1364;
+	int height = 720;
+
+	string imageExtension = ".png";
+
 	Fixed container;
 	TextView actionText; // The textview with the text with the actions to show;
 	Image crossroadImage;
@@ -12,7 +18,7 @@ public partial class MainWindow : Gtk.Window
 	{
 		Build();
 
-		Resize(1364, 720); //TODO: that's shit
+		Resize(width, height);
 
 		// The global container
 		container = new Fixed();
@@ -22,8 +28,6 @@ public partial class MainWindow : Gtk.Window
 		// Create Widgets to put into the Fixed container
 		crossroadImage = Image.LoadFromResource("monitor.resources.crossroad.png");
 		crossroadImage.RedrawOnAllocate = true;
-		//crossroadImage.SetSizeRequest(720, 720);
-
 
 		actionText = new TextView();
 		actionText.Editable = false;
@@ -34,7 +38,7 @@ public partial class MainWindow : Gtk.Window
 
 		// Put the Widgets inside the container
 		container.Put(crossroadImage, 0, 0);
-		container.Put(actionText, 1364 / 2 + 160, 5);
+		container.Put(actionText, width / 2 + 160, 5);
 
 		// Put the container in the window
 		Add(container);
@@ -46,11 +50,6 @@ public partial class MainWindow : Gtk.Window
 		a.RetVal = true;
 	}
 
-	//override protected void OnResizeChecked()
-	//{
-	//	base.OnResizeChecked();
-	//	crossroadImage.SetSizeRequest(Allocation.Width, Allocation.Height);
-	//}
 
 	//protected override void OnSizeAllocated(Gdk.Rectangle allocation)
 	//{
