@@ -96,7 +96,7 @@ namespace monitor
 
 
 
-		private bool openPort()
+		bool openPort()
 		{
 			if (!port.IsOpen)
 			{
@@ -112,7 +112,7 @@ namespace monitor
 			return port.IsOpen;
 		}
 
-		private void closePort()
+		void closePort()
 		{
 			port.Close();
 		}
@@ -122,7 +122,7 @@ namespace monitor
 		/*
 		 * Decode the message and update the UI
 		 */
-		private bool handleMessage(string msg)
+		bool handleMessage(string msg)
 		{
 			Type msgType = (Type)Convert.ToInt32(msg.Substring(0, 1));
 			switch (msgType)
@@ -138,7 +138,7 @@ namespace monitor
 			}
 		}
 
-		private bool handleInfoMessage(string msg)
+		bool handleInfoMessage(string msg)
 		{
 			if (msg.Length == 24)
 			{
@@ -162,7 +162,7 @@ namespace monitor
 			return false;
 		}
 
-		private bool handleFrequencyMessage(string msg)
+		bool handleFrequencyMessage(string msg)
 		{
 			if (msg.Length >= 130 && msg.Length <= 395)
 			{

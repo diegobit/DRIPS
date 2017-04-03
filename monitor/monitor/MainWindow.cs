@@ -4,9 +4,9 @@ using monitor;
 
 public partial class MainWindow : Gtk.Window
 {
-	private Fixed container;
-	private TextView actionText; // The textview with the text with the actions to show;
-	private Image crossroadImage;
+	Fixed container;
+	TextView actionText; // The textview with the text with the actions to show;
+	Image crossroadImage;
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
@@ -71,10 +71,4 @@ public partial class MainWindow : Gtk.Window
 	//	base.OnSizeRequested(ref requisition);
 	//	Console.Write("OnSizeRequested");
 	//}
-
-	public void Update(monitor.RoadID roadID, string manufacturer, string model, int orientation, Priority priority, monitor.Action requestedAction, monitor.Action currentAction )
-	{
-		//actionText.Buffer.Text += '\n' + text;
-		//ShowAll();
-	}
 }
