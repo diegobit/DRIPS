@@ -80,6 +80,7 @@ public partial class MainWindow : Gtk.Window
 
 				car = loadCarImage(expectedImagePath);
 
+				roads.Remove(road.Id);
 				roads.Add(road.Id, car);
 				placeCar(car, road);
 			}
