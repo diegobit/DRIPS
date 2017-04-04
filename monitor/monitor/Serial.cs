@@ -124,7 +124,7 @@ namespace monitor
 		 */
 		bool handleMessage(string msg)
 		{
-			Type msgType = (Type)Convert.ToInt32(msg.Substring(0, 1));
+			Type msgType = (Type) msg[0];
 			switch (msgType)
 			{
 				case Type.Info:
@@ -142,7 +142,7 @@ namespace monitor
 		{
 			if (msg.Length == 24)
 			{
-				RoadID roadID = (RoadID)Convert.ToInt32(msg.Substring(1, 1));
+				RoadID roadID = (RoadID) msg[1];
 
 				if (Enum.IsDefined(typeof(RoadID), roadID))
 				{
@@ -153,9 +153,9 @@ namespace monitor
 					{
 						// Complete info message
 						string model = msg.Substring(10, 8).Trim();
-						Priority priority = (Priority)Convert.ToInt32(msg.Substring(21, 1));
-						Action requestedAction = (Action)Convert.ToInt32(msg.Substring(22, 1));
-						Action currentAction = (Action)Convert.ToInt32(msg.Substring(23, 1));
+						Priority priority = (Priority) msg[21];
+						Action requestedAction = (Action) msg[22];
+						Action currentAction = (Action) msg[23];
 
 						if (Enum.IsDefined(typeof(Priority), priority) ||
 							Enum.IsDefined(typeof(Action), priority) ||
