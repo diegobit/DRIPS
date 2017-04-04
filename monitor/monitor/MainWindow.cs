@@ -25,6 +25,7 @@ public partial class MainWindow : Gtk.Window
 
 		// The global container
 		container = new Fixed();
+		roads = new Dictionary<RoadID, Image>();
 		//ModifyBase(StateType.Normal, new Gdk.Color(255,255,255));
 		//container.ModifyBase(StateType.Normal, new Gdk.Color(255, 255, 255));
 
