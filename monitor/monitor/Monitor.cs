@@ -50,10 +50,6 @@ namespace monitor
 			this.window = window;
 
 			crossroad = new Dictionary<RoadID, Road>();
-			//crossroad.Add(RoadID.Bottom, new Road(RoadID.Bottom));
-			//crossroad.Add(RoadID.Left, new Road(RoadID.Left));
-			//crossroad.Add(RoadID.Top, new Road(RoadID.Top));
-			//crossroad.Add(RoadID.Right, new Road(RoadID.Right));
 
 			Serial s = new Serial(this, "/dev/tty.usbmodem1D121", 230400); //TODO: better port choice
 			s.startReading();
@@ -89,13 +85,6 @@ namespace monitor
 			r.CurrentAction = currentAction;
 
 			window.UpdateRoad(r);
-		}
-
-
-
-		private void UpdateUI(Road road)
-		{
-			
 		}
 
 

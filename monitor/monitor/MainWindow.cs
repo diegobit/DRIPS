@@ -138,24 +138,4 @@ public partial class MainWindow : Gtk.Window
 		}
 		ShowAll();
 	}
-
-	//protected override void OnSizeAllocated(Gdk.Rectangle allocation)
-	//{
-	//	base.OnSizeAllocated(allocation);
-
-	//	if (container != null)
-	//	{
-	//		Child.SetSizeRequest(allocation.Width, allocation.Height);
-	//		//foreach (Widget c in container.Children)
-	//		//{
-	//		//	Console.Write(c.GetType());
-	//		//}
-	//	}
-	//}
-
-	//protected override void OnSizeRequested(ref Requisition requisition)
-	//{
-	//	base.OnSizeRequested(ref requisition);
-	//	Console.Write("OnSizeRequested");
-	//}
 }
