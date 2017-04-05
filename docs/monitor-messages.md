@@ -48,12 +48,12 @@ TABBBBBBBBCCCCCCCCDDDEFG\n
                     A           road ahead
                     R           road to my right
 
- Manufacturer:      Alfa⎵⎵⎵⎵
-                    Fiat⎵⎵⎵⎵
+ Manufacturer:      Vlkswagn
+                    Police⎵⎵
                     Tesla⎵⎵⎵
 
- Model:             Giulia⎵⎵
-                    500⎵⎵⎵⎵⎵
+ Model:             Beetle⎵⎵
+                    Police⎵⎵
                     Model S⎵
 
  Orientation:       [0..360]    degrees clockwise

@@ -71,7 +71,7 @@ void loop() {
   /**********
    * The car just arrived, it thinks it is alone (its sensors see nothing)
    **********/   
-  sendInfoMessage('M', "Alfa    ", "Giulia  ", 0, 'N', 'L', 'S');
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
 
   for (uint16_t i = 0; i < FFT_N / 2; i++) {
     bins1[i] = i + random(21);
@@ -79,12 +79,12 @@ void loop() {
     bins3[i] = i + random(21);
   }
 
-  //delay(2000); // 2 seconds
+  delay(2000); // 2 seconds
   
   /**********
    * The car sees 3 other cars, it has not joined the network
    **********/
-  sendInfoMessage('M', "Alfa    ", "Giulia  ", 0, 'N', 'L', 'S');
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
   sendPartialInfoMessage('L', 90);
   sendPartialInfoMessage('A', 180);
   sendPartialInfoMessage('R', 270);
@@ -105,10 +105,17 @@ void loop() {
   //delay(2000); // 2 seconds
   
   /**********
-   * The car sees 3 other cars and joined the network
+   * The car sees 2 other cars
    **********/
-  sendInfoMessage('M', "Alfa    ", "Giulia  ",   0, 'N', 'L', 'S');
-  sendInfoMessage('L', "Fiat    ", "500     ",  90, 'N', 'A', 'S');
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
+  sendInfoMessage('L', "Police  ", "Police  ",  90, 'N', 'A', 'S');
+  sendInfoMessage('R', "Tesla   ", "Model S ", 270, 'N', 'L', 'L');
+  
+  /**********
+   * The car sees 2 other cars. The police car wants priority
+   **********/
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
+  sendInfoMessage('L', "Police  ", "Police  ",  90, 'Y', 'A', 'S');
   sendInfoMessage('R', "Tesla   ", "Model S ", 270, 'N', 'L', 'L');
 
   
