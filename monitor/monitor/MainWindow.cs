@@ -30,6 +30,7 @@ public partial class MainWindow : Gtk.Window
 		//container.ModifyBase(StateType.Normal, new Gdk.Color(255, 255, 255));
 
 		// Create Widgets to put into the Fixed container
+
 		crossroadImage = Image.LoadFromResource("monitor.resources.crossroad.png");
 		crossroadImage.RedrawOnAllocate = true;
 		unknownImagePath = "monitor.resources.car" + resDiv + "Unknown" + resDiv + "Unknown" + imageExtension;
@@ -70,9 +71,7 @@ public partial class MainWindow : Gtk.Window
 		else
 		{
 			// Image present, I check whether I have to update its image
-			string prevPath;
-			IconSize s;
-			car.GetIconName(out prevPath, out s);
+			string prevPath = car.Name;
 			if (prevPath != expectedImagePath)
 			{
 				// Need to update the image
