@@ -53,10 +53,10 @@
       <LogicalName>gui.stetic</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="resources\crossroad.png" />
-    <EmbeddedResource Include="resources\car_police.png" />
     <EmbeddedResource Include="resources\car_Tesla_Model S.png" />
     <EmbeddedResource Include="resources\car_Unknown_Unknown.png" />
     <EmbeddedResource Include="resources\car_Volkswagen_Beetle.png" />
+    <EmbeddedResource Include="resources\car_Police_Police.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
