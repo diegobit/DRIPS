@@ -102,7 +102,7 @@ void loop() {
   sendFrequencyMessage('F', bins2);
   sendFrequencyMessage('R', bins3);
 
-  //delay(2000); // 2 seconds
+  delay(2000); // 2 seconds
   
   /**********
    * The car sees 2 other cars
@@ -111,6 +111,8 @@ void loop() {
   sendInfoMessage('L', "Police  ", "Police  ",  90, 'N', 'A', 'S');
   sendInfoMessage('R', "Tesla   ", "Model S ", 270, 'N', 'L', 'L');
   
+  delay(2000);
+
   /**********
    * The car sees 2 other cars. The police car wants priority
    **********/
@@ -118,6 +120,7 @@ void loop() {
   sendInfoMessage('L', "Police  ", "Police  ",  90, 'Y', 'A', 'S');
   sendInfoMessage('R', "Tesla   ", "Model S ", 270, 'N', 'L', 'L');
 
+  delay (2000);
   
 
 //  unsigned long time = micros() - startTime;
