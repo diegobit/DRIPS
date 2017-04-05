@@ -32,39 +32,8 @@ namespace monitor
 
 			reader = new Thread(delegate ()
 			{
-				port.ReadTimeout = 1000;
-				int i = 1;
-				// Try to open the port every second
-				while (!port.IsOpen && !shouldTerminate)
-				{
-					try
-					{
-						if (!openPort())
-						{
-							Thread.Sleep(1000 * i);
-							i++;
-						}
-						else
-							Console.WriteLine("--- PORT OPEN, READING... ---");
-					}
-					catch (ThreadInterruptedException) { }
-				}
-
-				// The port is open, read
-				while (!shouldTerminate)
-				{
-					try
-					{
-						string msg = port.ReadLine();
-						Console.WriteLine("--> RECEIVED MESSAGE. LENGTH: " + msg.Length + " B\n" + msg);
-
-						if (!handleMessage(msg))
-							Console.WriteLine("Received corrupted or unknown message");
-						else 
-							Console.WriteLine("Received valid message"); //TODO RM
-					}
-					catch (TimeoutException) { }
-				}
+				tryOpenPortUntilDone();
+				readMessages(); // Executed until asked for termination
 
 				Console.WriteLine("Thread terminating...");
 				closePort();
@@ -96,6 +65,51 @@ namespace monitor
 
 
 
+		void tryOpenPortUntilDone()
+		{
+			int i = 1;
+			while (!port.IsOpen && !shouldTerminate)
+			{
+				try
+				{
+					if (!openPort())
+					{
+						Console.WriteLine("Serial port unavailable. Retrying in " + i + " seconds...");
+						Thread.Sleep(1000 * i);
+						i++;
+					}
+					else
+						Console.WriteLine("--- PORT OPEN, READING STARTED ---");
+				}
+				catch (ThreadInterruptedException) { }
+			}
+		}
+
+		void readMessages()
+		{
+			port.ReadTimeout = 1000;
+
+			while (!shouldTerminate)
+			{
+				try
+				{
+					string msg = port.ReadLine();
+					Console.WriteLine("[ RECEIVED MESSAGE. LENGTH: " + msg.Length + " B\n" + msg);
+
+					if (!handleMessage(msg))
+						Console.WriteLine("UNKNOWN OR CORRUPT MESSAGE ]");
+					else
+						Console.WriteLine("MESSAGE HANDLED ]");
+				}
+				catch (TimeoutException) { }
+				catch (System.IO.IOException)
+				{
+					closePort();
+					tryOpenPortUntilDone();
+				}
+			}
+		}
+
 		bool openPort()
 		{
 			if (!port.IsOpen)
@@ -104,10 +118,7 @@ namespace monitor
 				{
 					port.Open();
 				}
-				catch (System.IO.IOException)
-				{
-					Console.WriteLine("Serial port unavailable");
-				}
+				catch (System.IO.IOException) { }
 			}
 			return port.IsOpen;
 		}
