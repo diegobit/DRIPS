@@ -135,18 +135,23 @@ namespace monitor
 		 */
 		bool handleMessage(string msg)
 		{
-			Type msgType = (Type) msg[0];
-			switch (msgType)
+			if (msg.Length > 0)
 			{
-				case Type.Info:
-					return handleInfoMessage(msg);
-				case Type.FrequencyLeft:
-				case Type.FrequencyFront:
-				case Type.FrequencyRight:
-					return handleFrequencyMessage(msg);
-				default:
-					return false;
+				Type msgType = (Type)msg[0];
+				switch (msgType)
+				{
+					case Type.Info:
+						return handleInfoMessage(msg);
+					case Type.FrequencyLeft:
+					case Type.FrequencyFront:
+					case Type.FrequencyRight:
+						return handleFrequencyMessage(msg);
+					default:
+						break;
+				}
 			}
+
+			return false;
 		}
 
 		bool handleInfoMessage(string msg)
