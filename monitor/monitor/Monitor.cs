@@ -43,6 +43,7 @@ namespace monitor
 	public class Monitor
 	{
 		MainWindow window;
+		Serial s;
 		Dictionary <RoadID, Road> crossroad;
 
 		public Monitor(MainWindow window)
@@ -51,7 +52,11 @@ namespace monitor
 
 			crossroad = new Dictionary<RoadID, Road>();
 
-			Serial s = new Serial(this, "/dev/tty.usbmodem1D121", 230400); //TODO: better port choice
+			s = new Serial(this, "/dev/tty.usbmodem1D121", 230400); //TODO: better port choice
+		}
+
+		public void StartSerialPortReading()
+		{
 			s.startReading();
 		}
 
@@ -95,6 +100,7 @@ namespace monitor
 			MainWindow w = new MainWindow();
 			Monitor m = new Monitor(w);
 			w.ShowAll();
+			m.StartSerialPortReading();
 			Application.Run();
 		}
 	}
