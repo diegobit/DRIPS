@@ -4,12 +4,12 @@
 	{
 		public RoadID Id { get; private set; }
 
-		public string Manufacturer { get; set; }
-		public string Model { get; set; }
+		public string Manufacturer { get; set; } = "";
+		public string Model { get; set; } = "";
 		public int Orientation { get; set; } = -1;
-		public Priority Priority { get; set; }
-		public Action RequestedAction { get; set; }
-		public Action CurrentAction { get; set; }
+		public Priority Priority { get; set; } = Priority.None;
+		public Action RequestedAction { get; set; } = Action.None;
+		public Action CurrentAction { get; set; } = Action.None;
 
 
 
