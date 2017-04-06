@@ -179,12 +179,14 @@ namespace monitor
 						{
 							monitor.UpdateRoad(roadID, orientation, manufacturer, model,
 											   priority, requestedAction, currentAction);
+							return true;
 						}
 					}
 					else
 					{
 						// partial info message
 						monitor.UpdateRoad(roadID, orientation);
+						return true;
 					}
 				}
 			}
