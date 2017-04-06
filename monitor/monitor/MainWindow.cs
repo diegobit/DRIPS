@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Gtk;
 using monitor;
 
@@ -16,6 +17,8 @@ public partial class MainWindow : Gtk.Window
 	TextView actionText; // The textview with the text with the actions to show;
 	Image crossroadImage;
 	Dictionary<RoadID, Image> roads;
+
+
 
 	public MainWindow() : base(Gtk.WindowType.Toplevel)
 	{
@@ -50,57 +53,55 @@ public partial class MainWindow : Gtk.Window
 		Add(container);
 	}
 
-	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
-	{
-		Application.Quit();
-		a.RetVal = true;
-	}
+
 
 	public void UpdateRoad(Road road)
 	{
-		Image car;
-		string expectedImagePath = "monitor.resources.car" + resDiv + road.Manufacturer + resDiv + road.Model + imageExtension;
-		if (!roads.TryGetValue(road.Id, out car))
+		Gtk.Application.Invoke(delegate
 		{
-			car = loadCarImage(expectedImagePath);
+			actionText.Buffer.Text += road.Id + " " + road.Manufacturer + '\n';
+		});
 
-			roads.Add(road.Id, car);
-
-			placeCar(car, road);
-		}
-		else
+		Image car;
+ 		string expectedImagePath = "monitor.resources.car" + resDiv + road.Manufacturer + resDiv + road.Model + imageExtension;
+		if (roads.TryGetValue(road.Id, out car))
 		{
 			// Image present, I check whether I have to update its image
 			string prevPath = car.Name;
-			if (prevPath != expectedImagePath)
+			if (prevPath != (road.Id + expectedImagePath))
 			{
-				// Need to update the image
 				removeCar(prevPath);
-
-				car = loadCarImage(expectedImagePath);
-
 				roads.Remove(road.Id);
+
+				car = loadCarImage(expectedImagePath, road.Id);
 				roads.Add(road.Id, car);
 				placeCar(car, road);
 			}
-
 		}
+		else
+		{
+			car = loadCarImage(expectedImagePath, road.Id);
+			roads.Add(road.Id, car);
+			placeCar(car, road);
+ 		}
 	}
 
-	Image loadCarImage(string expectedImagePath)
+
+
+	Image loadCarImage(string expectedImagePath, RoadID id)
 	{
 		Image car;
 		// Image not present, I have to create it
 		try
 		{
 			car = Image.LoadFromResource(expectedImagePath);
-			car.IconName = expectedImagePath;
+			car.Name = id + expectedImagePath;
 		}
 		catch (System.ArgumentException)
 		{
 			// The car advertised an unknown manufacturer or model
 			car = Image.LoadFromResource(unknownImagePath);
-			car.IconName = unknownImagePath;
+			car.Name = id + unknownImagePath;
 		}
 		return car;
 	}
@@ -109,9 +110,18 @@ public partial class MainWindow : Gtk.Window
 	{
 		foreach (Widget w in container.Children)
 		{
-			Image i = (Image)w;
-			if (i.IconName == imageName)
-				container.Remove(w);
+			try
+			{
+				Image i = (Image) w;
+				if (i.Name == imageName)
+				{
+					Gtk.Application.Invoke(delegate
+					{
+						container.Remove(w);
+					});
+				}
+			}
+			catch (InvalidCastException) { }
 		}
 	}
 
@@ -119,24 +129,36 @@ public partial class MainWindow : Gtk.Window
 	{
 		int crWidth = crossroadImage.Allocation.Width;
 		int crHeight = crossroadImage.Allocation.Height;
-		switch (road.Id)
+
+		Gtk.Application.Invoke(delegate
 		{
+			switch (road.Id)
+			{
 			case RoadID.Bottom:
 				container.Put(car, crWidth / 2 + 10, crHeight / 2 + 200);
 				break;
 			case RoadID.Left:
-				car.Pixbuf.RotateSimple(Gdk.PixbufRotation.Clockwise);
-				container.Put(car, crWidth / 2 + 10, crHeight / 2 + 200);
+				car.Pixbuf = car.Pixbuf.RotateSimple(Gdk.PixbufRotation.Clockwise);
+				container.Put(car, crWidth / 2 - 200, crHeight / 2);
 				break;
 			case RoadID.Top:
-				car.Pixbuf.RotateSimple(Gdk.PixbufRotation.Upsidedown);
-				container.Put(car, crWidth / 2 - 100, crHeight / 2 - 200);
+				car.Pixbuf = car.Pixbuf.RotateSimple(Gdk.PixbufRotation.Upsidedown);
+				container.Put(car, crWidth / 2 - car.Pixbuf.Width - 10, crHeight / 2 - 200);
 				break;
 			case RoadID.Right:
-				car.Pixbuf.RotateSimple(Gdk.PixbufRotation.Counterclockwise);
-				container.Put(car, crWidth / 2 + 100, crHeight / 2 + 200);
+				car.Pixbuf = car.Pixbuf.RotateSimple(Gdk.PixbufRotation.Counterclockwise);
+				container.Put(car, crWidth / 2 + 200, crHeight / 2 - car.Pixbuf.Height);
 				break;
-		}
-		ShowAll();
+			}
+			container.ShowAll();
+		});
+	}
+
+
+
+	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
+	{
+		Application.Quit();
+		a.RetVal = true;
 	}
 }
