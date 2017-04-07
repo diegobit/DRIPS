@@ -9,7 +9,7 @@ namespace monitor
 		Monitor monitor;
 		SerialPort port;
 		Thread reader;
-		volatile bool shouldTerminate = false;
+		volatile bool shouldTerminate; // false
 
 
 
@@ -26,28 +26,29 @@ namespace monitor
 		 * Start the thread reading the data from the serial port,
 		 * then it triggers and update of the UI
 		 */
-		public void startReading()
+		public void StartReading()
 		{
 			shouldTerminate = false;
 
-			reader = new Thread(delegate ()
-			{
-				tryOpenPortUntilDone();
-				readMessages(); // Executed until asked for termination
+            reader = new Thread(delegate ()
+            {
+                TryOpenPortUntilDone();
+                ReadMessages(); // Executed until asked for termination
 
-				Console.WriteLine("Thread terminating...");
-				closePort();
-			});
-
-			reader.IsBackground = true;
-			reader.Start();
+                Console.WriteLine("Thread terminating...");
+                ClosePort();
+            })
+            {
+                IsBackground = true
+            };
+            reader.Start();
 		}
 
 		/*
 		 * Terminate the thread reading data from the serial port (and close the port).
 		 * Should NOT be called from withing the reader thread.
 		 */
-		public void stopReading()
+        public void StopReading()
 		{
 			if (reader != null)
 			{
@@ -65,14 +66,14 @@ namespace monitor
 
 
 
-		void tryOpenPortUntilDone()
+        void TryOpenPortUntilDone()
 		{
 			int i = 1;
 			while (!port.IsOpen && !shouldTerminate)
 			{
 				try
 				{
-					if (!openPort())
+					if (!OpenPort())
 					{
 						Console.WriteLine("Serial port unavailable. Retrying in " + i + " seconds...");
 						Thread.Sleep(1000 * i);
@@ -85,7 +86,7 @@ namespace monitor
 			}
 		}
 
-		void readMessages()
+        void ReadMessages()
 		{
 			port.ReadTimeout = 1000;
 
@@ -96,7 +97,7 @@ namespace monitor
 					string msg = port.ReadLine();
 					Console.WriteLine("[ RECEIVED MESSAGE. LENGTH: " + msg.Length + " B\n" + msg);
 
-					if (!handleMessage(msg))
+					if (!HandleMessage(msg))
 						Console.WriteLine("UNKNOWN OR CORRUPT MESSAGE ]");
 					else
 						Console.WriteLine("MESSAGE HANDLED ]");
@@ -104,13 +105,13 @@ namespace monitor
 				catch (TimeoutException) { }
 				catch (System.IO.IOException)
 				{
-					closePort();
-					tryOpenPortUntilDone();
+					ClosePort();
+					TryOpenPortUntilDone();
 				}
 			}
 		}
 
-		bool openPort()
+        bool OpenPort()
 		{
 			if (!port.IsOpen)
 			{
@@ -123,7 +124,7 @@ namespace monitor
 			return port.IsOpen;
 		}
 
-		void closePort()
+        void ClosePort()
 		{
 			port.Close();
 		}
@@ -133,7 +134,7 @@ namespace monitor
 		/*
 		 * Decode the message and update the monitor
 		 */
-		bool handleMessage(string msg)
+        bool HandleMessage(string msg)
 		{
 			if (msg.Length > 0)
 			{
@@ -141,11 +142,11 @@ namespace monitor
 				switch (msgType)
 				{
 					case Type.Info:
-						return handleInfoMessage(msg);
+						return HandleInfoMessage(msg);
 					case Type.FrequencyLeft:
 					case Type.FrequencyFront:
 					case Type.FrequencyRight:
-						return handleFrequencyMessage(msg);
+						return HandleFrequencyMessage(msg);
 					default:
 						break;
 				}
@@ -154,7 +155,7 @@ namespace monitor
 			return false;
 		}
 
-		bool handleInfoMessage(string msg)
+        bool HandleInfoMessage(string msg)
 		{
 			if (msg.Length == 24)
 			{
@@ -194,7 +195,7 @@ namespace monitor
 			return false;
 		}
 
-		bool handleFrequencyMessage(string msg)
+        bool HandleFrequencyMessage(string msg)
 		{
 			if (msg.Length >= 130 && msg.Length <= 395)
 			{

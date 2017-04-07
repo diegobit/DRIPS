@@ -38,9 +38,11 @@ public partial class MainWindow : Gtk.Window
 		crossroadImage.RedrawOnAllocate = true;
 		unknownImagePath = "monitor.resources.car" + resDiv + "Unknown" + resDiv + "Unknown" + imageExtension;
 
-		actionText = new TextView();
-		actionText.Editable = false;
-		actionText.SetSizeRequest(505, 195);
+        actionText = new TextView()
+        {
+            Editable = false
+        };
+        actionText.SetSizeRequest(505, 195);
 		actionText.ModifyBase(StateType.Normal, new Gdk.Color(230, 230, 230));
 		actionText.ModifyFont(Pango.FontDescription.FromString("Arial 20"));
 		actionText.Buffer.Text = "I'm a cereal Listener\n";
@@ -62,33 +64,32 @@ public partial class MainWindow : Gtk.Window
 			actionText.Buffer.Text += road.Id + " " + road.Manufacturer + '\n';
 		});
 
-		Image car;
- 		string expectedImagePath = "monitor.resources.car" + resDiv + road.Manufacturer + resDiv + road.Model + imageExtension;
-		if (roads.TryGetValue(road.Id, out car))
+        string expectedImagePath = "monitor.resources.car" + resDiv + road.Manufacturer + resDiv + road.Model + imageExtension;
+        if (roads.TryGetValue(road.Id, out Image car))
 		{
 			// Image present, I check whether I have to update its image
 			string prevPath = car.Name;
 			if (prevPath != (road.Id + expectedImagePath))
 			{
-				removeCar(prevPath);
+				RemoveCar(prevPath);
 				roads.Remove(road.Id);
 
-				car = loadCarImage(expectedImagePath, road.Id);
+				car = LoadCarImage(expectedImagePath, road.Id);
 				roads.Add(road.Id, car);
-				placeCar(car, road);
+				PlaceCar(car, road);
 			}
 		}
 		else
 		{
-			car = loadCarImage(expectedImagePath, road.Id);
+			car = LoadCarImage(expectedImagePath, road.Id);
 			roads.Add(road.Id, car);
-			placeCar(car, road);
+			PlaceCar(car, road);
  		}
 	}
 
 
 
-	Image loadCarImage(string expectedImagePath, RoadID id)
+    Image LoadCarImage(string expectedImagePath, RoadID id)
 	{
 		Image car;
 		// Image not present, I have to create it
@@ -106,7 +107,7 @@ public partial class MainWindow : Gtk.Window
 		return car;
 	}
 
-	void removeCar(string imageName)
+    void RemoveCar(string imageName)
 	{
 		foreach (Widget w in container.Children)
 		{
@@ -125,7 +126,7 @@ public partial class MainWindow : Gtk.Window
 		}
 	}
 
-	void placeCar(Image car, Road road)
+    void PlaceCar(Image car, Road road)
 	{
 		int crWidth = crossroadImage.Allocation.Width;
 		int crHeight = crossroadImage.Allocation.Height;

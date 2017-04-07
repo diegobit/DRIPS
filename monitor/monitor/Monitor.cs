@@ -57,18 +57,17 @@ namespace monitor
 
 		public void StartSerialPortReading()
 		{
-			s.startReading();
+			s.StartReading();
 		}
 
 		public void UpdateRoad(RoadID roadID, int orientation)
 		{
-			Road r;
-			if (!crossroad.TryGetValue(roadID, out r))
-			{
-				r = new Road(roadID);
-				crossroad.Add(roadID, r);
-			}
-			r.Orientation = orientation;
+            if (!crossroad.TryGetValue(roadID, out Road r))
+            {
+                r = new Road(roadID);
+                crossroad.Add(roadID, r);
+            }
+            r.Orientation = orientation;
 
 			window.UpdateRoad(r);
 		}
@@ -76,13 +75,12 @@ namespace monitor
 		public void UpdateRoad(RoadID roadID, int orientation, string manufacturer, string model,
 							   Priority priority, Action requestedAction, Action currentAction)
 		{
-			Road r;
-			if (!crossroad.TryGetValue(roadID, out r))
-			{
-				r = new Road(roadID);
-				crossroad.Add(roadID, r);
-			}
-			r.Orientation = orientation;
+            if (!crossroad.TryGetValue(roadID, out Road r))
+            {
+                r = new Road(roadID);
+                crossroad.Add(roadID, r);
+            }
+            r.Orientation = orientation;
 			r.Manufacturer = manufacturer;
 			r.Model = model;
 			r.Priority = priority;
@@ -94,7 +92,7 @@ namespace monitor
 
 
 
-		public static void Main(string[] args)
+		public static void Main()
 		{
 			Application.Init();
 			MainWindow w = new MainWindow();
