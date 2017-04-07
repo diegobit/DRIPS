@@ -257,6 +257,18 @@ void sendFrequencyMessage(char type) {
   Serial.print('\n');
 }
 
+void sendSamplesMessage(char type) {
+  Serial.print(type);
+  Serial.print(SAMPLING_PERIOD * TIMER_PERIOD);
+  Serial.print(';');
+  for(uint8_t i = 0; i < FHT_N - 1; i++) {
+    Serial.print(fht_input[i]);
+    Serial.print(',');
+  }
+  Serial.print(fht_input[FHT_N - 1]);
+  Serial.print('\n');
+}
+
 void fht_constant_detrend() {
   uint16_t mean = 0;
   for (uint16_t i = 0; i < FHT_N; i++) {
@@ -267,7 +279,6 @@ void fht_constant_detrend() {
     fht_input[i] -= mean;
   }
 }
-
 
 
 
@@ -313,6 +324,11 @@ void loop() {
     fht_input[i] = analogRead(SENSOR);
   }
 
+
+  #if DEBUG
+    sendSamplesMessage('l');
+  #endif
+
   fht_constant_detrend();
   // window data, then reorder, then run, then take output
   //fht_window(); // window the data for better frequency response
@@ -321,7 +337,10 @@ void loop() {
   fht_mag_lin(); // take the output of the fft
   
   sendFrequencyMessage('L');
+  
 
   handleTurnButton();
   test_radio();
+
+  delay(100);
 }

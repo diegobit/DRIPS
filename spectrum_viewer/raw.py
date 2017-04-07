@@ -35,11 +35,11 @@ def update_xyvals(spectrum_message):
     # ((i*Fs/N) + ((i+1)*Fs/N)) / 2
     xvals = [((i*Fs/FFT_N) + ((i+1)*Fs/FFT_N)) / 2.0 for i in range(len(yvals))]
 
-    if strline[0] == 'L':
+    if strline[0] == 'l':
         plotdataL.put((xvals, yvals))
-    elif strline[0] == 'F':
+    elif strline[0] == 'f':
         plotdataF.put((xvals, yvals))
-    elif strline[0] == 'R':
+    elif strline[0] == 'r':
         plotdataR.put((xvals, yvals))
 
 def retrievePlotData():
@@ -47,7 +47,7 @@ def retrievePlotData():
     ser.readline() # Discard the first (possibly partial) line
     while True:
         line = b''
-        while len(line) == 0 or chr(line[0]) not in ['L', 'F', 'R']:
+        while len(line) == 0 or chr(line[0]) not in ['l', 'f', 'r']:
             print("Syncing...")
             line = ser.readline()
         update_xyvals(line)
@@ -94,7 +94,7 @@ def main():
         for plot in [plotL, plotF, plotR, plotLFR]:
             if len(plot.lines) > 0 and len(plot.lines[0].get_xdata()) > 0:
                 plot.set_xlim([0, plot.lines[0].get_xdata()[-1]])
-            plot.set_ylim([0, 200])
+            plot.set_ylim([0, 1023])
         
         return plotL.lines[0], plotF.lines[0], plotR.lines[0], plotLFR.lines[0], plotLFR.lines[1], plotLFR.lines[2]
 
