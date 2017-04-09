@@ -41,10 +41,15 @@ public partial class MainWindow : Window
 		// Listen for window resizing events
 		SizeAllocated += delegate
 		{
-			if (!stopPropagate)
+			if (!stopPropagate) /* FIXME: workaround for an infinite loop of calls to SizeAllocated
+								(Moving a widgen in OnResizeImages() triggers another event) */
 			{
 				OnResizeImages();
 				stopPropagate = true;
+			}
+			else
+			{
+				stopPropagate = false;
 			}
 		};
 
