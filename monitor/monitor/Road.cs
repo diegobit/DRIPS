@@ -23,7 +23,7 @@
 		/*
 		 * Returns true if the road is empty, false if there's a car
 		 */
-		bool IsEmpty()
+		public bool IsEmpty()
 		{
 			return Manufacturer == "" & Model == "" && Orientation == -1 &&
                 Priority == Priority.None && CurrentAction == Action.None && RequestedAction == Action.None;
@@ -32,7 +32,7 @@
 		/*
 		 * Returns true if there's a car on the road, but I only know it's orientation
 		 */
-		bool IsPartial()
+		public bool IsPartial()
 		{
 			return Manufacturer == "" && Model == "" && Orientation != -1 &&
                 Priority == Priority.None && CurrentAction == Action.None && RequestedAction == Action.None;
@@ -41,7 +41,7 @@
 		/*
 		 * Returns true if there's a car on the road, and I have all the informations about it
 		 */
-		bool IsComplete()
+		public bool IsComplete()
 		{
 			return Manufacturer != "" && Model != "" && Orientation != -1 &&
                 Priority != Priority.None && CurrentAction != Action.None && RequestedAction != Action.None;
