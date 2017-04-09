@@ -53,15 +53,15 @@ void sendInfoMessage(char roadId, String manufacturer, String model,
   Serial.print('\n');
 }
 
-void sendSamplesMessage(char type) {
+void sendSamplesMessage(char type, uint16_t fft_bins[]) {
   Serial.print(type);
-  Serial.print(SAMPLING_PERIOD * TIMER_PERIOD);
+  Serial.print(500);
   Serial.print(';');
-  for(uint8_t i = 0; i < FHT_N - 1; i++) {
-    Serial.print(fht_input[i]);
+  for(uint8_t i = 0; i < FFT_N - 1; i++) {
+    Serial.print(fft_bins[i]);
     Serial.print(',');
   }
-  Serial.print(fht_input[FHT_N - 1]);
+  Serial.print(fft_bins[FFT_N - 1]);
   Serial.print('\n');
 }
 
