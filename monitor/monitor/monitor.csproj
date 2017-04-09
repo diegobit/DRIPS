@@ -57,10 +57,10 @@
     <EmbeddedResource Include="resources\car_Unknown_Unknown.png" />
     <EmbeddedResource Include="resources\car_Police_Police.png" />
     <EmbeddedResource Include="resources\car_Vlkswagn_Beetle.png" />
-    <EmbeddedResource Include="resources\arrow_left.gif" />
-    <EmbeddedResource Include="resources\arrow_left.png" />
-    <EmbeddedResource Include="resources\arrow_right.gif" />
-    <EmbeddedResource Include="resources\arrow_right.png" />
+    <EmbeddedResource Include="resources\signal_left.gif" />
+    <EmbeddedResource Include="resources\signal_right.gif" />
+    <EmbeddedResource Include="resources\signal_down.gif" />
+    <EmbeddedResource Include="resources\signal_up.gif" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />

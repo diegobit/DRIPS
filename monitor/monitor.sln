@@ -14,4 +14,10 @@ Global
 		{843E9FE9-89F7-4A53-88E8-BA68FE6F7B63}.Release|x86.ActiveCfg = Release|x86
 		{843E9FE9-89F7-4A53-88E8-BA68FE6F7B63}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.FileWidth = 80
+		$1.scope = text/plain
+	EndGlobalSection
 EndGlobal
