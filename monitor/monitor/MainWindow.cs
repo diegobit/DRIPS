@@ -37,18 +37,21 @@ public partial class MainWindow : Window
 		var roadvalues = (RoadID[])Enum.GetValues(typeof(RoadID));
         foreach (RoadID road in roadvalues)
 		{
-            Label l = new Label();
-			l.SetSizeRequest(280, 120);
-			l.ModifyBase(StateType.Normal, new Gdk.Color(230, 230, 230));
-			l.ModifyFont(Pango.FontDescription.FromString("Arial 20"));
-            l.Text = MakeCarLabelText("", "", Priority.None, monitor.Action.None, monitor.Action.None);
-            if (road == RoadID.Left || road == RoadID.Top)
-                l.Justify = Justification.Right;
+            if (road != RoadID.None)
+            {
+                Label l = new Label();
+                l.SetSizeRequest(280, 120);
+                l.ModifyBase(StateType.Normal, new Gdk.Color(230, 230, 230));
+                l.ModifyFont(Pango.FontDescription.FromString("Arial 20"));
+                l.Text = MakeCarLabelText("", "", Priority.None, monitor.Action.None, monitor.Action.None);
+                if (road == RoadID.Left || road == RoadID.Top)
+                    l.Justify = Justification.Right;
 
-            roads.Add(road, Tuple.Create((Image)null, l));
+                roads.Add(road, Tuple.Create((Image)null, l));
 
-            Tuple<int, int> pos = ComputeLabelPosition(road, l);
-            container.Put(l, pos.Item1, pos.Item2);
+                Tuple<int, int> pos = ComputeLabelPosition(road, l);
+                container.Put(l, pos.Item1, pos.Item2);
+            }
 		}
 
 		// Put the container in the window
