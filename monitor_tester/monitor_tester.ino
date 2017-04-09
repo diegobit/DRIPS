@@ -1,4 +1,4 @@
-/* 
+/*
  *  This code sends some test packets through the serial port
  *  to test the communication and the monitor
  */
@@ -63,14 +63,14 @@ void setup() {
 
 void loop() {
   delay(2000); // 2 seconds
-  
+
 //  unsigned long startTime = micros();
 
 
-  
+
   /**********
    * The car just arrived, it thinks it is alone (its sensors see nothing)
-   **********/   
+   **********/
   sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
 
   for (uint16_t i = 0; i < FFT_N / 2; i++) {
@@ -80,14 +80,14 @@ void loop() {
   }
 
   delay(2000); // 2 seconds
-  
+
   /**********
    * The car sees 3 other cars, it has not joined the network
    **********/
   sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
-  sendPartialInfoMessage('L', 90);
+  sendPartialInfoMessage('L', 270);
   sendPartialInfoMessage('A', 180);
-  sendPartialInfoMessage('R', 270);
+  sendPartialInfoMessage('R', 90);
 
   bins1[9] = 700 + random(21);
   bins1[10] = 700 + random(21);
@@ -103,39 +103,39 @@ void loop() {
   sendFrequencyMessage('R', bins3);
 
   delay(2000); // 2 seconds
-  
+
   /**********
    * The car sees 2 other cars
    **********/
-  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
-  sendInfoMessage('L', "Police  ", "Police  ",  90, 'N', 'A', 'S');
-  sendInfoMessage('R', "Tesla   ", "Model S ", 270, 'N', 'L', 'L');
-  
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ",   0, 'N', 'L', 'S');
+  sendInfoMessage('L', "Police  ", "Police  ", 270, 'N', 'A', 'S');
+  sendInfoMessage('R', "Tesla   ", "Model S ",  90, 'N', 'L', 'L');
+
   delay(2000);
 
   /**********
    * The car sees 2 other cars. The police car wants priority
    **********/
-  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
-  sendInfoMessage('L', "Police  ", "Police  ",  90, 'Y', 'A', 'S');
-  sendInfoMessage('R', "Tesla   ", "Model S ", 270, 'N', 'L', 'L');
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ",  0, 'N', 'L', 'S');
+  sendInfoMessage('L', "Police  ", "Police  ", 270, 'Y', 'A', 'S');
+  sendInfoMessage('R', "Tesla   ", "Model S ", 180, 'N', 'L', 'L');
 
   delay (2000);
-  
+
 
 //  unsigned long time = micros() - startTime;
 //  Serial.write("STATS: Time passed is (us): ");
-//  Serial.println(time); 
-  
+//  Serial.println(time);
+
 }
 
 /************
  * TESTS
  ************
  * Time to send 8 Info-messages and 3 frequency-spectrum-messages: 30,812 ms
- * Time to send a single frequency-spectrum-message: 7,496 ms 
+ * Time to send a single frequency-spectrum-message: 7,496 ms
  * (slightly old message format)
- * 
+ *
  * 'Serial.write("IMAlfa    Giulia    0NLS\n");' 500 times takes 559604 us
  * sendInfoMessage(...)                                    takes 562504 us
  */

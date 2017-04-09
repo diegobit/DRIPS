@@ -56,7 +56,7 @@ TABBBBBBBBCCCCCCCCDDDEFG\n
                     Police⎵⎵
                     Model S⎵
 
- Orientation:       [0..360]    degrees clockwise
+ Orientation:       [0..360]    degrees counterclockwise
 
  Priority:          N           regular car
                     Y           priority car (ambulance, police)
