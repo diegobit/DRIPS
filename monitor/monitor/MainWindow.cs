@@ -43,7 +43,7 @@ public partial class MainWindow : Window
                 l.SetSizeRequest(280, 120);
                 l.ModifyBase(StateType.Normal, new Gdk.Color(230, 230, 230));
                 l.ModifyFont(Pango.FontDescription.FromString("Arial 20"));
-                l.Text = MakeCarLabelText("", "", Priority.None, monitor.Action.None, monitor.Action.None);
+                l.Text = MakeCarLabelText();
                 if (road == RoadID.Left || road == RoadID.Top)
                     l.Justify = Justification.Right;
 
@@ -78,7 +78,7 @@ public partial class MainWindow : Window
 		// Update text beside the car
 		Application.Invoke(delegate
 		{
-            car.Item2.Text = MakeCarLabelText(road.Manufacturer, road.Model, road.Priority, road.RequestedAction, road.CurrentAction);
+            car.Item2.Text = MakeCarLabelText(road);
 		});
 
         // Update car image
@@ -220,17 +220,32 @@ public partial class MainWindow : Window
 		return Tuple.Create(x, y);
 	}
 
-	string MakeCarLabelText(string manufacturer, string model, Priority priority,
-							monitor.Action requestedAction, monitor.Action currentAction)
+	string MakeCarLabelText(Road road)
 	{
-		return (manufacturer == "" && model == "")
-				? "Road empty"
-				: manufacturer + " " + model + "\n" +
-				  "\n" +
-				  "Requested action: " + requestedAction + "\n" +
-				  "Current action: " + currentAction + "\n" +
-				  "Priority: " + priority + "\n";
+        if (road.IsEmpty())
+            return MakeCarLabelText();
+        if (road.IsPartial())
+            return "Unknown model" + '\n';
+        if (road.IsComplete())
+            return road.Manufacturer + " " + road.Model + "\n" +
+                   "\n" +
+                   "Requested action: " + road.RequestedAction + "\n" +
+                   "Current action: " + road.CurrentAction + "\n" +
+                   "Priority: " + road.Priority + "\n";
+
+        // else
+        Console.WriteLine("ERROR: road in wrong state:");
+        Console.WriteLine(road);
+        return MakeCarLabelText();
 	}
+
+    /**
+     * Returns the text of an empty road label
+     */
+    string MakeCarLabelText()
+    {
+        return "Road empty" + '\n';
+    }
 
 
     /**
