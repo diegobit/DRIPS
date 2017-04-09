@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using Gtk;
 using monitor;
 
-public partial class MainWindow : Gtk.Window
+public partial class MainWindow : Window
 {
-	// FIXED WINDOW PARAMETERS
-    int rRadW = 152;
+    int rRadW = 152; // The width of half of the square at the center of the road
     int rRadH = 150;
 
 	string resDiv = "_";
@@ -21,34 +20,17 @@ public partial class MainWindow : Gtk.Window
 
 
 
-	public MainWindow() : base(Gtk.WindowType.Toplevel)
+	public MainWindow() : base(WindowType.Toplevel)
 	{
 		Build();
         Resize(1000, 700);
 
         unknownImagePath = "monitor.resources.car" + resDiv + "Unknown" + resDiv + "Unknown" + imageExtension;
 
-        container = new Layout(null, null);
         roads = new Dictionary<RoadID, Tuple<Image, Label>>();
+        container = new Layout(null, null);
 
-        // Create Widgets to put into the Fixed container
 		crossroadImage = Image.LoadFromResource("monitor.resources.crossroad.png");
-        //crossroadImage.RedrawOnAllocate = true;
-        SizeRequested += delegate
-        {
-            Console.WriteLine("Window sizeRequested " + Allocation.Width + "-" + Allocation.Height);
-        };
-        SizeAllocated += delegate
-        {
-            Console.WriteLine("Window sizeAllocated " + Allocation.Width + "-" + Allocation.Height);
-            //crossroadImage.SetSizeRequest(container.Allocation.Width, container.Allocation.Height);
-            if (!stopPropagate)
-            {
-                ResizeAll(); //FIXME 
-                stopPropagate = true;
-            }
-      };
-
         container.Put(crossroadImage, 0, 0);
 
 		// Create a textview for each car in the road
@@ -59,7 +41,7 @@ public partial class MainWindow : Gtk.Window
 			l.SetSizeRequest(280, 120);
 			l.ModifyBase(StateType.Normal, new Gdk.Color(230, 230, 230));
 			l.ModifyFont(Pango.FontDescription.FromString("Arial 20"));
-            l.Text = MakeCarText("", "", Priority.None, monitor.Action.None, monitor.Action.None);
+            l.Text = MakeCarLabelText("", "", Priority.None, monitor.Action.None, monitor.Action.None);
             if (road == RoadID.Left || road == RoadID.Top)
                 l.Justify = Justification.Right;
 
@@ -87,6 +69,16 @@ public partial class MainWindow : Gtk.Window
 
 		// Put the container in the window
 		Add(container);
+
+		// Listen for window resizing events
+		SizeAllocated += delegate
+		{
+			if (!stopPropagate)
+			{
+				ResizeAll();
+				stopPropagate = true;
+			}
+		};
 	}
 
 
@@ -97,9 +89,9 @@ public partial class MainWindow : Gtk.Window
         string expectedImagePath = "monitor.resources.car" + resDiv + road.Manufacturer + resDiv + road.Model + imageExtension;
 
 		// Update text beside the car
-		Gtk.Application.Invoke(delegate
+		Application.Invoke(delegate
 		{
-            car.Item2.Text = MakeCarText(road.Manufacturer, road.Model, road.Priority, road.RequestedAction, road.CurrentAction);
+            car.Item2.Text = MakeCarLabelText(road.Manufacturer, road.Model, road.Priority, road.RequestedAction, road.CurrentAction);
 		});
 
         // Update car image
@@ -118,8 +110,8 @@ public partial class MainWindow : Gtk.Window
 		}
 		else
 		{
+            // Image not present, I place it
 			Image carImg = LoadCarImage(expectedImagePath, road.Id);
-			//roads.Add(road.Id, car);
             roads[road.Id] = Tuple.Create(carImg, car.Item2);
 			PlaceCar(carImg, road);
  		}
@@ -136,7 +128,7 @@ public partial class MainWindow : Gtk.Window
 			car = Image.LoadFromResource(expectedImagePath);
 			car.Name = id + expectedImagePath;
 		}
-		catch (System.ArgumentException)
+		catch (ArgumentException)
 		{
 			// The car advertised an unknown manufacturer or model
 			car = Image.LoadFromResource(unknownImagePath);
@@ -154,7 +146,7 @@ public partial class MainWindow : Gtk.Window
 				Image i = (Image) w;
 				if (i.Name == imageName)
 				{
-					Gtk.Application.Invoke(delegate
+					Application.Invoke(delegate
 					{
 						container.Remove(w);
 					});
@@ -175,7 +167,7 @@ public partial class MainWindow : Gtk.Window
         int stepToMiddleLongH = (rRadH - carLong) / 2;
         int stepToMiddleShortH = (rRadH - carShort) / 2;
 
-		Gtk.Application.Invoke(delegate
+		Application.Invoke(delegate
 		{
 			switch (road.Id)
 			{
@@ -204,12 +196,12 @@ public partial class MainWindow : Gtk.Window
         foreach (RoadID road in roads.Keys)
         {
             Tuple<Image, Label> t = roads[road];
-            ResizeCar(t.Item1, road);
-            ResizeLabel(t.Item2, road);
+            ResizeCarImage(t.Item1, road);
+            ResizeCarLabel(t.Item2, road);
         }
     }
 
-    void ResizeCar(Image car, RoadID road)
+    void ResizeCarImage(Image car, RoadID road)
     {
         if (car != null)
         {
@@ -222,7 +214,7 @@ public partial class MainWindow : Gtk.Window
 			int stepToMiddleLongH = (rRadH - carLong) / 2;
 			int stepToMiddleShortH = (rRadH - carShort) / 2;
 
-            Gtk.Application.Invoke(delegate
+            Application.Invoke(delegate
             {
                 switch (road)
                 {
@@ -239,16 +231,16 @@ public partial class MainWindow : Gtk.Window
                         container.Move(car, crossW / 2 + rRadW, crossH / 2 - rRadH + stepToMiddleShortH);
                         break;
                 }
-                //container.ShowAll();
+                container.ShowAll();
             });
         }
     }
 
-    void ResizeLabel(Label label, RoadID road)
+    void ResizeCarLabel(Label label, RoadID road)
     {
         if (label != null)
         {
-            Gtk.Application.Invoke(delegate
+            Application.Invoke(delegate
             {
                 switch (road)
                 {
@@ -273,7 +265,8 @@ public partial class MainWindow : Gtk.Window
         }
     }
 
-    string MakeCarText(string manufacturer, string model, Priority priority, monitor.Action requestedAction, monitor.Action currentAction)
+    string MakeCarLabelText(string manufacturer, string model, Priority priority,
+                            monitor.Action requestedAction, monitor.Action currentAction)
     {
         return (manufacturer == "" && model == "")
                 ? "Road empty"
