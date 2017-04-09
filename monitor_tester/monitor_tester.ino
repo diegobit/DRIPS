@@ -2,6 +2,17 @@
  *  This code sends some test packets through the serial port
  *  to test the communication and the monitor
  */
+ 
+ /************
+ * TESTS
+ ************
+ * Time to send 8 Info-messages and 3 frequency-spectrum-messages: 30,812 ms
+ * Time to send a single frequency-spectrum-message: 7,496 ms
+ * (slightly old message format)
+ *
+ * 'Serial.write("IMAlfa    Giulia    0NLS\n");' 500 times takes 559604 us
+ * sendInfoMessage(...)                                    takes 562504 us
+ */
 
 #define FFT_N 128 // 2 * number of samples
 
@@ -42,6 +53,18 @@ void sendInfoMessage(char roadId, String manufacturer, String model,
   Serial.print('\n');
 }
 
+void sendSamplesMessage(char type) {
+  Serial.print(type);
+  Serial.print(SAMPLING_PERIOD * TIMER_PERIOD);
+  Serial.print(';');
+  for(uint8_t i = 0; i < FHT_N - 1; i++) {
+    Serial.print(fht_input[i]);
+    Serial.print(',');
+  }
+  Serial.print(fht_input[FHT_N - 1]);
+  Serial.print('\n');
+}
+
 void sendFrequencyMessage(char type, uint16_t fft_bins[]) {
   Serial.print(type);
   Serial.print(500);
@@ -56,17 +79,10 @@ void sendFrequencyMessage(char type, uint16_t fft_bins[]) {
 
 
 
-void setup() {
-  Serial.begin(230400);
-  randomSeed(9357);
-}
 
-void loop() {
+
+void generalTest() {
   delay(2000); // 2 seconds
-
-//  unsigned long startTime = micros();
-
-
 
   /**********
    * The car just arrived, it thinks it is alone (its sensors see nothing)
@@ -121,21 +137,54 @@ void loop() {
   sendInfoMessage('R', "Tesla   ", "Model S ", 180, 'N', 'L', 'L');
 
   delay (2000);
-
-
-//  unsigned long time = micros() - startTime;
-//  Serial.write("STATS: Time passed is (us): ");
-//  Serial.println(time);
-
 }
 
-/************
- * TESTS
- ************
- * Time to send 8 Info-messages and 3 frequency-spectrum-messages: 30,812 ms
- * Time to send a single frequency-spectrum-message: 7,496 ms
- * (slightly old message format)
- *
- * 'Serial.write("IMAlfa    Giulia    0NLS\n");' 500 times takes 559604 us
- * sendInfoMessage(...)                                    takes 562504 us
- */
+
+
+
+
+void infoMessageTest() {
+  delay(3000);
+
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
+
+  delay(3000);
+
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
+
+  delay(3000);
+
+  sendPartialInfoMessage('L', 270);
+
+  delay(3000);
+
+  sendInfoMessage('R', "Tesla   ", "Model S ", 90, 'N', 'L', 'L');
+
+  delay(3000);
+
+  sendInfoMessage('L', "Police  ", "Police  ",  270, 'N', 'A', 'S');
+
+  delay (3000);
+
+  sendInfoMessage('L', "Police  ", "Police  ",  270, 'Y', 'A', 'S');
+
+  delay (3000);
+
+  sendInfoMessage('T', "Tesla   ", "Model S ",  0, 'N', 'S', 'S');
+}
+
+
+
+
+
+void setup() {
+  Serial.begin(230400);
+  randomSeed(9357);
+}
+
+void loop() {
+
+  //generalTest();
+  infoMessageTest();
+
+}
