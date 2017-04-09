@@ -245,11 +245,9 @@ public partial class MainWindow : Window
     {
 		int crossW = crossroadImage.Allocation.Width;
 		int crossH = crossroadImage.Allocation.Height;
-		int carLong = car.Pixbuf.Height;
-		int carShort = car.Pixbuf.Width;
-		//int stepToMiddleLongW = (rRadW - carLong) / 2;
+		int carLong = car.Pixbuf.Height > car.Pixbuf.Width ? car.Pixbuf.Height : car.Pixbuf.Width;
+		int carShort = car.Pixbuf.Height < car.Pixbuf.Width ? car.Pixbuf.Height : car.Pixbuf.Width;
 		int stepToMiddleShortW = (rRadW - carShort) / 2;
-		//int stepToMiddleLongH = (rRadH - carLong) / 2;
 		int stepToMiddleShortH = (rRadH - carShort) / 2;
 
         int x = 0;
