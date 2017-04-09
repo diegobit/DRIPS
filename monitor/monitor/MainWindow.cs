@@ -229,33 +229,29 @@ public partial class MainWindow : Window
 	}
 
 
-
+    /**
+     * Repositions car images and labels
+     * Method called by the window when a SizeAllocated event occurs
+     */
     void OnResizeImages()
         {
         foreach (RoadID road in roads.Keys)
         {
             Tuple<Image, Label> t = roads[road];
-            ResizeCarImage(t.Item1, road);
-            ResizeCarLabel(t.Item2, road);
-        }
-    }
+            Image car = t.Item1;
+            Label label = t.Item2;
 
-    void ResizeCarImage(Image car, RoadID road)
-    {
-        if (car != null)
-        {
-			Tuple<int, int> pos = ComputeCarPosition(road, car);
-			container.Move(car, pos.Item1, pos.Item2);
-			//container.ShowAll();
-        }
-    }
+			if (car != null)
+			{
+				Tuple<int, int> pos = ComputeCarPosition(road, car);
+				container.Move(car, pos.Item1, pos.Item2);
+			}
 
-    void ResizeCarLabel(Label label, RoadID road)
-    {
-        if (label != null)
-        {
-            Tuple<int, int> pos = ComputeLabelPosition(road, label);
-            container.Move(label, pos.Item1, pos.Item2);
+			if (label != null)
+			{
+				Tuple<int, int> pos = ComputeLabelPosition(road, label);
+				container.Move(label, pos.Item1, pos.Item2);
+			}
         }
     }
 
