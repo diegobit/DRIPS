@@ -46,25 +46,9 @@ public partial class MainWindow : Window
                 l.Justify = Justification.Right;
 
             roads.Add(road, Tuple.Create((Image)null, l));
-            switch(road)
-            {
-                case (RoadID.Bottom):
-                    container.Put(l, crossroadImage.Allocation.Width / 2 + rRadW,
-                                     crossroadImage.HeightRequest / 2 + rRadH);
-                    break;
-				case (RoadID.Left):
-                    container.Put(l, crossroadImage.WidthRequest / 2 - rRadW - l.SizeRequest().Width,
-                                     crossroadImage.HeightRequest / 2 + rRadH);
-					break;
-				case (RoadID.Top):
-					container.Put(l, crossroadImage.WidthRequest / 2 - rRadW - l.SizeRequest().Width,
-                                     crossroadImage.HeightRequest / 2 - rRadH - l.SizeRequest().Height);
-					break;
-				case (RoadID.Right):
-					container.Put(l, crossroadImage.WidthRequest / 2 + rRadW,
-                                     crossroadImage.HeightRequest / 2 - rRadH - l.SizeRequest().Height);
-					break;
-            }
+
+            Tuple<int, int> pos = ComputeLabelPosition(road, l);
+            container.Put(l, pos.Item1, pos.Item2);
 		}
 
 		// Put the container in the window
@@ -75,7 +59,7 @@ public partial class MainWindow : Window
 		{
 			if (!stopPropagate)
 			{
-				ResizeAll();
+				OnResizeImages();
 				stopPropagate = true;
 			}
 		};
@@ -158,40 +142,95 @@ public partial class MainWindow : Window
 
     void PlaceCar(Image car, Road road)
 	{
-        int crossW = crossroadImage.Allocation.Width;
-        int crossH = crossroadImage.Allocation.Height;
-        int carLong = car.Pixbuf.Height;
-        int carShort = car.Pixbuf.Width;
-        int stepToMiddleLongW = (rRadW - carLong) / 2;
-        int stepToMiddleShortW = (rRadW - carShort) / 2;
-        int stepToMiddleLongH = (rRadH - carLong) / 2;
-        int stepToMiddleShortH = (rRadH - carShort) / 2;
+        Tuple<int, int> pos = ComputeCarPosition(road.Id, car);
 
 		Application.Invoke(delegate
 		{
-			switch (road.Id)
-			{
-                case RoadID.Bottom:
-                    container.Put(car, crossW / 2 + stepToMiddleShortW, crossH / 2 + rRadH);
-                    break;
-				case RoadID.Left:
-					car.Pixbuf = car.Pixbuf.RotateSimple(Gdk.PixbufRotation.Clockwise);
-                    container.Put(car, crossW / 2 - rRadW - carLong, crossH / 2 + stepToMiddleShortH);
-					break;
-				case RoadID.Top:
-					car.Pixbuf = car.Pixbuf.RotateSimple(Gdk.PixbufRotation.Upsidedown);
-                    container.Put(car, crossW / 2 - rRadW + stepToMiddleShortW, crossH / 2 - rRadW - carLong);
-					break;
-				case RoadID.Right:
-					car.Pixbuf = car.Pixbuf.RotateSimple(Gdk.PixbufRotation.Counterclockwise);
-                    container.Put(car, crossW / 2 + rRadW, crossH / 2 - rRadH + stepToMiddleShortH);
-					break;
-			}
+            container.Put(car, pos.Item1, pos.Item2);
 			container.ShowAll();
 		});
 	}
 
-    void ResizeAll()
+
+
+    Tuple<int, int> ComputeCarPosition(RoadID road, Image car)
+    {
+		int crossW = crossroadImage.Allocation.Width;
+		int crossH = crossroadImage.Allocation.Height;
+		int carLong = car.Pixbuf.Height;
+		int carShort = car.Pixbuf.Width;
+		//int stepToMiddleLongW = (rRadW - carLong) / 2;
+		int stepToMiddleShortW = (rRadW - carShort) / 2;
+		//int stepToMiddleLongH = (rRadH - carLong) / 2;
+		int stepToMiddleShortH = (rRadH - carShort) / 2;
+
+        int x = 0;
+        int y = 0;
+		switch (road)
+		{
+			case RoadID.Bottom:
+                x = crossW / 2 + stepToMiddleShortW;
+                y = crossH / 2 + rRadH;
+				break;
+			case RoadID.Left:
+                x = crossW / 2 - rRadW - carLong;
+                y = crossH / 2 + stepToMiddleShortH;
+				break;
+			case RoadID.Top:
+                x = crossW / 2 - rRadW + stepToMiddleShortW;
+                y = crossH / 2 - rRadW - carLong;
+				break;
+			case RoadID.Right:
+                x = crossW / 2 + rRadW;
+                y = crossH / 2 - rRadH + stepToMiddleShortH;
+				break;
+		}
+
+        return Tuple.Create(x, y);
+    }
+
+	Tuple<int, int> ComputeLabelPosition(RoadID road, Label label)
+	{
+		int x = 0;
+		int y = 0;
+		switch (road)
+		{
+			case (RoadID.Bottom):
+				x = crossroadImage.Allocation.Width / 2 + rRadW;
+				y = crossroadImage.Allocation.Height / 2 + rRadH;
+				break;
+			case (RoadID.Left):
+				x = crossroadImage.Allocation.Width / 2 - rRadW - label.Allocation.Width;
+				y = crossroadImage.Allocation.Height / 2 + rRadH;
+				break;
+			case (RoadID.Top):
+				x = crossroadImage.Allocation.Width / 2 - rRadW - label.Allocation.Width;
+				y = crossroadImage.Allocation.Height / 2 - rRadH - label.Allocation.Height;
+				break;
+			case (RoadID.Right):
+				x = crossroadImage.Allocation.Width / 2 + rRadW;
+				y = crossroadImage.Allocation.Height / 2 - rRadH - label.Allocation.Height;
+				break;
+		}
+
+		return Tuple.Create(x, y);
+	}
+
+	string MakeCarLabelText(string manufacturer, string model, Priority priority,
+							monitor.Action requestedAction, monitor.Action currentAction)
+	{
+		return (manufacturer == "" && model == "")
+				? "Road empty"
+				: manufacturer + " " + model + "\n" +
+				  "\n" +
+				  "Requested action: " + requestedAction + "\n" +
+				  "Current action: " + currentAction + "\n" +
+				  "Priority: " + priority + "\n";
+	}
+
+
+
+    void OnResizeImages()
         {
         foreach (RoadID road in roads.Keys)
         {
@@ -205,34 +244,9 @@ public partial class MainWindow : Window
     {
         if (car != null)
         {
-            int crossW = crossroadImage.Allocation.Width;
-            int crossH = crossroadImage.Allocation.Height;
-			int carLong = car.Pixbuf.Width;
-			int carShort = car.Pixbuf.Height;
-			int stepToMiddleLongW = (rRadW - carLong) / 2;
-			int stepToMiddleShortW = (rRadW - carShort) / 2;
-			int stepToMiddleLongH = (rRadH - carLong) / 2;
-			int stepToMiddleShortH = (rRadH - carShort) / 2;
-
-            Application.Invoke(delegate
-            {
-                switch (road)
-                {
-                    case RoadID.Bottom:
-                        container.Move(car, crossW / 2 + stepToMiddleShortW, crossH / 2 + rRadH);
-                        break;
-                    case RoadID.Left:
-                        container.Move(car, crossW / 2 - rRadW - carLong, crossH / 2 + stepToMiddleShortH);
-                        break;
-                    case RoadID.Top:
-                        container.Move(car, crossW / 2 - rRadW + stepToMiddleShortW, crossH / 2 - rRadW - carLong);
-                        break;
-                    case RoadID.Right:
-                        container.Move(car, crossW / 2 + rRadW, crossH / 2 - rRadH + stepToMiddleShortH);
-                        break;
-                }
-                container.ShowAll();
-            });
+			Tuple<int, int> pos = ComputeCarPosition(road, car);
+			container.Move(car, pos.Item1, pos.Item2);
+			//container.ShowAll();
         }
     }
 
@@ -240,44 +254,10 @@ public partial class MainWindow : Window
     {
         if (label != null)
         {
-            Application.Invoke(delegate
-            {
-                switch (road)
-                {
-                    case (RoadID.Bottom):
-                        container.Move(label, crossroadImage.Allocation.Width / 2 + rRadW,
-                                       crossroadImage.Allocation.Height / 2 + rRadH);
-                        break;
-                    case (RoadID.Left):
-                        container.Move(label, crossroadImage.Allocation.Width / 2 - rRadW - label.Allocation.Width,
-                                       crossroadImage.Allocation.Height / 2 + rRadH);
-                        break;
-                    case (RoadID.Top):
-                        container.Move(label, crossroadImage.Allocation.Width / 2 - rRadW - label.Allocation.Width,
-                                       crossroadImage.Allocation.Height / 2 - rRadH - label.Allocation.Height);
-                        break;
-                    case (RoadID.Right):
-                        container.Move(label, crossroadImage.Allocation.Width / 2 + rRadW,
-                                       crossroadImage.Allocation.Height / 2 - rRadH - label.Allocation.Height);
-                        break;
-                }
-            });
+            Tuple<int, int> pos = ComputeLabelPosition(road, label);
+            container.Move(label, pos.Item1, pos.Item2);
         }
     }
-
-    string MakeCarLabelText(string manufacturer, string model, Priority priority,
-                            monitor.Action requestedAction, monitor.Action currentAction)
-    {
-        return (manufacturer == "" && model == "")
-                ? "Road empty"
-                : manufacturer + " " + model + "\n" +
-                  "\n" +
-                  "Requested action: " + requestedAction + "\n" +
-                  "Current action: " + currentAction + "\n" +
-                  "Priority: " + priority + "\n";
-    }
-
-
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
