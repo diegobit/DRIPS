@@ -60,18 +60,6 @@ namespace monitor
 			s.StartReading();
 		}
 
-		public void UpdateRoad(RoadID roadID, int orientation)
-		{
-            if (!crossroad.TryGetValue(roadID, out Road r))
-            {
-                r = new Road(roadID);
-                crossroad.Add(roadID, r);
-            }
-            r.Orientation = orientation;
-
-			window.UpdateRoad(r);
-		}
-
 		public void UpdateRoad(RoadID roadID, int orientation, string manufacturer, string model,
 							   Priority priority, Action requestedAction, Action currentAction)
 		{

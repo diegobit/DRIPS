@@ -165,28 +165,18 @@ namespace monitor
 				{
 					int orientation = Convert.ToInt32(msg.Substring(18, 3).Trim());
 
-					string manufacturer = msg.Substring(2, 8).Trim(); //TODO: better to specify the type (partial, complete) in the message format
-					if (manufacturer != "")
-					{
-						// Complete info message
-						string model = msg.Substring(10, 8).Trim();
-						Priority priority = (Priority) msg[21];
-						Action requestedAction = (Action) msg[22];
-						Action currentAction = (Action) msg[23];
+					string manufacturer = msg.Substring(2, 8).Trim();
+					string model = msg.Substring(10, 8).Trim();
+					Priority priority = (Priority) msg[21];
+					Action requestedAction = (Action) msg[22];
+					Action currentAction = (Action) msg[23];
 
-						if (Enum.IsDefined(typeof(Priority), priority) ||
-							Enum.IsDefined(typeof(Action), priority) ||
-							Enum.IsDefined(typeof(Action), priority))
-						{
-							monitor.UpdateRoad(roadID, orientation, manufacturer, model,
-											   priority, requestedAction, currentAction);
-							return true;
-						}
-					}
-					else
+					if (Enum.IsDefined(typeof(Priority), priority) ||
+                        Enum.IsDefined(typeof(Action), requestedAction) ||
+                        Enum.IsDefined(typeof(Action), currentAction))
 					{
-						// partial info message
-						monitor.UpdateRoad(roadID, orientation);
+						monitor.UpdateRoad(roadID, orientation, manufacturer, model,
+						                   priority, requestedAction, currentAction);
 						return true;
 					}
 				}
