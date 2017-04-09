@@ -29,7 +29,7 @@ void sendPartialInfoMessage(char roadId, uint16_t orientation) {
   if (orientation < 10) Serial.print(F("  "));
   else if (orientation < 100) Serial.write(' ');
   Serial.print(orientation);
-  Serial.print("   ");
+  Serial.print("000");
   Serial.print('\n');
 }
 

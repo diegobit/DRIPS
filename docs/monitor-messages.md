@@ -51,18 +51,22 @@ TABBBBBBBBCCCCCCCCDDDEFG\n
  Manufacturer:      Vlkswagn
                     Police⎵⎵
                     Tesla⎵⎵⎵
+                    ⎵⎵⎵⎵⎵⎵⎵⎵     (sent when unknown)
 
  Model:             Beetle⎵⎵
                     Police⎵⎵
                     Model S⎵
+                    ⎵⎵⎵⎵⎵⎵⎵⎵     (sent when unknown)
 
  Orientation:       [0..360]    degrees counterclockwise
 
- Priority:          N           regular car
+ Priority:          0           None (sent when unknown)
+                    N           regular car
                     Y           priority car (ambulance, police)
 
  RequestedAction,
- CurrentAction:     S           Stay still
+ CurrentAction:     0           None (sent when unknown)
+                    S           Stay still
                     L           turn left
                     A           go straight ahead
                     R           turn right
