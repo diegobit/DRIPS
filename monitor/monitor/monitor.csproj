@@ -57,6 +57,10 @@
     <EmbeddedResource Include="resources\car_Unknown_Unknown.png" />
     <EmbeddedResource Include="resources\car_Police_Police.png" />
     <EmbeddedResource Include="resources\car_Vlkswagn_Beetle.png" />
+    <EmbeddedResource Include="resources\arrow_left.gif" />
+    <EmbeddedResource Include="resources\arrow_left.png" />
+    <EmbeddedResource Include="resources\arrow_right.gif" />
+    <EmbeddedResource Include="resources\arrow_right.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
