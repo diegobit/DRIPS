@@ -147,8 +147,6 @@ namespace monitor
 					case Type.FrequencyFront:
 					case Type.FrequencyRight:
 						return HandleFrequencyMessage(msg);
-					default:
-						break;
 				}
 			}
 

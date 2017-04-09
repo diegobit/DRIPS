@@ -27,7 +27,6 @@ public partial class MainWindow : Window
 	public MainWindow() : base(WindowType.Toplevel)
 	{
 		Build();
-        Resize(1000, 700);
 
 		unknownImagePath = "monitor.resources.car" + resDiv + "Unknown" + resDiv + "Unknown" + imageExtension;
 
@@ -169,8 +168,8 @@ public partial class MainWindow : Window
 				r.PixbufAnimation = new Gdk.PixbufAnimation(null, "monitor.resources.signal_up.gif");
 				break;
 		}
-        return Tuple.Create(l, r);
-    }
+		return Tuple.Create(l, r);
+	}
 
 	Label LoadLabel(RoadID road)
 	{
