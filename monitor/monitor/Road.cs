@@ -21,30 +21,30 @@
 
 
 		/*
-		 * Returns true if the road id is empty, false if there's a car
+		 * Returns true if the road is empty, false if there's a car
 		 */
 		bool IsEmpty()
 		{
-			return Manufacturer == null & Model == null && Orientation == -1 &&
-				Priority == 0 && CurrentAction == 0 && RequestedAction == 0;
+			return Manufacturer == "" & Model == "" && Orientation == -1 &&
+                Priority == Priority.None && CurrentAction == Action.None && RequestedAction == Action.None;
 		}
 
 		/*
-		 * Returns true if there's a car on the road id, but I only know it's orientation
+		 * Returns true if there's a car on the road, but I only know it's orientation
 		 */
 		bool IsPartial()
 		{
-			return Manufacturer == null && Model == null && Orientation != -1 &&
-				Priority == 0 && CurrentAction == 0 && RequestedAction == 0;
+			return Manufacturer == "" && Model == "" && Orientation != -1 &&
+                Priority == Priority.None && CurrentAction == Action.None && RequestedAction == Action.None;
 		}
 
 		/*
-		 * Returns true if there's a car on the road id, and I have all the informations about it
+		 * Returns true if there's a car on the road, and I have all the informations about it
 		 */
 		bool IsComplete()
 		{
-			return Manufacturer != null && Model != null && Orientation == -1 &&
-				Priority != 0 && CurrentAction != 0 && RequestedAction != 0;
+			return Manufacturer != "" && Model != "" && Orientation != -1 &&
+                Priority != Priority.None && CurrentAction != Action.None && RequestedAction != Action.None;
 		}
 
 
