@@ -146,7 +146,8 @@ public partial class MainWindow : Window
 
 		Application.Invoke(delegate
 		{
-            container.Put(car, pos.Item1, pos.Item2);
+            car.Pixbuf = car.Pixbuf.RotateSimple((Gdk.PixbufRotation) road.Orientation); //TODO: only allowed 90 degrees step
+			container.Put(car, pos.Item1, pos.Item2);
 			container.ShowAll();
 		});
 	}
