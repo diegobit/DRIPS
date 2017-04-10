@@ -41,8 +41,8 @@ public partial class MainWindow : Window
 		// Listen for window resizing events
 		SizeAllocated += delegate
 		{
-			if (!stopPropagate) /* FIXME: workaround for an infinite loop of calls to SizeAllocated
-								(Moving a widgen in OnResizeImages() triggers another event) */
+			if (!stopPropagate) /* FIXME: workaround for an endless number of calls to SizeAllocated
+								(Moving a widget in OnResizeImages() triggers this same event) */
 			{
 				OnResizeImages();
 				stopPropagate = true;
@@ -188,7 +188,7 @@ public partial class MainWindow : Window
 		return label;
 	}
 
-    void RemoveCar(string imageName)
+	void RemoveCar(string imageName)
 	{
 		foreach (Widget w in container.Children)
 		{
