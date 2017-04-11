@@ -95,12 +95,22 @@ namespace monitor
 				try
 				{
 					string msg = port.ReadLine();
-					Console.WriteLine("[ RECEIVED MESSAGE. LENGTH: " + msg.Length + " B\n" + msg);
+					Type ret = HandleMessage(msg);
 
-					if (!HandleMessage(msg))
-						Console.WriteLine("UNKNOWN OR CORRUPT MESSAGE ]");
-					else
-						Console.WriteLine("MESSAGE HANDLED ]");
+					switch (ret)
+					{
+						case Type.Info:
+							Console.WriteLine("RECEIVED INFO-MESSAGE (" + msg.Length + " Bytes)\n" + msg);
+							break;
+						case Type.FrequencyLeft:
+						case Type.FrequencyFront:
+						case Type.FrequencyRight:
+							Console.WriteLine("IGNORED FREQUENCY-MESSAGE");
+							break;
+						case Type.None:
+							Console.WriteLine("RECEIVED UNKNOWN OR CORRUPT MESSAGE (" + msg.Length + " Bytes)\n" + msg);
+							break;
+					}
 				}
 				catch (TimeoutException) { }
 				catch (System.IO.IOException)
@@ -134,7 +144,7 @@ namespace monitor
 		/*
 		 * Decode the message and update the monitor
 		 */
-        bool HandleMessage(string msg)
+        Type HandleMessage(string msg)
 		{
 			if (msg.Length > 0)
 			{
@@ -150,10 +160,10 @@ namespace monitor
 				}
 			}
 
-			return false;
+			return Type.None;
 		}
 
-        bool HandleInfoMessage(string msg)
+        Type HandleInfoMessage(string msg)
 		{
 			if (msg.Length == 24)
 			{
@@ -175,23 +185,27 @@ namespace monitor
 					{
 						monitor.UpdateRoad(roadID, orientation, manufacturer, model,
 						                   priority, requestedAction, currentAction);
-						return true;
+						return Type.Info;
 					}
 				}
 			}
 
-			return false;
+			return Type.None;
 		}
 
-        bool HandleFrequencyMessage(string msg)
+		/**
+		 * To handle a frequency message is not this software's duty, so it
+		 * simply returns the type of the message. If this method returns
+		 * Type.FrequencyLeft it's not a guarantee of a well-formed message
+		 */
+        Type HandleFrequencyMessage(string msg)
 		{
 			if (msg.Length >= 130 && msg.Length <= 395)
 			{
-				// TODO: start the python script?
-				return true;
+				return Type.FrequencyLeft;
 			}
 
-			return false;
+			return Type.None;
 		}
 	}
 }
