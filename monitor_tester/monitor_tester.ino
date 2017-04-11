@@ -102,7 +102,7 @@ void generalTest() {
    **********/
   sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
   sendPartialInfoMessage('L', 270);
-  sendPartialInfoMessage('A', 180);
+  sendPartialInfoMessage('F', 180);
   sendPartialInfoMessage('R', 90);
 
   bins1[9] = 700 + random(21);
