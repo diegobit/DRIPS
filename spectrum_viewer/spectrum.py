@@ -3,7 +3,7 @@ import threading
 import queue
 import time
 import random
-import sys
+import os
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -124,7 +124,7 @@ def main():
     
     ani = animation.FuncAnimation(fig, animate, interval=100)
     plt.show()
-    sys.exit(0)
+    os._exit(0)
 
 threading.Thread(target=retrievePlotData).start()
 threading.Thread(target=main).start()
