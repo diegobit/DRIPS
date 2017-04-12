@@ -67,11 +67,8 @@ uint8_t visibleAction = NONE; // Action shown by the turn leds
 bool buttonPressed = false;
 
 /**
- * Basic frequency in µs for the timer.
- */
-#define TIMER_PERIOD (100*_us)
-
-/**
+ * Sampling period, in microseconds.
+ * 
  * The sampling frequency must be high enough to be able to read the signal multiple times, and
  * must be low enough to be able to read enough samples to see an entire period of the signal:
  * 
@@ -84,6 +81,12 @@ bool buttonPressed = false;
  *  · SAMPLING_FREQ  <=  SIGNAL_MIN_FREQ * FFT_N / 2
  *  
  */
+#define SAMPLING_PERIOD (400*_us)
+
+/**
+ * Basic frequency in µs for the timer.
+ */
+#define TIMER_PERIOD (100*_us)
 
 /*
  * Unit: TIMER_PERIOD. These values MUST be even.
@@ -94,7 +97,6 @@ bool buttonPressed = false;
  *
  * (between each number there is a delay of TIMER_PERIOD)
 */
-#define SAMPLING_PERIOD   5     // WARNING: If you change this, remember to actually change it in the sampling code. Yeah, I know this is stupid, but you have to. Sorry.
 #define LED1_PERIOD       10
 #define LED2_PERIOD       20
 #define LED3_PERIOD       30
@@ -288,7 +290,7 @@ void setup() {
 
   // you can choose a prescaler from above.
   // PS_16, PS_32, PS_64 or PS_128
-  ADCSRA |= PS_16;    // set our own prescaler to 64 
+  ADCSRA |= PS_16;    // set our own prescaler to 16
 
 
   Serial.begin(230400);
@@ -320,12 +322,14 @@ void loop() {
   Serial.flush();
   unsigned long timing = 0;
   for (int i = 0 ; i < FHT_N ; i++) {
-    if (i > 0) {
+    if (i == 0) {
+      timing = micros();
+    } else {
       // Attendiamo 500us da quando abbiamo fatto l'ultimo campionamento
-      while (micros() - timing < 500);
+      unsigned long deadline = i * SAMPLING_PERIOD;
+      while (micros() - timing < deadline);
     }
 
-    timing = micros();
     fht_input[i] = analogRead(SENSOR);
   }
 
