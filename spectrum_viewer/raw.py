@@ -9,6 +9,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
+serialPorts = ['/dev/ttyACM0', '/dev/ttyACM1', '/dev/ttyACM2']
+
 plotdataL = queue.Queue()
 plotdataF = queue.Queue()
 plotdataR = queue.Queue()
@@ -43,23 +45,30 @@ def update_xyvals(spectrum_message):
         plotdataR.put((xvals, yvals))
 
 def retrievePlotData():
-    ser = serial.Serial('/dev/ttyACM0', 230400)
-    ser.readline() # Discard the first (possibly partial) line
+    portId = 0
     while True:
-        line = b''
-        while len(line) == 0 or chr(line[0]) not in ['l', 'f', 'r']:
-            print("Syncing...")
-            line = ser.readline()
-        update_xyvals(line)
-        
-        # Dummy data generator (comment the above lines and uncomment these to enable it)
-        #time.sleep(0.1)
-        #line = b'L200;' + ','.join([str((200 if i == 9 else 700 if i == 10 else 300 if i == 11 else i) + random.randint(0, 10)) for i in range(128)]).encode('utf-8')
-        #update_xyvals(line)
-        #line = b'F200;' + ','.join([str((250 if i == 20 else 800 if i == 21 else 400 if i == 22 else i) + random.randint(0, 10)) for i in range(128)]).encode('utf-8')
-        #update_xyvals(line)
-        #line = b'R200;' + ','.join([str((700 if i == 30 else 900 if i == 31 else 650 if i == 32 else i) + random.randint(0, 10)) for i in range(128)]).encode('utf-8')
-        #update_xyvals(line)
+        try:
+            print("Connecting to " + serialPorts[portId] + "...")
+            ser = serial.Serial(serialPorts[portId], 230400)
+            ser.readline() # Discard the first (possibly partial) line
+            while True:
+                line = b''
+                while len(line) == 0 or chr(line[0]) not in ['l', 'f', 'r']:
+                    print("Syncing...")
+                    line = ser.readline()
+                update_xyvals(line)
+
+                # Dummy data generator (comment the above lines and uncomment these to enable it)
+                #time.sleep(0.1)
+                #line = b'L200;' + ','.join([str((200 if i == 9 else 700 if i == 10 else 300 if i == 11 else i) + random.randint(0, 10)) for i in range(128)]).encode('utf-8')
+                #update_xyvals(line)
+                #line = b'F200;' + ','.join([str((250 if i == 20 else 800 if i == 21 else 400 if i == 22 else i) + random.randint(0, 10)) for i in range(128)]).encode('utf-8')
+                #update_xyvals(line)
+                #line = b'R200;' + ','.join([str((700 if i == 30 else 900 if i == 31 else 650 if i == 32 else i) + random.randint(0, 10)) for i in range(128)]).encode('utf-8')
+                #update_xyvals(line)
+        except serial.serialutil.SerialException:
+            portId = (portId + 1) % len(serialPorts)
+            time.sleep(0.3)
 
 def main():
     def animate(i):
