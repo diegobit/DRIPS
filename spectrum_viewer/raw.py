@@ -131,7 +131,7 @@ def main():
     plt.tight_layout()
     fig.subplots_adjust(hspace=1.5)
     
-    ani = animation.FuncAnimation(fig, animate, interval=100)
+    ani = animation.FuncAnimation(fig, animate, interval=100, blit=True)
     plt.show()
     os._exit(0)
 
