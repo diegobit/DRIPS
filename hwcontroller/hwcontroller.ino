@@ -320,15 +320,13 @@ void loop() {
 
   // We flush the serial just before the sampling, so that we don't have unnecessary interrupts ruining our timing.
   Serial.flush();
-  unsigned long timing = 0;
-  for (int i = 0 ; i < FHT_N ; i++) {
-    if (i == 0) {
-      timing = micros();
-    } else {
-      // Attendiamo 500us da quando abbiamo fatto l'ultimo campionamento
-      unsigned long deadline = i * SAMPLING_PERIOD;
-      while (micros() - timing < deadline);
-    }
+
+  // Sampling
+  unsigned long timing = micros();
+  fht_input[0] = analogRead(SENSOR);
+  for (int i = 1; i < FHT_N; i++) {
+    unsigned long deadline = timing + i * SAMPLING_PERIOD;
+    while (micros() < deadline);
 
     fht_input[i] = analogRead(SENSOR);
   }
