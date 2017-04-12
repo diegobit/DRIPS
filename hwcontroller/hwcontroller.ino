@@ -249,7 +249,7 @@ void handleTurnButton() {
 
 void sendFrequencyMessage(char type) {
   Serial.print(type);
-  Serial.print(SAMPLING_PERIOD * TIMER_PERIOD);
+  Serial.print(SAMPLING_PERIOD);
   Serial.print(';');
   for(uint8_t i = 0; i < FHT_N / 2 - 1; i++) {
     Serial.print(fht_lin_out[i]);
@@ -261,7 +261,7 @@ void sendFrequencyMessage(char type) {
 
 void sendSamplesMessage(char type) {
   Serial.print(type);
-  Serial.print(SAMPLING_PERIOD * TIMER_PERIOD);
+  Serial.print(SAMPLING_PERIOD);
   Serial.print(';');
   for(uint8_t i = 0; i < FHT_N - 1; i++) {
     Serial.print(fht_input[i]);
@@ -281,7 +281,6 @@ void fht_constant_detrend() {
     fht_input[i] -= mean;
   }
 }
-
 
 
 void setup() {
