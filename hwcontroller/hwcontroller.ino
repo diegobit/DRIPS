@@ -315,12 +315,17 @@ void setup() {
 }
 
 void loop() {
+
+  // We flush the serial just before the sampling, so that we don't have unnecessary interrupts ruining our timing.
+  Serial.flush();
+  unsigned long timing = 0;
   for (int i = 0 ; i < FHT_N ; i++) {
     if (i > 0) {
-      //delayMicroseconds(SAMPLING_PERIOD * TIMER_PERIOD);
-      delayMicroseconds(416); // Equivale a un periodo reale di 500us, ovvero 2000Hz
+      // Attendiamo 500us da quando abbiamo fatto l'ultimo campionamento
+      while (micros() - timing < 500);
     }
 
+    timing = micros();
     fht_input[i] = analogRead(SENSOR);
   }
 
