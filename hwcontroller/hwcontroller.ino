@@ -303,7 +303,7 @@ void fht_constant_detrend() {
  * @param output        Pointer to an array of length (FHT_N/2) in which the result will be copied.
  *                      If NULL, the result will be a reference to `fht_lin_out`.
  *
- * @return       A reference to the output array, which can be `output` or `fht_lin_out` depending on the
+ * @return       A reference to the output array, which can be `output` or `fht_lin_out` depending on
  *               the `output` parameter.
  */
 uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, uint16_t *output) {
