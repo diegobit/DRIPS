@@ -253,7 +253,7 @@ void handleTurnButton() {
  * Send a "sample" message on the serial port.
  *
  * @param type  Type of the message ('l', 'f', or 'r')
- * @param data  Array of samples, of length FHT_N
+ * @param data  Pointer to an array of samples, of length FHT_N
  */
 void sendSamplesMessage(char type, uint16_t *data) {
   Serial.print(type);
@@ -271,7 +271,7 @@ void sendSamplesMessage(char type, uint16_t *data) {
  * Send a "frequency" message on the serial port.
  *
  * @param type  Type of the message ('L', 'F', or 'R')
- * @param data  Array of samples, of length FHT_N/2
+ * @param data  Pointer to an array of samples, of length FHT_N/2
  */
 void sendFrequencyMessage(char type, uint16_t *data) {
   Serial.print(type);
