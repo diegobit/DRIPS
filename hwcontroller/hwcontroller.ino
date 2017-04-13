@@ -57,15 +57,15 @@ const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 // Singleton instance of the radio driver
 RH_NRF24 nrf24(10, 9); // CE, CS
 
-enum ACTIONS {
-  NONE = 0,
-  TURN_LEFT = 1,
-  TURN_RIGHT = 2,
-  PRIORITY = 3
+enum Actions {
+  EA_NONE = 0,
+  EA_TURN_LEFT = 1,
+  EA_TURN_RIGHT = 2,
+  EA_PRIORITY = 3
 };
 
-uint8_t requestedAction = NONE; // Actual action advertised by the car
-uint8_t visibleAction = NONE; // Action shown by the turn leds
+uint8_t requestedAction = EA_NONE; // Actual action advertised by the car
+uint8_t visibleAction = EA_NONE; // Action shown by the turn leds
 bool buttonPressed = false;
 
 /**
@@ -127,13 +127,13 @@ uint16_t LED_TURN_COUNTER = 0;
 
 #define FLASH_TURN_LED(counter, period, pinL, pinR) {\
   if (counter == ((period)/2) - 1) {\
-    if (visibleAction == TURN_LEFT) {\
+    if (visibleAction == EA_TURN_LEFT) {\
       digitalWrite((pinL), HIGH);\
       digitalWrite((pinR), LOW);\
-    } else if (visibleAction == TURN_RIGHT) {\
+    } else if (visibleAction == EA_TURN_RIGHT) {\
       digitalWrite((pinL), LOW);\
       digitalWrite((pinR), HIGH);\
-    } else if (visibleAction == PRIORITY) {\
+    } else if (visibleAction == EA_PRIORITY) {\
       digitalWrite((pinL), HIGH);\
       digitalWrite((pinR), HIGH);\
     } else {\
@@ -142,13 +142,13 @@ uint16_t LED_TURN_COUNTER = 0;
     }\
     counter++;\
   } else if (counter == (period) - 1) {\
-    if (visibleAction == TURN_LEFT) {\
+    if (visibleAction == EA_TURN_LEFT) {\
       digitalWrite((pinL), LOW);\
       digitalWrite((pinR), LOW);\
-    } else if (visibleAction == TURN_RIGHT) {\
+    } else if (visibleAction == EA_TURN_RIGHT) {\
       digitalWrite((pinL), LOW);\
       digitalWrite((pinR), LOW);\
-    } else if (visibleAction == PRIORITY) {\
+    } else if (visibleAction == EA_PRIORITY) {\
       digitalWrite((pinL), HIGH);\
       digitalWrite((pinR), HIGH);\
     } else {\
@@ -236,8 +236,8 @@ void handleTurnButton() {
     if (positive_modulo(curMillis - buttonMillis, 256) >= TURN_BUTTON_DELAY) {
       buttonMillis = curMillis;
       visibleAction++;
-      if (visibleAction > PRIORITY) {
-        visibleAction = NONE;
+      if (visibleAction > EA_PRIORITY) {
+        visibleAction = EA_NONE;
       }
     }
   } else {
