@@ -255,7 +255,7 @@ void handleTurnButton() {
  * @param type  Type of the message ('l', 'f', or 'r')
  * @param data  Pointer to an array of samples, of length FHT_N
  */
-void sendSamplesMessage(char type, uint16_t *data) {
+void sendSamplesMessage(char type, int *data) {
   Serial.print(type);
   Serial.print(SAMPLING_PERIOD);
   Serial.print(';');
