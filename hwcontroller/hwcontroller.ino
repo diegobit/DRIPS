@@ -313,7 +313,7 @@ uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, u
   // Sampling
   unsigned long timing = micros();
   fht_input[0] = analogRead(pin);
-  for (int i = 1; i < FHT_N; i++) {
+  for (uint16_t i = 1; i < FHT_N; i++) {
     unsigned long deadline = timing + i * SAMPLING_PERIOD;
     while (micros() < deadline);
 
