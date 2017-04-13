@@ -327,7 +327,9 @@ uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, u
 
   fht_constant_detrend();
   // window data, then reorder, then run, then take output
-  //fht_window(); // window the data for better frequency response
+  #if WINDOW
+    fht_window(); // window the data for better frequency response
+  #endif
   fht_reorder(); // reorder the data before doing the fft
   fht_run(); // process the data in the fft
   fht_mag_lin(); // take the output of the fft
