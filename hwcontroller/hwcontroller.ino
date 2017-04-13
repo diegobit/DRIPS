@@ -380,9 +380,9 @@ void setup() {
 }
 
 void loop() {
-  uint16_t left[FHT_N / 2];  // Allocate the space on the stack
-  uint16_t front[FHT_N / 2]; // Allocate the space on the stack
-  uint16_t *right;           // Don't allocate space as we'll use this just as a reference to fht_lin_out
+  static uint16_t left[FHT_N / 2];  // Allocate the space on the stack
+  static uint16_t front[FHT_N / 2]; // Allocate the space on the stack
+  static uint16_t *right;           // Don't allocate space as we'll use this just as a reference to fht_lin_out
 
   readIrFrequencies(SENSOR_L, 'l', 'L', left);
 
