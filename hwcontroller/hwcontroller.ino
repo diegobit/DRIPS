@@ -205,10 +205,6 @@ void test_radio() {
   }  
 }
 
-inline uint8_t positive_modulo(uint8_t i, uint8_t n) {
-    return (i % n + n) % n;
-}
-
 /**
  * Detects if the turn button has been pressed and controls
  * the changes of the visibleAction and requestedAction.
@@ -233,7 +229,11 @@ void handleTurnButton() {
       buttonPressed = true;
     }
 
-    if (positive_modulo(curMillis - buttonMillis, 256) >= TURN_BUTTON_DELAY) {
+    // The cast to uint8_t is the same as taking the positive modulo:
+    //                            (uint8_t)x
+    //                                ==
+    //                              x % 256
+    if ((uint8_t)(curMillis - buttonMillis) >= TURN_BUTTON_DELAY) {
       buttonMillis = curMillis;
       visibleAction++;
       if (visibleAction > EA_PRIORITY) {
