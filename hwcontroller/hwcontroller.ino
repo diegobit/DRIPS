@@ -38,7 +38,9 @@ void __assert(bool success, String msg) {
 #define IR_LED_5 6
 #define TURN_L   7
 #define TURN_R   8
-#define SENSOR   A1
+#define SENSOR_L A1
+#define SENSOR_F A2
+#define SENSOR_R A3
 #define BUTTON   A0
 
 /**
@@ -247,27 +249,39 @@ void handleTurnButton() {
   }
 }
 
-void sendFrequencyMessage(char type) {
+/**
+ * Send a "sample" message on the serial port.
+ *
+ * @param type  Type of the message ('l', 'f', or 'r')
+ * @param data  Array of samples, of length FHT_N
+ */
+void sendSamplesMessage(char type, uint16_t *data) {
   Serial.print(type);
   Serial.print(SAMPLING_PERIOD);
   Serial.print(';');
-  for(uint8_t i = 0; i < FHT_N / 2 - 1; i++) {
-    Serial.print(fht_lin_out[i]);
+  for (uint8_t i = 0; i < FHT_N - 1; i++) {
+    Serial.print(data[i]);
     Serial.print(',');
   }
-  Serial.print(fht_lin_out[FHT_N / 2 - 1]);
+  Serial.print(data[FHT_N - 1]);
   Serial.print('\n');
 }
 
-void sendSamplesMessage(char type) {
+/**
+ * Send a "frequency" message on the serial port.
+ *
+ * @param type  Type of the message ('L', 'F', or 'R')
+ * @param data  Array of samples, of length FHT_N/2
+ */
+void sendFrequencyMessage(char type, uint16_t *data) {
   Serial.print(type);
   Serial.print(SAMPLING_PERIOD);
   Serial.print(';');
-  for(uint8_t i = 0; i < FHT_N - 1; i++) {
-    Serial.print(fht_input[i]);
+  for (uint8_t i = 0; i < FHT_N / 2 - 1; i++) {
+    Serial.print(data[i]);
     Serial.print(',');
   }
-  Serial.print(fht_input[FHT_N - 1]);
+  Serial.print(data[FHT_N / 2 - 1]);
   Serial.print('\n');
 }
 
@@ -280,6 +294,52 @@ void fht_constant_detrend() {
   for (uint16_t i = 0; i < FHT_N; i++) {
     fht_input[i] -= mean;
   }
+}
+
+/**
+ * @param pin           Pin number of the IR sensor
+ * @param sampleMsgType Type of the sampling messages ('l', 'f', or 'r')
+ * @param freqMsgType   Type of the spectrum messages ('L', 'F', or 'R')
+ * @param output        Pointer to an array of length (FHT_N/2) in which the result will be copied.
+ *                      If NULL, the result will be a reference to `fht_lin_out`.
+ *
+ * @return       A reference to the output array, which can be `output` or `fht_lin_out` depending on the
+ *               the `output` parameter.
+ */
+uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, uint16_t *output) {
+  // We flush the serial just before the sampling, so that we don't have unnecessary interrupts ruining our timing.
+  Serial.flush();
+
+  // Sampling
+  unsigned long timing = micros();
+  fht_input[0] = analogRead(pin);
+  for (int i = 1; i < FHT_N; i++) {
+    unsigned long deadline = timing + i * SAMPLING_PERIOD;
+    while (micros() < deadline);
+
+    fht_input[i] = analogRead(pin);
+  }
+
+
+  #if DEBUG
+    sendSamplesMessage(sampleMsgType, fht_input);
+  #endif
+
+  fht_constant_detrend();
+  // window data, then reorder, then run, then take output
+  //fht_window(); // window the data for better frequency response
+  fht_reorder(); // reorder the data before doing the fft
+  fht_run(); // process the data in the fft
+  fht_mag_lin(); // take the output of the fft
+
+  sendFrequencyMessage(freqMsgType, fht_lin_out);
+
+  if (output != NULL) {
+    memcpy(output, fht_lin_out, sizeof(fht_lin_out));
+    return output;
+  }
+
+  return fht_lin_out;
 }
 
 
@@ -297,7 +357,9 @@ void setup() {
   if (!nrf24.init())
     Serial.println(F("Radio init failed!"));
   
-  pinMode(SENSOR, INPUT);
+  pinMode(SENSOR_L, INPUT);
+  pinMode(SENSOR_F, INPUT);
+  pinMode(SENSOR_R, INPUT);
   pinMode(BUTTON, INPUT);
   pinMode(IR_LED_1, OUTPUT);
   pinMode(IR_LED_2, OUTPUT);
@@ -316,36 +378,27 @@ void setup() {
 }
 
 void loop() {
+  uint16_t left[FHT_N / 2];  // Allocate the space on the stack
+  uint16_t front[FHT_N / 2]; // Allocate the space on the stack
+  uint16_t *right;           // Don't allocate space as we'll use this just as a reference to fht_lin_out
 
-  // We flush the serial just before the sampling, so that we don't have unnecessary interrupts ruining our timing.
-  Serial.flush();
-
-  // Sampling
-  unsigned long timing = micros();
-  fht_input[0] = analogRead(SENSOR);
-  for (int i = 1; i < FHT_N; i++) {
-    unsigned long deadline = timing + i * SAMPLING_PERIOD;
-    while (micros() < deadline);
-
-    fht_input[i] = analogRead(SENSOR);
-  }
-
-
-  #if DEBUG
-    sendSamplesMessage('l');
-  #endif
-
-  fht_constant_detrend();
-  // window data, then reorder, then run, then take output
-  //fht_window(); // window the data for better frequency response
-  fht_reorder(); // reorder the data before doing the fft
-  fht_run(); // process the data in the fft
-  fht_mag_lin(); // take the output of the fft
-  
-  sendFrequencyMessage('L');
-  
+  readIrFrequencies(SENSOR_L, 'l', 'L', left);
 
   handleTurnButton();
+
+  readIrFrequencies(SENSOR_F, 'f', 'F', front);
+
+  handleTurnButton();
+
+  right = readIrFrequencies(SENSOR_R, 'r', 'R', NULL);
+
+  handleTurnButton();
+
+  // TODO: Interpret the data
+  // sendFrequencyMessage('L', left);
+  // sendFrequencyMessage('F', front);
+  // sendFrequencyMessage('R', right);
+
   test_radio();
 
   delay(100);
