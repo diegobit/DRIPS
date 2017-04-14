@@ -8,6 +8,7 @@
 // Singleton instance of the radio driver
 RH_NRF24 nrf24(10, 9); // CE, CS
 
+extern uint8_t requestedAction; // Actual action advertised by the car
 void test_radio();
 
 void setupCCS() {

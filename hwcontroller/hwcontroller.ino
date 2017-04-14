@@ -44,8 +44,13 @@ const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
 const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);
 const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 
-uint8_t requestedAction = EA_NONE; // Actual action advertised by the car
-uint8_t visibleAction = EA_NONE; // Action shown by the turn leds
+// Actual action advertised by the car
+extern uint8_t requestedAction;
+
+// Action shown by the turn leds (can be different from requestedAction while the
+// user is switching through the actions with the button)
+uint8_t visibleAction = requestedAction;
+
 bool buttonPressed = false;
 
 /**

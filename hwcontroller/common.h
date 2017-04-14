@@ -12,6 +12,11 @@ enum Actions {
   EA_PRIORITY = 3
 };
 
+/**
+ * Action advertised by the car
+ */
+extern uint8_t requestedAction;
+
 #if DEBUG
 void __assert(bool success, String msg);
 #endif
