@@ -1,16 +1,8 @@
 #pragma GCC optimize ("O3")
 #define _us 1
 
-#define DEBUG 1
-#if DEBUG
-void __assert(bool success, String msg) {
-  if (!success) {
-    Serial.println(msg);
-    Serial.flush();
-    abort();
-  }
-}
-#endif
+#include "common.h"
+#include "ccs.h"
 
 /**
  * FFT Parameters
@@ -25,8 +17,6 @@ void __assert(bool success, String msg) {
  */
 #include <FHT.h>
 #include <FlexiTimer2.h>
-#include <SPI.h>       // nRF24L01+
-#include <RH_NRF24.h>  // nRF24L01+
 
 /**
  * Ports
@@ -53,16 +43,6 @@ const unsigned char PS_16 = (1 << ADPS2);
 const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
 const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);
 const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
-
-// Singleton instance of the radio driver
-RH_NRF24 nrf24(10, 9); // CE, CS
-
-enum Actions {
-  EA_NONE = 0,
-  EA_TURN_LEFT = 1,
-  EA_TURN_RIGHT = 2,
-  EA_PRIORITY = 3
-};
 
 uint8_t requestedAction = EA_NONE; // Actual action advertised by the car
 uint8_t visibleAction = EA_NONE; // Action shown by the turn leds
@@ -178,31 +158,6 @@ __attribute__((optimize("O3"))) void timerHandler() {
   FLASH_IR_LED(LED5_COUNTER, LED5_PERIOD, IR_LED_5);
 
   FLASH_TURN_LED(LED_TURN_COUNTER, LED_TURN_PERIOD, TURN_L, TURN_R);
-}
-
-void test_radio() {
-  if (nrf24.available())
-  {
-    // Should be a message for us now   
-    uint8_t buf[RH_NRF24_MAX_MESSAGE_LEN];
-    uint8_t len = sizeof(buf);
-    if (nrf24.recv(buf, &len))
-    {
-      // RF24::printBuffer("request: ", buf, len);
-      Serial.print(F("got request: "));
-      Serial.println((char*)buf);
-      // Serial.print("RSSI: ");
-      // Serial.println((uint8_t)rf24.lastRssi(), DEC);
-      
-      // Send a reply
-      uint8_t data[] = "Hello Back";
-      nrf24.send(data, sizeof(data));
-      nrf24.waitPacketSent();
-      Serial.println(F("Sent a reply"));
-    } else {
-      Serial.println(F("recv failed"));
-    }
-  }  
 }
 
 /**
@@ -356,8 +311,7 @@ void setup() {
 
   Serial.begin(230400);
 
-  if (!nrf24.init())
-    Serial.println(F("Radio init failed!"));
+  setupCCS();
   
   pinMode(SENSOR_L, INPUT);
   pinMode(SENSOR_F, INPUT);
@@ -401,7 +355,7 @@ void loop() {
   // sendFrequencyMessage('F', front);
   // sendFrequencyMessage('R', right);
 
-  test_radio();
+  handleCCS(/* params will be passed here... */);
 
   delay(100);
 }
