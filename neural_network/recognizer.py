@@ -3,8 +3,8 @@ import numpy as np
 import pickle
 import random
 
-n_bins = 64
-input_size = n_bins * 3
+n_peaks = 6 # number of peaks for each sensor
+input_size = 3 * n_peaks
 output_size = 8 # num of possible road configurations
 
 # input: [...FFT0][...FFT1][...FFT2]
