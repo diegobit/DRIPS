@@ -5,6 +5,13 @@ import numpy as np
 # Under this level (included), a bin is considered noise
 maxnoise = 10
 
+def ranks(array):
+    array = np.array(array)
+    temp = array.argsort()
+    ranks = np.empty(len(array), int)
+    ranks[temp] = np.arange(len(array))
+    return ranks.tolist()
+
 def getRandomSensorData(peaks):
     # background noise
     v = [random.randint(0, maxnoise) for i in range(64)]
@@ -36,30 +43,44 @@ fright = 50
 
 out = []
 
-# left
+# 100
 for i in range(10000):
     out.append([
-        getRandomData([fleft], [], []),
+        getRandomData([fright], [], []),
         [0, 0, 0, 0, 1, 0, 0, 0]
     ])
 
-# front
+# 010
 for i in range(10000):
     out.append([
         getRandomData([], [ffront], []),
         [0, 0, 1, 0, 0, 0, 0, 0]
     ])
 
-# right
+# 001
 for i in range(10000):
     out.append([
-        getRandomData([], [], [fright]),
+        getRandomData([], [], [fleft]),
         [0, 1, 0, 0, 0, 0, 0, 0]
+    ])
+
+# 011
+for i in range(10000):
+    out.append([
+        getRandomData([], [ffront], [fleft]),
+        [0, 0, 0, 1, 0, 0, 0, 0]
+    ])
+
+# 110
+for i in range(10000):
+    out.append([
+        getRandomData([fright], [ffront], []),
+        [0, 0, 0, 0, 0, 0, 1, 0]
     ])
 
 # Preprocess data
 
-n_peaks = 6
+n_peaks = 5
 for i in range(len(out)):
     fftL = out[i][0][0]
     fftF = out[i][0][1]
@@ -67,28 +88,24 @@ for i in range(len(out)):
 
     # Sharpen peaks.
     # For each known frequency f, set
-    #       v(f) = max(v(f-1), v(f), v(f+1));
-    #       v(f-1) = f(f+1) = 0;
+    #       v(f) := max(v(f-1), v(f), v(f+1))
     # (here f is actually a bin number)
     for f in [fleft, fleftfront, ffront, frightfront, fright]:
         fftL[f] = max(fftL[f-1], fftL[f], fftL[f+1])
         fftF[f] = max(fftF[f-1], fftF[f], fftF[f+1])
         fftR[f] = max(fftR[f-1], fftR[f], fftR[f+1])
-        fftL[f-1] = fftL[f+1] = 0
-        fftF[f-1] = fftF[f+1] = 0
-        fftR[f-1] = fftR[f+1] = 0
 
-    # get max peak indices:
-    peaksL = np.argsort(fftL)[::-1][:n_peaks].tolist()
-    peaksF = np.argsort(fftF)[::-1][:n_peaks].tolist()
-    peaksR = np.argsort(fftR)[::-1][:n_peaks].tolist()
+    # Take only the meaningful frequencies
+    fftL = [fftL[fleft], fftL[fleftfront], fftL[ffront], fftL[frightfront], fftL[fright]]
+    fftF = [fftF[fleft], fftF[fleftfront], fftF[ffront], fftF[frightfront], fftF[fright]]
+    fftR = [fftR[fleft], fftR[fleftfront], fftR[ffront], fftR[frightfront], fftR[fright]]
 
-    # set noise peaks to zero:
-    peaksL = [0 if fftL[peaksL[i]] <= maxnoise else peaksL[i] for i in range(len(peaksL))]
-    peaksF = [0 if fftF[peaksF[i]] <= maxnoise else peaksF[i] for i in range(len(peaksF))]
-    peaksR = [0 if fftR[peaksR[i]] <= maxnoise else peaksR[i] for i in range(len(peaksR))]
+    # We need ranks because our neural network model can't know about order by itself.
+    ranksL = ranks(fftL)
+    ranksF = ranks(fftF)
+    ranksR = ranks(fftR)
 
-    out[i][0] = peaksL + peaksF + peaksR
+    out[i][0] = fftL + ranksL + fftF + ranksF + fftR + ranksR
 
 
 
