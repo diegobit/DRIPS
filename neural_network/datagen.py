@@ -105,7 +105,7 @@ for i in range(len(out)):
     ranksF = ranks(fftF)
     ranksR = ranks(fftR)
 
-    out[i][0] = fftL + ranksL + fftF + ranksF + fftR + ranksR
+    out[i][0] =  ranksL + ranksF + ranksR
 
 
 

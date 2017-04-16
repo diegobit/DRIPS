@@ -5,7 +5,7 @@ import random
 
 #n_peaks = 5 # number of peaks for each sensor
 #input_size = 3 * n_peaks
-input_size = 30
+input_size = 15
 output_size = 8 # num of possible road configurations
 
 # input: [...FFT0][...FFT1][...FFT2]
@@ -47,8 +47,8 @@ sess = tf.InteractiveSession()
 
 tf.global_variables_initializer().run()
 
-max = 40000
-step = 1000
+max = 20000
+step = 100
 for i in range(0, max, step):
   batch_xs, batch_ys = train_data[i:i+step], train_labels[i:i+step]
   sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
@@ -56,7 +56,7 @@ for i in range(0, max, step):
   correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
   accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
   accuracy_val = sess.run(accuracy, feed_dict={x: train_data[max-len(train_data):], y_: train_labels[max-len(train_data):]})
-  print(str(i) + " / " + str(max) + "; accuracy: " + str(accuracy_val))
+  print(str(i+step) + " / " + str(max) + "; accuracy: " + str(accuracy_val))
 
 # Save weights
 W_val, b_val = sess.run([W, b])
