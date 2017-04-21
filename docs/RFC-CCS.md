@@ -34,8 +34,9 @@ tempo di 2X sommato a un backoff casuale compreso tra Y e Z secondi.
 Ogni altra auto nell'incrocio, alla ricezione del CCS di A:
 
  1. Determina se attualmente è impegnata in una procedura di CCS con un qualsiasi peer.
-     a. Se sì e se quel peer non è A, risponde in broadcast con un SCS con specificato
-        l'indirizzo del peer con cui è in corso la procedura già avviata.
+     a. Se sì e se quel peer non è A, oppure se sì e se il CCS non era per questa auto,
+        allora risponde in broadcast con un SCS con specificato l'indirizzo del peer con
+        cui è in corso la procedura già avviata.
      b. Se no, determina se il CCS era destinato a lei.
           i. Se no, termina
          ii. Se sì, attende X secondi da quando ha rilevato il CCS, quindi entra
