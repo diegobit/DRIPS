@@ -316,6 +316,8 @@ void setup() {
 
   Serial.begin(230400);
 
+  randomSeed(analogRead(A4)); // A4 is unused; we use it for the seed
+
   setupCCS();
   
   pinMode(SENSOR_L, INPUT);

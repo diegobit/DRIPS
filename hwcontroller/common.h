@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 #define DEBUG 1
+#define ADDRESS "1"
 #define MANUFACTURER "ALFARMEO"
 #define MODEL "GIULIA"
 
