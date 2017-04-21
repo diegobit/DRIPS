@@ -154,7 +154,8 @@ State FUN_ST_INTERPRETATE() {
 }
 
 /**
- * @return  whether the caller should reset the state to ST_BEGIN
+ * @return  if different than ST_CURRENT, indicates the state that the caller
+ *          should immediately return.
  */
 State handleIncomingRequests() {
   if (nrf24.available())
