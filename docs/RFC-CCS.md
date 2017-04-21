@@ -50,6 +50,32 @@ del messaggio sia diverso da quello dell'auto corrente, la procedura viene inter
 
 ## Formato dei pacchetti
 
+### KeepAlive
+
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +---------------+---------------+-------------------------------+
+ | Msg Type (K)  |  Sender Addr  | Requested Act |  Current Act  |
+ +---------------+---------------+-------------------------------+
+ |                                                               |
+ +                         Manufacturer                          +
+ |                                                               |
+ +---------------------------------------------------------------+
+ |                                                               |
+ +                             Model                             +
+ |                                                               |
+ +---------------------------------------------------------------+
+ |   Priority    |
+ +---------------+
+
+ Msg Type = 75 (carattere K)
+ Sender Addr = l'indirizzo che identifica l'auto che ha emesso il CCS.
+ Requested Act = l'azione che l'auto vorrebbe fare
+ Current Act = l'azione che l'auto sta facendo a seguito della coordinazione con la rete
+ Manufacturer = il produttore dell'auto
+ Model = il modello dell'auto
+ Priority = (boolean) se l'azione richiesta dall'auto ha priorità su quelle delle altre auto
+
 ### CCS
 
   0                   1                   2
