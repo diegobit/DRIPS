@@ -32,6 +32,7 @@
 #define SENSOR_F A2
 #define SENSOR_R A3
 #define BUTTON   A0
+#define RND_SEED A4 // Unconnected pin used as a seed for the RNG
 
 /**
  * Configuration parameters
@@ -316,7 +317,7 @@ void setup() {
 
     Serial.begin(230400);
 
-    randomSeed(analogRead(A4)); // A4 is unused; we use it for the seed
+    randomSeed(analogRead(RND_SEED));
 
     setupCCS();
 
