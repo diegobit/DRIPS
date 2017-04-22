@@ -9,19 +9,19 @@
 #define MODEL "GIULIA"
 
 enum Actions {
-  EA_NONE = 0,
-  EA_TURN_LEFT = 1,
-  EA_TURN_RIGHT = 2,
-  EA_PRIORITY = 3
+    EA_NONE = 0,
+    EA_TURN_LEFT = 1,
+    EA_TURN_RIGHT = 2,
+    EA_PRIORITY = 3
 };
 
 typedef struct RoadInfo {
-  char manufacturer[8];
-  char model[8];
-  uint16_t orientation;
-  bool priority;
-  uint8_t requestedAction;
-  uint8_t currentAction;
+    char manufacturer[8];
+    char model[8];
+    uint16_t orientation;
+    bool priority;
+    uint8_t requestedAction;
+    uint8_t currentAction;
 } RoadInfo;
 
 /**

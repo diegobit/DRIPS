@@ -99,51 +99,51 @@ uint8_t LED5_COUNTER = 0;
 uint16_t LED_TURN_COUNTER = 0;
 
 #define FLASH_IR_LED(counter, period, pin) {\
-  if (counter == ((period)/2) - 1) {\
-    digitalWrite((pin), HIGH);\
-    counter++;\
-  } else if (counter == (period) - 1) {\
-    digitalWrite((pin), LOW);\
-    counter = 0;\
-  } else {\
-    counter++;\
-  }\
+    if (counter == ((period)/2) - 1) {\
+        digitalWrite((pin), HIGH);\
+        counter++;\
+    } else if (counter == (period) - 1) {\
+        digitalWrite((pin), LOW);\
+        counter = 0;\
+    } else {\
+        counter++;\
+    }\
 }
 
 #define FLASH_TURN_LED(counter, period, pinL, pinR) {\
-  if (counter == ((period)/2) - 1) {\
-    if (visibleAction == EA_TURN_LEFT) {\
-      digitalWrite((pinL), HIGH);\
-      digitalWrite((pinR), LOW);\
-    } else if (visibleAction == EA_TURN_RIGHT) {\
-      digitalWrite((pinL), LOW);\
-      digitalWrite((pinR), HIGH);\
-    } else if (visibleAction == EA_PRIORITY) {\
-      digitalWrite((pinL), HIGH);\
-      digitalWrite((pinR), HIGH);\
+    if (counter == ((period)/2) - 1) {\
+        if (visibleAction == EA_TURN_LEFT) {\
+            digitalWrite((pinL), HIGH);\
+            digitalWrite((pinR), LOW);\
+        } else if (visibleAction == EA_TURN_RIGHT) {\
+            digitalWrite((pinL), LOW);\
+            digitalWrite((pinR), HIGH);\
+        } else if (visibleAction == EA_PRIORITY) {\
+            digitalWrite((pinL), HIGH);\
+            digitalWrite((pinR), HIGH);\
+        } else {\
+            digitalWrite((pinL), LOW);\
+            digitalWrite((pinR), LOW);\
+        }\
+        counter++;\
+    } else if (counter == (period) - 1) {\
+        if (visibleAction == EA_TURN_LEFT) {\
+            digitalWrite((pinL), LOW);\
+            digitalWrite((pinR), LOW);\
+        } else if (visibleAction == EA_TURN_RIGHT) {\
+            digitalWrite((pinL), LOW);\
+            digitalWrite((pinR), LOW);\
+        } else if (visibleAction == EA_PRIORITY) {\
+            digitalWrite((pinL), HIGH);\
+            digitalWrite((pinR), HIGH);\
+        } else {\
+            digitalWrite((pinL), LOW);\
+            digitalWrite((pinR), LOW);\
+        }\
+        counter = 0;\
     } else {\
-      digitalWrite((pinL), LOW);\
-      digitalWrite((pinR), LOW);\
+        counter++;\
     }\
-    counter++;\
-  } else if (counter == (period) - 1) {\
-    if (visibleAction == EA_TURN_LEFT) {\
-      digitalWrite((pinL), LOW);\
-      digitalWrite((pinR), LOW);\
-    } else if (visibleAction == EA_TURN_RIGHT) {\
-      digitalWrite((pinL), LOW);\
-      digitalWrite((pinR), LOW);\
-    } else if (visibleAction == EA_PRIORITY) {\
-      digitalWrite((pinL), HIGH);\
-      digitalWrite((pinR), HIGH);\
-    } else {\
-      digitalWrite((pinL), LOW);\
-      digitalWrite((pinR), LOW);\
-    }\
-    counter = 0;\
-  } else {\
-    counter++;\
-  }\
 }
 
 /**
@@ -156,13 +156,13 @@ uint16_t LED_TURN_COUNTER = 0;
  */
 __attribute__((optimize("O3"))) void timerHandler() {
 
-  FLASH_IR_LED(LED1_COUNTER, LED1_PERIOD, IR_LED_1);
-  FLASH_IR_LED(LED2_COUNTER, LED2_PERIOD, IR_LED_2);
-  FLASH_IR_LED(LED3_COUNTER, LED3_PERIOD, IR_LED_3);
-  FLASH_IR_LED(LED4_COUNTER, LED4_PERIOD, IR_LED_4);
-  FLASH_IR_LED(LED5_COUNTER, LED5_PERIOD, IR_LED_5);
+    FLASH_IR_LED(LED1_COUNTER, LED1_PERIOD, IR_LED_1);
+    FLASH_IR_LED(LED2_COUNTER, LED2_PERIOD, IR_LED_2);
+    FLASH_IR_LED(LED3_COUNTER, LED3_PERIOD, IR_LED_3);
+    FLASH_IR_LED(LED4_COUNTER, LED4_PERIOD, IR_LED_4);
+    FLASH_IR_LED(LED5_COUNTER, LED5_PERIOD, IR_LED_5);
 
-  FLASH_TURN_LED(LED_TURN_COUNTER, LED_TURN_PERIOD, TURN_L, TURN_R);
+    FLASH_TURN_LED(LED_TURN_COUNTER, LED_TURN_PERIOD, TURN_L, TURN_R);
 }
 
 /**
@@ -172,41 +172,41 @@ __attribute__((optimize("O3"))) void timerHandler() {
  * Must be called periodically.
  */
 void handleTurnButton() {
-  static uint8_t buttonMillis = 0;
+    static uint8_t buttonMillis = 0;
 
-  if (digitalRead(BUTTON) == LOW) {
-    // Button is currently held down
+    if (digitalRead(BUTTON) == LOW) {
+        // Button is currently held down
 
-    // This variable is declared to optimize for speed.
-    // You can safely replace each occurrence of curMillis
-    // with its expression in order to save memory.
-    uint8_t curMillis = (millis() / 100) & 0xFF;
+        // This variable is declared to optimize for speed.
+        // You can safely replace each occurrence of curMillis
+        // with its expression in order to save memory.
+        uint8_t curMillis = (millis() / 100) & 0xFF;
 
-    if (!buttonPressed) {
-      // Start counting. Subtract TURN_BUTTON_DELAY so that
-      // the user doesn't have to wait for the current action.
-      buttonMillis = curMillis - TURN_BUTTON_DELAY;
-      buttonPressed = true;
+        if (!buttonPressed) {
+            // Start counting. Subtract TURN_BUTTON_DELAY so that
+            // the user doesn't have to wait for the current action.
+            buttonMillis = curMillis - TURN_BUTTON_DELAY;
+            buttonPressed = true;
+        }
+
+        // The cast to uint8_t is the same as taking the positive modulo:
+        //                            (uint8_t)x
+        //                                ==
+        //                              x % 256
+        if ((uint8_t)(curMillis - buttonMillis) >= TURN_BUTTON_DELAY) {
+            buttonMillis = curMillis;
+            visibleAction++;
+            if (visibleAction > EA_PRIORITY) {
+                visibleAction = EA_NONE;
+            }
+        }
+    } else {
+        // Button is not currently held down
+        if (buttonPressed) {
+            requestedAction = visibleAction;
+            buttonPressed = false;
+        }
     }
-
-    // The cast to uint8_t is the same as taking the positive modulo:
-    //                            (uint8_t)x
-    //                                ==
-    //                              x % 256
-    if ((uint8_t)(curMillis - buttonMillis) >= TURN_BUTTON_DELAY) {
-      buttonMillis = curMillis;
-      visibleAction++;
-      if (visibleAction > EA_PRIORITY) {
-        visibleAction = EA_NONE;
-      }
-    }
-  } else {
-    // Button is not currently held down
-    if (buttonPressed) {
-      requestedAction = visibleAction;
-      buttonPressed = false;
-    }
-  }
 }
 
 /**
@@ -216,15 +216,15 @@ void handleTurnButton() {
  * @param data  Pointer to an array of samples, of length FHT_N
  */
 void sendSamplesMessage(char type, int *data) {
-  Serial.print(type);
-  Serial.print(SAMPLING_PERIOD);
-  Serial.print(';');
-  for (uint8_t i = 0; i < FHT_N - 1; i++) {
-    Serial.print(data[i]);
-    Serial.print(',');
-  }
-  Serial.print(data[FHT_N - 1]);
-  Serial.print('\n');
+    Serial.print(type);
+    Serial.print(SAMPLING_PERIOD);
+    Serial.print(';');
+    for (uint8_t i = 0; i < FHT_N - 1; i++) {
+        Serial.print(data[i]);
+        Serial.print(',');
+    }
+    Serial.print(data[FHT_N - 1]);
+    Serial.print('\n');
 }
 
 /**
@@ -234,26 +234,26 @@ void sendSamplesMessage(char type, int *data) {
  * @param data  Pointer to an array of samples, of length FHT_N/2
  */
 void sendFrequencyMessage(char type, uint16_t *data) {
-  Serial.print(type);
-  Serial.print(SAMPLING_PERIOD);
-  Serial.print(';');
-  for (uint8_t i = 0; i < FHT_N / 2 - 1; i++) {
-    Serial.print(data[i]);
-    Serial.print(',');
-  }
-  Serial.print(data[FHT_N / 2 - 1]);
-  Serial.print('\n');
+    Serial.print(type);
+    Serial.print(SAMPLING_PERIOD);
+    Serial.print(';');
+    for (uint8_t i = 0; i < FHT_N / 2 - 1; i++) {
+        Serial.print(data[i]);
+        Serial.print(',');
+    }
+    Serial.print(data[FHT_N / 2 - 1]);
+    Serial.print('\n');
 }
 
 void fht_constant_detrend() {
-  uint16_t mean = 0;
-  for (uint16_t i = 0; i < FHT_N; i++) {
-    mean += fht_input[i];
-  }
-  mean = mean / FHT_N;
-  for (uint16_t i = 0; i < FHT_N; i++) {
-    fht_input[i] -= mean;
-  }
+    uint16_t mean = 0;
+    for (uint16_t i = 0; i < FHT_N; i++) {
+        mean += fht_input[i];
+    }
+    mean = mean / FHT_N;
+    for (uint16_t i = 0; i < FHT_N; i++) {
+        fht_input[i] -= mean;
+    }
 }
 
 /**
@@ -267,102 +267,102 @@ void fht_constant_detrend() {
  *               the `output` parameter.
  */
 uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, uint16_t *output) {
-  // We flush the serial just before the sampling, so that we don't have unnecessary interrupts ruining our timing.
-  Serial.flush();
+    // We flush the serial just before the sampling, so that we don't have unnecessary interrupts ruining our timing.
+    Serial.flush();
 
-  // Sampling
-  unsigned long timing = micros();
-  fht_input[0] = analogRead(pin);
-  for (uint16_t i = 1; i < FHT_N; i++) {
-    unsigned long deadline = timing + i * SAMPLING_PERIOD;
-    while (micros() < deadline);
+    // Sampling
+    unsigned long timing = micros();
+    fht_input[0] = analogRead(pin);
+    for (uint16_t i = 1; i < FHT_N; i++) {
+        unsigned long deadline = timing + i * SAMPLING_PERIOD;
+        while (micros() < deadline);
 
-    fht_input[i] = analogRead(pin);
-  }
+        fht_input[i] = analogRead(pin);
+    }
 
 
-  #if DEBUG
-    sendSamplesMessage(sampleMsgType, fht_input);
-  #endif
+    #if DEBUG
+        sendSamplesMessage(sampleMsgType, fht_input);
+    #endif
 
-  fht_constant_detrend();
-  // window data, then reorder, then run, then take output
-  #if WINDOW
-    fht_window(); // window the data for better frequency response
-  #endif
-  fht_reorder(); // reorder the data before doing the fft
-  fht_run(); // process the data in the fft
-  fht_mag_lin(); // take the output of the fft
+    fht_constant_detrend();
+    // window data, then reorder, then run, then take output
+    #if WINDOW
+        fht_window(); // window the data for better frequency response
+    #endif
+    fht_reorder(); // reorder the data before doing the fft
+    fht_run(); // process the data in the fft
+    fht_mag_lin(); // take the output of the fft
 
-  sendFrequencyMessage(freqMsgType, fht_lin_out);
+    sendFrequencyMessage(freqMsgType, fht_lin_out);
 
-  if (output != NULL) {
-    memcpy(output, fht_lin_out, sizeof(fht_lin_out));
-    return output;
-  }
+    if (output != NULL) {
+        memcpy(output, fht_lin_out, sizeof(fht_lin_out));
+        return output;
+    }
 
-  return fht_lin_out;
+    return fht_lin_out;
 }
 
 
 void setup() {
-  // set up the ADC
-  ADCSRA &= ~PS_128;  // remove bits set by Arduino library
+    // set up the ADC
+    ADCSRA &= ~PS_128;  // remove bits set by Arduino library
 
-  // you can choose a prescaler from above.
-  // PS_16, PS_32, PS_64 or PS_128
-  ADCSRA |= PS_16;    // set our own prescaler to 16
+    // you can choose a prescaler from above.
+    // PS_16, PS_32, PS_64 or PS_128
+    ADCSRA |= PS_16;    // set our own prescaler to 16
 
 
-  Serial.begin(230400);
+    Serial.begin(230400);
 
-  randomSeed(analogRead(A4)); // A4 is unused; we use it for the seed
+    randomSeed(analogRead(A4)); // A4 is unused; we use it for the seed
 
-  setupCCS();
-  
-  pinMode(SENSOR_L, INPUT);
-  pinMode(SENSOR_F, INPUT);
-  pinMode(SENSOR_R, INPUT);
-  pinMode(BUTTON, INPUT);
-  pinMode(IR_LED_1, OUTPUT);
-  pinMode(IR_LED_2, OUTPUT);
-  pinMode(IR_LED_3, OUTPUT);
-  pinMode(IR_LED_4, OUTPUT);
-  pinMode(IR_LED_5, OUTPUT);
-  pinMode(TURN_L, OUTPUT);
-  pinMode(TURN_R, OUTPUT);
+    setupCCS();
 
-  // Enable internal pull-up resistor
-  digitalWrite(BUTTON, HIGH);
+    pinMode(SENSOR_L, INPUT);
+    pinMode(SENSOR_F, INPUT);
+    pinMode(SENSOR_R, INPUT);
+    pinMode(BUTTON, INPUT);
+    pinMode(IR_LED_1, OUTPUT);
+    pinMode(IR_LED_2, OUTPUT);
+    pinMode(IR_LED_3, OUTPUT);
+    pinMode(IR_LED_4, OUTPUT);
+    pinMode(IR_LED_5, OUTPUT);
+    pinMode(TURN_L, OUTPUT);
+    pinMode(TURN_R, OUTPUT);
 
-  unsigned long semiperiod = TIMER_PERIOD / 2;
-  FlexiTimer2::set(semiperiod / 100, 1.0/10000, timerHandler); // max resolution appears to be 100 µs. 10 µs is distorted, while 1 µs is broken.
-  FlexiTimer2::start();
+    // Enable internal pull-up resistor
+    digitalWrite(BUTTON, HIGH);
+
+    unsigned long semiperiod = TIMER_PERIOD / 2;
+    FlexiTimer2::set(semiperiod / 100, 1.0/10000, timerHandler); // max resolution appears to be 100 µs. 10 µs is distorted, while 1 µs is broken.
+    FlexiTimer2::start();
 }
 
 void loop() {
-  static uint16_t left[FHT_N / 2];  // Allocate the space on the stack
-  static uint16_t front[FHT_N / 2]; // Allocate the space on the stack
-  static uint16_t *right;           // Don't allocate space as we'll use this just as a reference to fht_lin_out
+    static uint16_t left[FHT_N / 2];  // Allocate the space on the stack
+    static uint16_t front[FHT_N / 2]; // Allocate the space on the stack
+    static uint16_t *right;           // Don't allocate space as we'll use this just as a reference to fht_lin_out
 
-  readIrFrequencies(SENSOR_L, 'l', 'L', left);
+    readIrFrequencies(SENSOR_L, 'l', 'L', left);
 
-  handleTurnButton();
+    handleTurnButton();
 
-  readIrFrequencies(SENSOR_F, 'f', 'F', front);
+    readIrFrequencies(SENSOR_F, 'f', 'F', front);
 
-  handleTurnButton();
+    handleTurnButton();
 
-  right = readIrFrequencies(SENSOR_R, 'r', 'R', NULL);
+    right = readIrFrequencies(SENSOR_R, 'r', 'R', NULL);
 
-  handleTurnButton();
+    handleTurnButton();
 
-  // TODO: Interpret the data
-  // sendFrequencyMessage('L', left);
-  // sendFrequencyMessage('F', front);
-  // sendFrequencyMessage('R', right);
+    // TODO: Interpret the data
+    // sendFrequencyMessage('L', left);
+    // sendFrequencyMessage('F', front);
+    // sendFrequencyMessage('R', right);
 
-  handleCCS(/* params will be passed here... */);
+    handleCCS(/* params will be passed here... */);
 
-  delay(100);
+    delay(100);
 }
