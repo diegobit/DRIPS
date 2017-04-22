@@ -1,3 +1,4 @@
+#pragma GCC optimize ("O3")
 #include "common.h"
 #include "ccs.h"
 
