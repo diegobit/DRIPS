@@ -201,22 +201,23 @@ State handleIncomingRequests() {
         memcpy(&(vehicles[index].model), &buf[12], 8);
         vehicles[index].priority = buf[13];
         vehicles[index].receivedTime = millis();
-      }
-    } else if (buf[0] == MSG_TYPE_CCS) {
-      // CCS
 
-    } else if (buf[0] == MSG_TYPE_SCS) {
-      // SCS
-      bool pardoned = buf[1] == ADDRESS[0];
-      if (state == ST_BEGIN || (state == ST_WAIT_TO_BLINK && !pardoned) || (state == ST_BLINK && !pardoned)) {
-        advertiseCCS = false;
+      } else if (buf[0] == MSG_TYPE_CCS) {
+        // CCS
 
-        // Choose backoff
-        backoff = random(TIMESPAN_Y, TIMESPAN_Z);
-        timeMarker = millis();
+      } else if (buf[0] == MSG_TYPE_SCS) {
+        // SCS
+        bool pardoned = buf[1] == ADDRESS[0];
+        if (state == ST_BEGIN || (state == ST_WAIT_TO_BLINK && !pardoned) || (state == ST_BLINK && !pardoned)) {
+          advertiseCCS = false;
 
-        // Instruct to go back to begin
-        return ST_BEGIN;
+          // Choose backoff
+          backoff = random(TIMESPAN_Y, TIMESPAN_Z);
+          timeMarker = millis();
+
+          // Instruct to go back to begin
+          return ST_BEGIN;
+        }
       }
     }
   }
