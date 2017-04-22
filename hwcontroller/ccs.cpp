@@ -22,7 +22,10 @@ const unsigned long TIME_KEEPALIVE = 0;
 const uint16_t VEHICLE_CACHE_TTL = 0;
 
 const uint16_t TIMESPAN_X = 0;
+
+/** Value for the lower end of the random backoff interval (ms). Must be strictly > 0. */
 const uint16_t TIMESPAN_Y = 0;
+/** Value for the upper end of the random backoff interval (ms). Must be strictly > TIMESPAN_Z. */
 const uint16_t TIMESPAN_Z = 0;
 
 /** CCS led frequency */
@@ -111,7 +114,8 @@ State FUN_ST_BEGIN() {
     return r;
   }
 
-  if (millis() < timeMarker + TIMESPAN_NOOP + backoff) {
+  const uint16_t timeToWait = backoff == 0 ? TIMESPAN_NOOP : 2*TIMESPAN_X + backoff;
+  if (millis() < timeMarker + timeToWait) {
     return ST_BEGIN;
   }
 
