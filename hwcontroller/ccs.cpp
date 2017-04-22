@@ -203,18 +203,16 @@ State handleIncomingRequests() {
 
     } else if (buf[0] == MSG_TYPE_SCS) {
       // SCS
-      if (state == ST_BEGIN || state == ST_WAIT_TO_BLINK || state == ST_BLINK) {
-        // Check if I'm pardoned
-        if (buf[1] != ADDRESS[0]) {
-          advertiseCCS = false;
+      bool pardoned = buf[1] == ADDRESS[0];
+      if (state == ST_BEGIN || (state == ST_WAIT_TO_BLINK && !pardoned) || (state == ST_BLINK && !pardoned)) {
+        advertiseCCS = false;
 
-          // Choose backoff
-          backoff = random(TIMESPAN_Y, TIMESPAN_Z);
-          timeMarker = millis();
+        // Choose backoff
+        backoff = random(TIMESPAN_Y, TIMESPAN_Z);
+        timeMarker = millis();
 
-          // Instruct to go back to begin
-          return ST_BEGIN;
-        }
+        // Instruct to go back to begin
+        return ST_BEGIN;
       }
     }
   }
