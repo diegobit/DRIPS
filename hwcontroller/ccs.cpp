@@ -13,7 +13,11 @@
 #define MSG_TYPE_CCS 'C'
 #define MSG_TYPE_SCS 'S'
 
-/** Time to wait between consecutive attempts to send a CCS */
+/**
+ * Time to wait between consecutive attempts to send a CCS.
+ * Must be ≫ 2*TIMESPAN_X, and in general should be greater
+ * than the maximum time required to complete a CCS procedure.
+ */
 const uint16_t TIMESPAN_NOOP = 0;
 
 /** Interval at which we send KeepAlive messages */
@@ -27,6 +31,7 @@ const uint16_t TIMESPAN_X = 0;
 
 /** Value for the lower end of the random backoff interval (ms). Must be strictly > 0. */
 const uint16_t TIMESPAN_Y = 0;
+
 /** Value for the upper end of the random backoff interval (ms). Must be strictly > TIMESPAN_Y. */
 const uint16_t TIMESPAN_Z = 0;
 
