@@ -93,6 +93,7 @@ Vehicle vehicles[3];
 unsigned long timeMarker = 0; // TODO REDUCE ACCURACY TO SAVE SPACE
 bool advertiseCCS = false;
 uint16_t backoff = 0;
+char currentPeer = '\0'; // TODO Remember to assign it where needed!
 State state = ST_BEGIN;
 
 
@@ -211,6 +212,34 @@ State handleIncomingRequests() {
 
             } else if (buf[0] == MSG_TYPE_CCS) {
                 // CCS
+                const bool isForMe = buf[1] == ADDRESS[0];
+                if (state == ST_BEGIN) {
+                    if (isForMe) {
+                        timeMarker = millis();
+                        return ST_WAIT_TO_BLINK;
+                    } else {
+                        backoff = random(TIMESPAN_Y, TIMESPAN_Z);
+                        timeMarker = millis();
+                        return ST_BEGIN;
+                    }
+                } else if (state == ST_WAIT_TO_BLINK || state == ST_BLINK) {
+                    const char sender = buf[2];
+                    if (!(isForMe && sender == currentPeer)) {
+                        // Send pardoned SCS
+                        uint8_t data[] = MSG_TYPE_SCS " "; // FIXME Must we send the string terminator too?
+                        data[1] = currentPeer;
+                        nrf24.send(data, sizeof(data));
+                        nrf24.waitPacketSent();
+                    }
+                } else if (state == ST_SAMPLE_L || state == ST_SAMPLE_F || state == ST_SAMPLE_R || state == ST_INTERPRETATE) {
+                    if (isForMe) {
+                        // Send non-pardoned SCS
+                        uint8_t data[] = MSG_TYPE_SCS "0"; // FIXME Must we send the string terminator too?
+                                                           // FIXME Can we send \0 as the pardoned address?
+                        nrf24.send(data, sizeof(data));
+                        nrf24.waitPacketSent();
+                    }
+                }
 
             } else if (buf[0] == MSG_TYPE_SCS) {
                 // SCS
