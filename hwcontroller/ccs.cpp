@@ -67,7 +67,6 @@ typedef struct Vehicle {
 
 
 // ==== FUNCTION DECLARATIONS ==== //
-void test_radio();
 State FUN_ST_BEGIN();
 State FUN_ST_WAIT_TO_BLINK();
 State FUN_ST_BLINK();
@@ -277,31 +276,5 @@ State stateJmp(State s) {
         default:
             Serial.println(F("UNHANDLED STATE JMP"));
             return ST_CURRENT;
-    }
-}
-
-// FIXME Delete me
-void test_radio() {
-    if (nrf24.available())
-    {
-        // Should be a message for us now
-        uint8_t buf[RH_NRF24_MAX_MESSAGE_LEN];
-        uint8_t len = sizeof(buf);
-        if (nrf24.recv(buf, &len))
-        {
-            // RF24::printBuffer("request: ", buf, len);
-            Serial.print(F("got request: "));
-            Serial.println((char*)buf);
-            // Serial.print("RSSI: ");
-            // Serial.println((uint8_t)rf24.lastRssi(), DEC);
-
-            // Send a reply
-            uint8_t data[] = "Hello Back";
-            nrf24.send(data, sizeof(data));
-            nrf24.waitPacketSent();
-            Serial.println(F("Sent a reply"));
-        } else {
-            Serial.println(F("recv failed"));
-        }
     }
 }
