@@ -406,10 +406,14 @@ public partial class MainWindow : Window
      */
     void OnResize()
     {
-		// Crossroad image
-		var newSize = scaleSize(cFullRadW, cFullRadH);
-		cRadW = newSize.Item1;
-		cRadH = newSize.Item2;
+		// Update sizes
+		cRadW = scaleValue(cFullRadW, true);
+		cRadH = scaleValue(cFullRadH, false);
+		labelW = scaleValue(labelFullW, true);
+		labelH = scaleValue(labelFullH, false);
+		fontSize = scaleValue(fontFullSize, false);
+
+		// Crossroad
 		crossroadImage.SizeAllocate(new Gdk.Rectangle(0, 0, Allocation.Width, Allocation.Height));
 		crossroadImage.Pixbuf = crossroadPixbuf.ScaleSimple(Allocation.Width, Allocation.Height, Gdk.InterpType.Nearest);
 
