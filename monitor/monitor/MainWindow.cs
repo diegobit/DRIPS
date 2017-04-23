@@ -5,8 +5,13 @@ using monitor;
 
 public partial class MainWindow : Window
 {
-    int rRadW = 152; // The width of half of the square at the center of the road
-    int rRadH = 150;
+	// Crossroad parameters
+	int cFullW;
+	int cFullH;
+	int cFullRadW = 152; // The width of half of the square at the center of the road
+	int cFullRadH = 150;
+	int cRadW;
+	int cRadH;
 
 	string resDiv = "_";
 	string imageExtension = ".png";
@@ -247,8 +252,8 @@ public partial class MainWindow : Window
 		int crossH = crossroadImage.Allocation.Height;
 		int carLong = car.Pixbuf.Height > car.Pixbuf.Width ? car.Pixbuf.Height : car.Pixbuf.Width;
 		int carShort = car.Pixbuf.Height < car.Pixbuf.Width ? car.Pixbuf.Height : car.Pixbuf.Width;
-		int stepToMiddleShortW = (rRadW - carShort) / 2;
-		int stepToMiddleShortH = (rRadH - carShort) / 2;
+		int stepToMiddleShortW = (cRadW - carShort) / 2;
+		int stepToMiddleShortH = (cRadH - carShort) / 2;
 
         int x = 0;
         int y = 0;
@@ -256,19 +261,19 @@ public partial class MainWindow : Window
 		{
 			case RoadID.Bottom:
                 x = crossW / 2 + stepToMiddleShortW;
-                y = crossH / 2 + rRadH;
+                y = crossH / 2 + cRadH;
 				break;
 			case RoadID.Left:
-                x = crossW / 2 - rRadW - carLong;
+                x = crossW / 2 - cRadW - carLong;
                 y = crossH / 2 + stepToMiddleShortH;
 				break;
 			case RoadID.Top:
-                x = crossW / 2 - rRadW + stepToMiddleShortW;
-                y = crossH / 2 - rRadW - carLong;
+                x = crossW / 2 - cRadW + stepToMiddleShortW;
+                y = crossH / 2 - cRadW - carLong;
 				break;
 			case RoadID.Right:
-                x = crossW / 2 + rRadW;
-                y = crossH / 2 - rRadH + stepToMiddleShortH;
+                x = crossW / 2 + cRadW;
+                y = crossH / 2 - cRadH + stepToMiddleShortH;
 				break;
 		}
 
@@ -282,20 +287,20 @@ public partial class MainWindow : Window
 		switch (road)
 		{
 			case (RoadID.Bottom):
-				x = crossroadImage.Allocation.Width / 2 + rRadW;
-				y = crossroadImage.Allocation.Height / 2 + rRadH;
+				x = crossroadImage.Allocation.Width / 2 + cRadW;
+				y = crossroadImage.Allocation.Height / 2 + cRadH;
 				break;
 			case (RoadID.Left):
-				x = crossroadImage.Allocation.Width / 2 - rRadW - label.Allocation.Width;
-				y = crossroadImage.Allocation.Height / 2 + rRadH;
+				x = crossroadImage.Allocation.Width / 2 - cRadW - label.Allocation.Width;
+				y = crossroadImage.Allocation.Height / 2 + cRadH;
 				break;
 			case (RoadID.Top):
-				x = crossroadImage.Allocation.Width / 2 - rRadW - label.Allocation.Width;
-				y = crossroadImage.Allocation.Height / 2 - rRadH - label.Allocation.Height;
+				x = crossroadImage.Allocation.Width / 2 - cRadW - label.Allocation.Width;
+				y = crossroadImage.Allocation.Height / 2 - cRadH - label.Allocation.Height;
 				break;
 			case (RoadID.Right):
-				x = crossroadImage.Allocation.Width / 2 + rRadW;
-				y = crossroadImage.Allocation.Height / 2 - rRadH - label.Allocation.Height;
+				x = crossroadImage.Allocation.Width / 2 + cRadW;
+				y = crossroadImage.Allocation.Height / 2 - cRadH - label.Allocation.Height;
 				break;
 		}
 
@@ -321,27 +326,27 @@ public partial class MainWindow : Window
 		{
 			case (RoadID.Bottom):
 				xl = crossW / 2;
-				yl = crossH / 2 + rRadH - sH;
-				xr = xl + rRadW - sW;
+				yl = crossH / 2 + cRadH - sH;
+				xr = xl + cRadW - sW;
 				yr = yl;
 				break;
 			case (RoadID.Left):
-				xl = crossW / 2 - rRadW;
+				xl = crossW / 2 - cRadW;
 				yl = crossH / 2;
 				xr = xl;
-				yr = yl + rRadH - sH;
+				yr = yl + cRadH - sH;
 				break;
 			case (RoadID.Top):
 				xl = crossW / 2 - sW;
-				xr = xl - rRadW + sW;
-				yl = crossH / 2 - rRadH;
+				xr = xl - cRadW + sW;
+				yl = crossH / 2 - cRadH;
 				yr = yl;
 				break;
 			case (RoadID.Right):
-				xl = crossW / 2 + rRadW - sW;
+				xl = crossW / 2 + cRadW - sW;
 				xr = xl;
 				yl = crossH / 2 - sH;
-				yr = yl - rRadH + sH;
+				yr = yl - cRadH + sH;
 				break;
 		}
 
@@ -382,6 +387,10 @@ public partial class MainWindow : Window
      */
     void OnResize()
     {
+		// Crossroad
+		cRadW = cFullRadW * crossroadImage.Allocation.Width / cFullW;
+		cRadH = cFullRadH * crossroadImage.Allocation.Height / cFullH;
+
 		// Cars and labels
         foreach (RoadID road in roads.Keys)
         {
