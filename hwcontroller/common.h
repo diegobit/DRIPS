@@ -4,9 +4,9 @@
 #include <Arduino.h>
 
 #define DEBUG 1
-#define ADDRESS "1"
-#define MANUFACTURER "ALFARMEO"
-#define MODEL "GIULIA"
+#define ADDRESS "1" // Must be 1 character long.
+#define MANUFACTURER "ALFARMEO" // Must be 8 characters long
+#define MODEL "GIULIA  " // Must be 8 characters long
 
 enum Actions {
     EA_NONE = 0,

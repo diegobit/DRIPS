@@ -128,10 +128,14 @@ State FUN_ST_BEGIN() {
 
     backoff = 0;
 
-    // FIXME This is probably nonsense
-    uint8_t data[] = "C0" ADDRESS;
-    nrf24.send(data, sizeof(data));
-    nrf24.waitPacketSent();
+    // TODO Send KeepAlives
+    // TODO Send CCS
+
+    // TODO What if, instead of trying to send and then hoping nothing collides, we first
+    // listen to the channel to see if someone's talking? Kind of what 802.11 does:
+    // https://en.wikipedia.org/wiki/Received_signal_strength_indication
+    //      Serial.print("RSSI: ");
+    //      Serial.println((uint8_t)rf24.lastRssi(), DEC);
 
     timeMarker = millis();
 
