@@ -44,7 +44,7 @@ public partial class MainWindow : Window
 			if (!stopPropagate) /* FIXME: workaround for an endless number of calls to SizeAllocated
 								(Moving a widget in OnResizeImages() triggers this same event) */
 			{
-				OnResizeImages();
+				OnResize();
 				stopPropagate = true;
 			}
 			else
@@ -377,11 +377,12 @@ public partial class MainWindow : Window
 
 
     /**
-     * Repositions car images and labels
+     * Change size of UI element during a resize operation
      * Method called by the window when a SizeAllocated event occurs
      */
-    void OnResizeImages()
-        {
+    void OnResize()
+    {
+		// Cars and labels
         foreach (RoadID road in roads.Keys)
         {
             Tuple<Image, Label, Image, Image> t = roads[road];
