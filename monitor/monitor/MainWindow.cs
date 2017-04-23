@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using Gtk;
 using monitor;
@@ -389,9 +389,10 @@ public partial class MainWindow : Window
      */
     void OnResize()
     {
-		// Crossroad
-		cRadW = cFullRadW * crossroadImage.Allocation.Width / cFullW;
-		cRadH = cFullRadH * crossroadImage.Allocation.Height / cFullH;
+		// Crossroad image
+		var newSize = scaleSize(cFullRadW, cFullRadH);
+		cRadW = newSize.Item1;
+		cRadH = newSize.Item2;
 		crossroadImage.SizeAllocate(new Gdk.Rectangle(0, 0, Allocation.Width, Allocation.Height));
 		crossroadImage.Pixbuf = crossroadPixbuf.ScaleSimple(Allocation.Width, Allocation.Height, Gdk.InterpType.Nearest);
 
@@ -424,6 +425,15 @@ public partial class MainWindow : Window
 			}
         }
     }
+
+	/**
+	 * Given a value, it scales to the current window size
+	 */
+	Tuple<int, int> scaleSize(int w, int h)
+	{
+		return Tuple.Create(w * crossroadImage.Allocation.Width / cFullW,
+		                    h * crossroadImage.Allocation.Height / cFullH);
+	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
