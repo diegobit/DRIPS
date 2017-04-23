@@ -70,6 +70,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serial.cs" />
     <Compile Include="Road.cs" />
+    <Compile Include="RLayout.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="resources\" />

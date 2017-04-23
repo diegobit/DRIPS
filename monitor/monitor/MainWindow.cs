@@ -27,10 +27,7 @@ public partial class MainWindow : Window
 	const string imageExtension = ".png";
 	string unknownImagePath;
 
-	// True when onResize has already been handled
-    bool stopPropagate;
-
-	Layout container;
+	RLayout container;
 	Image crossroadImage;
 	Gdk.Pixbuf crossroadPixbuf;
     /**
@@ -55,27 +52,12 @@ public partial class MainWindow : Window
 
         roads = new Dictionary<RoadID, Tuple<Image, Label, Image, Image>>();
 
-        container = new Layout(null, null);
+        container = new RLayout(this, null, null);
 		Add(container);
 
 		crossroadImage = Image.LoadFromResource("monitor.resources.crossroad.png");
 		crossroadPixbuf = crossroadImage.Pixbuf;
 		container.Put(crossroadImage, 0, 0);
-
-		// Listen for window resizing events
-		SizeAllocated += delegate
-		{
-			if (!stopPropagate) /* FIXME: workaround for an endless number of calls to SizeAllocated
-								(Moving a widget in OnResizeImages() triggers this same event) */
-			{
-				OnResize();
-				stopPropagate = true;
-			}
-			else
-			{
-				stopPropagate = false;
-			}
-		};
 
 		// Create a textview for each car in the road
 		var roadvalues = (RoadID[])Enum.GetValues(typeof(RoadID));
@@ -205,7 +187,7 @@ public partial class MainWindow : Window
 		Label label = new Label();
 		label.SetSizeRequest(labelW, labelH);
 		label.ModifyBase(StateType.Normal, new Gdk.Color(230, 230, 230));
-		label.ModifyFont(Pango.FontDescription.FromString("Arial 20"));
+		label.ModifyFont(Pango.FontDescription.FromString(fontFamily + " " + fontSize));
 		label.Text = MakeCarLabelText();
 		if (road == RoadID.Left || road == RoadID.Top)
 			label.Justify = Justification.Right;
@@ -233,7 +215,7 @@ public partial class MainWindow : Window
 
     void PlaceCar(Image car, Road road)
 	{
-        Tuple<int, int> pos = ComputeCarPosition(road.Id, car);
+		Tuple<int, int> pos = ComputeCarPosition(road.Id, car, Allocation);
 		car.Pixbuf = car.Pixbuf.RotateSimple((Gdk.PixbufRotation)road.Orientation); //TODO: only allowed 90 degrees step
 
 		Application.Invoke(delegate
@@ -245,7 +227,7 @@ public partial class MainWindow : Window
 
 	void PlaceSignals(Image leftSignal, Image rightSignal, RoadID road)
     {
-		Tuple<int, int, int, int> pos = ComputeSignalPositions(road, leftSignal);
+		Tuple<int, int, int, int> pos = ComputeSignalPositions(road, leftSignal, Allocation);
 		int xl = pos.Item1;
 		int yl = pos.Item2;
 		int xr = pos.Item3;
@@ -259,16 +241,16 @@ public partial class MainWindow : Window
 
 	void PlaceLabel(Label label, RoadID road)
 	{
-		Tuple<int, int> pos = ComputeLabelPosition(road, label);
+		Tuple<int, int> pos = ComputeLabelPosition(road, Allocation);
 		container.Put(label, pos.Item1, pos.Item2);
 	}
 
 
 
-    Tuple<int, int> ComputeCarPosition(RoadID road, Image car)
+	Tuple<int, int> ComputeCarPosition(RoadID road, Image car, Gdk.Rectangle allocation)
     {
-		int crossW = crossroadImage.Allocation.Width;
-		int crossH = crossroadImage.Allocation.Height;
+		int crossW = allocation.Width;
+		int crossH = allocation.Height;
 		int carLong = car.Pixbuf.Height > car.Pixbuf.Width ? car.Pixbuf.Height : car.Pixbuf.Width;
 		int carShort = car.Pixbuf.Height < car.Pixbuf.Width ? car.Pixbuf.Height : car.Pixbuf.Width;
 		int stepToMiddleShortW = (cRadW - carShort) / 2;
@@ -299,27 +281,27 @@ public partial class MainWindow : Window
         return Tuple.Create(x, y);
     }
 
-	Tuple<int, int> ComputeLabelPosition(RoadID road, Label label)
+	Tuple<int, int> ComputeLabelPosition(RoadID road, Gdk.Rectangle allocation)
 	{
 		int x = 0;
 		int y = 0;
 		switch (road)
 		{
 			case (RoadID.Bottom):
-				x = crossroadImage.Allocation.Width / 2 + cRadW;
-				y = crossroadImage.Allocation.Height / 2 + cRadH;
+				x = allocation.Width / 2 + cRadW;
+				y = allocation.Height / 2 + cRadH;
 				break;
 			case (RoadID.Left):
-				x = crossroadImage.Allocation.Width / 2 - cRadW - label.Allocation.Width;
-				y = crossroadImage.Allocation.Height / 2 + cRadH;
+				x = allocation.Width / 2 - cRadW - labelW;
+				y = allocation.Height / 2 + cRadH;
 				break;
 			case (RoadID.Top):
-				x = crossroadImage.Allocation.Width / 2 - cRadW - label.Allocation.Width;
-				y = crossroadImage.Allocation.Height / 2 - cRadH - label.Allocation.Height;
+				x = allocation.Width / 2 - cRadW - labelW;
+				y = allocation.Height / 2 - cRadH - labelH;
 				break;
 			case (RoadID.Right):
-				x = crossroadImage.Allocation.Width / 2 + cRadW;
-				y = crossroadImage.Allocation.Height / 2 - cRadH - label.Allocation.Height;
+				x = allocation.Width / 2 + cRadW;
+				y = allocation.Height / 2 - cRadH - labelH;
 				break;
 		}
 
@@ -330,10 +312,8 @@ public partial class MainWindow : Window
 	 * returns the positions of the signals of the car on `road`.
 	 * Assumptions: image `signal` already rotated; the two signals have the same size
 	 */
-	Tuple<int, int, int, int> ComputeSignalPositions(RoadID road, Image signal)
+	Tuple<int, int, int, int> ComputeSignalPositions(RoadID road, Image signal, Gdk.Rectangle allocation)
     {
-		int crossW = crossroadImage.Allocation.Width;
-		int crossH = crossroadImage.Allocation.Height;
 		int sW = signal.PixbufAnimation.Width;
 		int sH = signal.PixbufAnimation.Height;
 
@@ -344,27 +324,27 @@ public partial class MainWindow : Window
 		switch (road)
 		{
 			case (RoadID.Bottom):
-				xl = crossW / 2;
-				yl = crossH / 2 + cRadH - sH;
+				xl = allocation.Width / 2;
+				yl = allocation.Height / 2 + cRadH - sH;
 				xr = xl + cRadW - sW;
 				yr = yl;
 				break;
 			case (RoadID.Left):
-				xl = crossW / 2 - cRadW;
-				yl = crossH / 2;
+				xl = allocation.Width / 2 - cRadW;
+				yl = allocation.Height / 2;
 				xr = xl;
 				yr = yl + cRadH - sH;
 				break;
 			case (RoadID.Top):
-				xl = crossW / 2 - sW;
+				xl = allocation.Width / 2 - sW;
 				xr = xl - cRadW + sW;
-				yl = crossH / 2 - cRadH;
+				yl = allocation.Height / 2 - cRadH;
 				yr = yl;
 				break;
 			case (RoadID.Right):
-				xl = crossW / 2 + cRadW - sW;
+				xl = allocation.Width / 2 + cRadW - sW;
 				xr = xl;
-				yl = crossH / 2 - sH;
+				yl = allocation.Height / 2 - sH;
 				yr = yl - cRadH + sH;
 				break;
 		}
@@ -404,56 +384,66 @@ public partial class MainWindow : Window
      * Change size of UI element during a resize operation
      * Method called by the window when a SizeAllocated event occurs
      */
-    void OnResize()
+	internal void OnResize(Gdk.Rectangle allocation)
     {
 		// Update sizes
-		cRadW = scaleValue(cFullRadW, true);
-		cRadH = scaleValue(cFullRadH, false);
-		labelW = scaleValue(labelFullW, true);
-		labelH = scaleValue(labelFullH, false);
-		fontSize = scaleValue(fontFullSize, false);
+		cRadW = scaleValue(cFullRadW, allocation, true);
+		cRadH = scaleValue(cFullRadH, allocation, false);
+		labelW = scaleValue(labelFullW, allocation, true);
+		labelH = scaleValue(labelFullH, allocation, false);
+		fontSize = scaleValue(fontFullSize, allocation, false);
+		var newFontDesc = Pango.FontDescription.FromString(fontFamily + " " + fontSize);
 
 		// Crossroad
-		crossroadImage.SizeAllocate(new Gdk.Rectangle(0, 0, Allocation.Width, Allocation.Height));
-		crossroadImage.Pixbuf = crossroadPixbuf.ScaleSimple(Allocation.Width, Allocation.Height, Gdk.InterpType.Nearest);
+		if (crossroadImage != null)
+		{
+			crossroadImage.SizeAllocate(allocation);
+			crossroadImage.Pixbuf = crossroadPixbuf.ScaleSimple(allocation.Width, allocation.Height, Gdk.InterpType.Nearest);
+		}
 
 		// Cars and labels
-        foreach (RoadID road in roads.Keys)
-        {
-            var r = roads[road];
-            Image car = r.Item1;
-            Label label = r.Item2;
-			Image leftSignal = r.Item3;
-			Image rightSignal = r.Item4;
-
-			if (car != null)
+		if (roads != null)
+		{
+			foreach (RoadID road in roads.Keys)
 			{
-				Tuple<int, int> pos = ComputeCarPosition(road, car);
-				container.Move(car, pos.Item1, pos.Item2);
-			}
+				var r = roads[road];
+				Image car = r.Item1;
+				Label label = r.Item2;
+				Image leftSignal = r.Item3;
+				Image rightSignal = r.Item4;
 
-			if (label != null)
-			{
-				Tuple<int, int> pos = ComputeLabelPosition(road, label);
-				container.Move(label, pos.Item1, pos.Item2);
-			}
+				if (car != null)
+				{
+					Tuple<int, int> pos = ComputeCarPosition(road, car, allocation);
+					container.Move(car, pos.Item1, pos.Item2); //TODO SIZE CAR
+				}
 
-			if (leftSignal != null && rightSignal != null)
-			{
-				Tuple<int, int, int, int> pos = ComputeSignalPositions(road, leftSignal);
-				container.Move(leftSignal, pos.Item1, pos.Item2);
-				container.Move(rightSignal, pos.Item3, pos.Item4);
+				if (label != null)
+				{
+					label.SetSizeRequest(labelW, labelH);
+					label.ModifyFont(newFontDesc);
+
+					Tuple<int, int> pos = ComputeLabelPosition(road, allocation);
+					container.Move(label, pos.Item1, pos.Item2);
+				}
+
+				if (leftSignal != null && rightSignal != null)
+				{
+					Tuple<int, int, int, int> pos = ComputeSignalPositions(road, leftSignal, allocation);
+					container.Move(leftSignal, pos.Item1, pos.Item2);
+					container.Move(rightSignal, pos.Item3, pos.Item4);
+				}
 			}
-        }
+		}
     }
 
 	/**
 	 * Given a value, it scales to the current window size
 	 */
-	int scaleValue(int v, bool useWidth)
+	int scaleValue(int v, Gdk.Rectangle allocation, bool useWidth)
 	{
-		return useWidth ? v * crossroadImage.Allocation.Width / cFullW
-					    : v * crossroadImage.Allocation.Height / cFullH;
+		return useWidth ? (int)Math.Round((float)v * allocation.Width / cFullW, 0)
+						: (int)Math.Round((float)v * allocation.Height / cFullH, 0);
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
