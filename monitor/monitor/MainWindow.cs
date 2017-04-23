@@ -420,11 +420,11 @@ public partial class MainWindow : Window
 		// Cars and labels
         foreach (RoadID road in roads.Keys)
         {
-            Tuple<Image, Label, Image, Image> t = roads[road];
-            Image car = t.Item1;
-            Label label = t.Item2;
-			Image leftSignal = t.Item3;
-			Image rightSignal = t.Item4;
+            var r = roads[road];
+            Image car = r.Item1;
+            Label label = r.Item2;
+			Image leftSignal = r.Item3;
+			Image rightSignal = r.Item4;
 
 			if (car != null)
 			{
@@ -450,10 +450,10 @@ public partial class MainWindow : Window
 	/**
 	 * Given a value, it scales to the current window size
 	 */
-	Tuple<int, int> scaleSize(int w, int h)
+	int scaleValue(int v, bool useWidth)
 	{
-		return Tuple.Create(w * crossroadImage.Allocation.Width / cFullW,
-		                    h * crossroadImage.Allocation.Height / cFullH);
+		return useWidth ? v * crossroadImage.Allocation.Width / cFullW
+					    : v * crossroadImage.Allocation.Height / cFullH;
 	}
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
