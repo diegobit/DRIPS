@@ -21,6 +21,7 @@ public partial class MainWindow : Window
 
 	Layout container;
 	Image crossroadImage;
+	Gdk.Pixbuf crossroadPixbuf;
     /**
      * For each road I keep 4 things:
      * car image, label, left signal, right signal
@@ -41,6 +42,9 @@ public partial class MainWindow : Window
 		Add(container);
 
 		crossroadImage = Image.LoadFromResource("monitor.resources.crossroad.png");
+		crossroadPixbuf = crossroadImage.Pixbuf;
+		cFullW = crossroadPixbuf.Width;
+		cFullH = crossroadPixbuf.Height;
 		container.Put(crossroadImage, 0, 0);
 
 		// Listen for window resizing events
@@ -390,6 +394,8 @@ public partial class MainWindow : Window
 		// Crossroad
 		cRadW = cFullRadW * crossroadImage.Allocation.Width / cFullW;
 		cRadH = cFullRadH * crossroadImage.Allocation.Height / cFullH;
+		crossroadImage.SizeAllocate(new Gdk.Rectangle(0, 0, Allocation.Width, Allocation.Height));
+		crossroadImage.Pixbuf = crossroadPixbuf.ScaleSimple(Allocation.Width, Allocation.Height, Gdk.InterpType.Nearest);
 
 		// Cars and labels
         foreach (RoadID road in roads.Keys)
