@@ -229,7 +229,8 @@ State handleIncomingRequests() {
                     const char sender = buf[2];
                     if (!(isForMe && sender == currentPeer)) {
                         // Send pardoned SCS
-                        uint8_t data[] = MSG_TYPE_SCS " "; // FIXME Must we send the string terminator too?
+                        uint8_t data[2]; // FIXME Must we send the string terminator too?
+                        data[0] = MSG_TYPE_SCS;
                         data[1] = currentPeer;
                         nrf24.send(data, sizeof(data));
                         nrf24.waitPacketSent();
@@ -237,8 +238,9 @@ State handleIncomingRequests() {
                 } else if (state == ST_SAMPLE_L || state == ST_SAMPLE_F || state == ST_SAMPLE_R || state == ST_INTERPRETATE) {
                     if (isForMe) {
                         // Send non-pardoned SCS
-                        uint8_t data[] = MSG_TYPE_SCS "0"; // FIXME Must we send the string terminator too?
-                                                           // FIXME Can we send \0 as the pardoned address?
+                        uint8_t data[2]; // FIXME Must we send the string terminator too?
+                        data[0] = MSG_TYPE_SCS;
+                        data[1] = '0'; // FIXME Can we send \0 as the pardoned address?
                         nrf24.send(data, sizeof(data));
                         nrf24.waitPacketSent();
                     }
