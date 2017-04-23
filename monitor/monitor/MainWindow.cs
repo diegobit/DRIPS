@@ -13,10 +13,21 @@ public partial class MainWindow : Window
 	int cRadW;
 	int cRadH;
 
+	// Label parameters
+	const int labelFullW = 280;
+	const int labelFullH = 120;
+	int labelW;
+	int labelH;
+	const string fontFamily = "Arial";
+	const int fontFullSize = 20;
+	int fontSize;
+
+	// Paths
 	const string resDiv = "_";
 	const string imageExtension = ".png";
 	string unknownImagePath;
 
+	// True when onResize has already been handled
     bool stopPropagate;
 
 	Layout container;
@@ -33,6 +44,12 @@ public partial class MainWindow : Window
 	public MainWindow() : base(WindowType.Toplevel)
 	{
 		Build();
+
+		cRadW = cFullRadW;
+		cRadH = cFullRadH;
+		labelW = labelFullW;
+		labelH = labelFullH;
+		fontSize = fontFullSize;
 
 		unknownImagePath = "monitor.resources.car" + resDiv + "Unknown" + resDiv + "Unknown" + imageExtension;
 
@@ -186,7 +203,7 @@ public partial class MainWindow : Window
 	Label LoadLabel(RoadID road)
 	{
 		Label label = new Label();
-		label.SetSizeRequest(280, 120);
+		label.SetSizeRequest(labelW, labelH);
 		label.ModifyBase(StateType.Normal, new Gdk.Color(230, 230, 230));
 		label.ModifyFont(Pango.FontDescription.FromString("Arial 20"));
 		label.Text = MakeCarLabelText();
