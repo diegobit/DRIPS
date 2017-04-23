@@ -6,15 +6,15 @@ using monitor;
 public partial class MainWindow : Window
 {
 	// Crossroad parameters
-	int cFullW;
-	int cFullH;
-	int cFullRadW = 152; // The width of half of the square at the center of the road
-	int cFullRadH = 150;
+	const int cFullW = 1366;
+	const int cFullH = 768;
+	const int cFullRadW = 152; // The width of half of the square at the center of the road
+	const int cFullRadH = 150;
 	int cRadW;
 	int cRadH;
 
-	string resDiv = "_";
-	string imageExtension = ".png";
+	const string resDiv = "_";
+	const string imageExtension = ".png";
 	string unknownImagePath;
 
     bool stopPropagate;
@@ -43,8 +43,6 @@ public partial class MainWindow : Window
 
 		crossroadImage = Image.LoadFromResource("monitor.resources.crossroad.png");
 		crossroadPixbuf = crossroadImage.Pixbuf;
-		cFullW = crossroadPixbuf.Width;
-		cFullH = crossroadPixbuf.Height;
 		container.Put(crossroadImage, 0, 0);
 
 		// Listen for window resizing events
