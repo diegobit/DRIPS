@@ -22,14 +22,16 @@ namespace monitor
 		Right = 'R'
 	}
 
-	public enum Priority
+	public enum ReqAction
 	{
 		None = '0',
-		Normal = 'N',
-		High = 'Y'
+		Left = 'L',
+		Straight = 'A',
+		Right = 'R',
+		Priority = 'P'
 	}
 
-	public enum Action
+		public enum CurrAction
 	{
 		None = '0',
 		Still = 'S',
@@ -61,7 +63,7 @@ namespace monitor
 		}
 
 		public void UpdateRoad(RoadID roadID, int orientation, string manufacturer, string model,
-							   Priority priority, Action requestedAction, Action currentAction)
+							   ReqAction requestedAction, CurrAction currentAction)
 		{
             if (!crossroad.TryGetValue(roadID, out Road r))
             {
@@ -71,7 +73,6 @@ namespace monitor
             r.Orientation = orientation;
 			r.Manufacturer = manufacturer;
 			r.Model = model;
-			r.Priority = priority;
 			r.RequestedAction = requestedAction;
 			r.CurrentAction = currentAction;
 

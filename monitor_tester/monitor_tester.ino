@@ -38,7 +38,7 @@ void sendPartialInfoMessage(char roadId, uint16_t orientation) {
  * Manufacturer and model should be already padded
  */
 void sendInfoMessage(char roadId, String manufacturer, String model,
-                     uint16_t orientation, char priority, char requestedAction, char currentAction) {
+                     uint16_t orientation, char requestedAction, char currentAction) {
 
   Serial.print('I');
   Serial.print(roadId);
@@ -47,7 +47,6 @@ void sendInfoMessage(char roadId, String manufacturer, String model,
   if (orientation < 10) Serial.print(F("  "));
   else if (orientation < 100) Serial.write(' ');
   Serial.print(orientation);
-  Serial.print(priority);
   Serial.print(requestedAction);
   Serial.print(currentAction);
   Serial.print('\n');
@@ -87,7 +86,7 @@ void generalTest() {
   /**********
    * The car just arrived, it thinks it is alone (its sensors see nothing)
    **********/
-  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'L', 'S');
 
   for (uint16_t i = 0; i < FFT_N / 2; i++) {
     bins1[i] = i + random(21);
@@ -100,7 +99,7 @@ void generalTest() {
   /**********
    * The car sees 3 other cars, it has not joined the network
    **********/
-  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'L', 'S');
   sendPartialInfoMessage('L', 270);
   sendPartialInfoMessage('F', 180);
   sendPartialInfoMessage('R', 90);
@@ -123,18 +122,18 @@ void generalTest() {
   /**********
    * The car sees 2 other cars
    **********/
-  sendInfoMessage('M', "Vlkswagn", "Beetle  ",   0, 'N', 'L', 'S');
-  sendInfoMessage('L', "Police  ", "Police  ", 270, 'N', 'A', 'S');
-  sendInfoMessage('R', "Tesla   ", "Model S ",  90, 'N', 'L', 'L');
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ",   0, 'L', 'S');
+  sendInfoMessage('L', "Police  ", "Police  ", 270, 'A', 'S');
+  sendInfoMessage('R', "Tesla   ", "Model S ",  90, 'L', 'L');
 
   delay(2000);
 
   /**********
    * The car sees 2 other cars. The police car wants priority
    **********/
-  sendInfoMessage('M', "Vlkswagn", "Beetle  ",  0, 'N', 'L', 'S');
-  sendInfoMessage('L', "Police  ", "Police  ", 270, 'Y', 'A', 'S');
-  sendInfoMessage('R', "Tesla   ", "Model S ", 180, 'N', 'L', 'L');
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ",  0, 'L', 'S');
+  sendInfoMessage('L', "Police  ", "Police  ", 270, 'P', 'S');
+  sendInfoMessage('R', "Tesla   ", "Model S ", 180, 'L', 'L');
 
   delay (2000);
 }
@@ -146,11 +145,11 @@ void generalTest() {
 void infoMessageTest() {
   delay(3000);
 
-  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'L', 'S');
 
   delay(3000);
 
-  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'N', 'L', 'S');
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, L', 'S');
 
   delay(3000);
 
@@ -158,19 +157,19 @@ void infoMessageTest() {
 
   delay(3000);
 
-  sendInfoMessage('R', "Tesla   ", "Model S ", 90, 'N', 'L', 'L');
+  sendInfoMessage('R', "Tesla   ", "Model S ", 90, L', 'L');
 
   delay(3000);
 
-  sendInfoMessage('L', "Police  ", "Police  ",  270, 'N', 'A', 'S');
+  sendInfoMessage('L', "Police  ", "Police  ",  270, 'A', 'S');
 
   delay (3000);
 
-  sendInfoMessage('L', "Police  ", "Police  ",  270, 'Y', 'A', 'S');
+  sendInfoMessage('L', "Police  ", "Police  ",  270, 'P', 'S');
 
   delay (3000);
 
-  sendInfoMessage('T', "Tesla   ", "Model S ",  0, 'N', 'S', 'S');
+  sendInfoMessage('T', "Tesla   ", "Model S ",  0, 'S', 'S');
 }
 
 

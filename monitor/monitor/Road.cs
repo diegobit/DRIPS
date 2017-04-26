@@ -7,9 +7,8 @@
 		public string Manufacturer { get; set; } = "";
 		public string Model { get; set; } = "";
 		public int Orientation { get; set; } = -1;
-		public Priority Priority { get; set; } = Priority.None;
-		public Action RequestedAction { get; set; } = Action.None;
-		public Action CurrentAction { get; set; } = Action.None;
+		public ReqAction RequestedAction { get; set; } = ReqAction.None;
+		public CurrAction CurrentAction { get; set; } = CurrAction.None;
 
 
 
@@ -26,7 +25,7 @@
 		public bool IsEmpty()
 		{
 			return Manufacturer == "" & Model == "" && Orientation == -1 &&
-                Priority == Priority.None && CurrentAction == Action.None && RequestedAction == Action.None;
+                CurrentAction == CurrAction.None && RequestedAction == ReqAction.None;
 		}
 
 		/*
@@ -35,7 +34,7 @@
 		public bool IsPartial()
 		{
 			return Manufacturer == "" && Model == "" && Orientation != -1 &&
-                Priority == Priority.None && CurrentAction == Action.None && RequestedAction == Action.None;
+                CurrentAction == CurrAction.None && RequestedAction == ReqAction.None;
 		}
 
 		/*
@@ -44,7 +43,7 @@
 		public bool IsComplete()
 		{
 			return Manufacturer != "" && Model != "" && Orientation != -1 &&
-                Priority != Priority.None && CurrentAction != Action.None && RequestedAction != Action.None;
+                CurrentAction != CurrAction.None && RequestedAction != ReqAction.None;
 		}
 
 
@@ -54,7 +53,6 @@
 			Manufacturer = null;
 			Model = null;
 			Orientation = -1;
-			Priority = 0;
 			CurrentAction = 0;
 			RequestedAction = 0;
 		}

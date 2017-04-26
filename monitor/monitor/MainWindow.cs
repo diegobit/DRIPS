@@ -119,21 +119,22 @@ public partial class MainWindow : Window
 		Image rightSignal = car.Item4;
 		leftSignal.Hide(); // Done to synchronize the GIF playback of the two signals
 		rightSignal.Hide();
-		if (road.Priority == Priority.High)
+		if (road.RequestedAction == ReqAction.Priority)
 		{
 			leftSignal.Show();
 			rightSignal.Show();
 		}
-		else if (road.RequestedAction == monitor.Action.Left)
+		else if (road.RequestedAction == ReqAction.Left)
 		{
 			leftSignal.Show();
 			rightSignal.Hide();
 		}
-		else if (road.RequestedAction == monitor.Action.Right)
+		else if (road.RequestedAction == ReqAction.Right)
 		{
 			leftSignal.Hide();
 			rightSignal.Show();
 		}
+		// ReqAction.Straight already handled
 	}
 
 
@@ -362,8 +363,7 @@ public partial class MainWindow : Window
             return road.Manufacturer + " " + road.Model + "\n" +
                    "\n" +
                    "Requested action: " + road.RequestedAction + "\n" +
-                   "Current action: " + road.CurrentAction + "\n" +
-                   "Priority: " + road.Priority + "\n";
+                   "Current action: " + road.CurrentAction + "\n";
 
         // else
         Console.WriteLine("ERROR: road in wrong state:");

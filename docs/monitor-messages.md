@@ -26,7 +26,7 @@ This is the format which is used by all the messages.
 
 ## INFO-MESSAGE
 
-Size: 25 Bytes
+Size: 24 Bytes
 TABBBBBBBBCCCCCCCCDDDEFG\n
 
 |   |  FIELD NAME       | DIM |
@@ -36,7 +36,6 @@ TABBBBBBBBCCCCCCCCDDDEFG\n
 | B |  Manufacturer     | 8B  |
 | C |  Model            | 8B  |
 | D |  Orientation      | 3B  |
-| E |  Priority         | 1B  |
 | F |  RequestedAction  | 1B  | // The action the car wants to do
 | G |  CurrentAction    | 1B  | // The action the car is doing to cooperate with the network
 
@@ -64,9 +63,14 @@ TABBBBBBBBCCCCCCCCDDDEFG\n
                     N           regular car
                     Y           priority car (ambulance, police)
 
- RequestedAction,
+ RequestedAction,   0           None (sent when unknown)
+                    L           turn left
+                    A           go straight ahead
+                    R           turn right
+                    P           the car needs to have priority over other cars
+                    
  CurrentAction:     0           None (sent when unknown)
-                    S           Stay still
+                    S           stay still
                     L           turn left
                     A           go straight ahead
                     R           turn right
