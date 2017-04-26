@@ -73,6 +73,7 @@ State FUN_ST_BLINK();
 State FUN_ST_INTERPRETATE();
 State handleIncomingRequests();
 State stateJmp(State s);
+void sendKeepAlive();
 
 
 // ==== VARIABLES ==== //
@@ -80,6 +81,7 @@ State stateJmp(State s);
 // Singleton instance of the radio driver
 RH_NRF24 nrf24(10, 9); // CE, CS
 extern uint8_t requestedAction; // Actual action advertised by the car
+extern uint8_t currentAction; // The action agreed with the network
 Vehicle vehicles[3];
 /**
  * This variable indicates the time at which the previous state ended.
@@ -128,7 +130,7 @@ State FUN_ST_BEGIN() {
 
     backoff = 0;
 
-    // TODO Send KeepAlives
+    sendKeepAlive();
     // TODO Send CCS
 
     // TODO What if, instead of trying to send and then hoping nothing collides, we first
@@ -283,4 +285,17 @@ State stateJmp(State s) {
             Serial.println(F("UNHANDLED STATE JMP"));
             return ST_CURRENT;
     }
+}
+
+void sendKeepAlive() {
+    uint8_t data[20];
+    data[0] = MSG_TYPE_KEEPALIVE; //TODO e se invece tenessimo in ram direttamente l'array?
+    data[1] = ADDRESS;
+    data[2] = requestedAction;
+    data[3] = currentAction;
+    memcpy(&(MANUFACTURER), &data[4], 8);
+    memcpy(&(MODEL), &data[12], 8);
+
+    nrf24.send(data, sizeof(data));
+    nrf24.waitPacketSent();
 }
