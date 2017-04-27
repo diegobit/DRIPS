@@ -149,7 +149,7 @@ void infoMessageTest() {
 
   delay(3000);
 
-  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, L', 'S');
+  sendInfoMessage('M', "Vlkswagn", "Beetle  ", 0, 'L', 'S');
 
   delay(3000);
 
@@ -157,7 +157,7 @@ void infoMessageTest() {
 
   delay(3000);
 
-  sendInfoMessage('R', "Tesla   ", "Model S ", 90, L', 'L');
+  sendInfoMessage('R', "Tesla   ", "Model S ", 90, 'L', 'L');
 
   delay(3000);
 

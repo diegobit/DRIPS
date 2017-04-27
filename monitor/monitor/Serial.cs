@@ -175,11 +175,11 @@ namespace monitor
 
 					string manufacturer = msg.Substring(2, 8).Trim();
 					string model = msg.Substring(10, 8).Trim();
-					Action requestedAction = (ReqAction) msg[21];
-					Action currentAction = (CurrAction) msg[22];
+					ReqAction requestedAction = (ReqAction) msg[21];
+					CurrAction currentAction = (CurrAction) msg[22];
 
-					if (Enum.IsDefined(typeof(Action), requestedAction) ||
-                        Enum.IsDefined(typeof(Action), currentAction))
+					if (Enum.IsDefined(typeof(ReqAction), requestedAction) ||
+                        Enum.IsDefined(typeof(CurrAction), currentAction))
 					{
 						monitor.UpdateRoad(roadID, orientation, manufacturer, model,
 						                   requestedAction, currentAction);
