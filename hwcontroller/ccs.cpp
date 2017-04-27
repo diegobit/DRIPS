@@ -20,8 +20,8 @@
  */
 const uint16_t TIMESPAN_NOOP = 0;
 
-/** Interval at which we send KeepAlive messages */
-const unsigned long TIME_KEEPALIVE = 0;
+/** Time to wait from keepAliveTimeMarker before sending another keepAlive */
+const unsigned long TIMESPAN_KEEPALIVE = 0;
 
 /** Time after which vehicles in the vehicle cache expire */
 const uint16_t VEHICLE_CACHE_TTL = 0;
@@ -92,6 +92,7 @@ Vehicle vehicles[3];
  * it for ST_BEGIN when resetting the procedure.
  */
 unsigned long timeMarker = 0; // TODO REDUCE ACCURACY TO SAVE SPACE
+unsigned long keepAliveTimeMarker = 0; // TODO: to define
 bool advertiseCCS = false;
 uint16_t backoff = 0;
 char currentPeer = '\0'; // TODO Remember to assign it where needed!
@@ -130,7 +131,10 @@ State FUN_ST_BEGIN() {
 
     backoff = 0;
 
-    sendKeepAlive();
+    if (millis() < keepAliveTimeMarker + TIMESPAN_KEEPALIVE) {
+        sendKeepAlive();
+    }
+
     // TODO Send CCS
 
     // TODO What if, instead of trying to send and then hoping nothing collides, we first
