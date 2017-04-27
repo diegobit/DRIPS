@@ -93,7 +93,7 @@ Vehicle vehicles[3];
  * it for ST_BEGIN when resetting the procedure.
  */
 unsigned long timeMarker = 0; // TODO REDUCE ACCURACY TO SAVE SPACE
-unsigned long keepAliveTimeMarker = 0; // TODO: to define
+unsigned long keepAliveTimeMarker = 0;
 bool advertiseCCS = false;
 uint16_t backoff = 0;
 char currentPeer = '\0'; // TODO Remember to assign it where needed!
@@ -132,9 +132,7 @@ State FUN_ST_BEGIN() {
 
     backoff = 0;
 
-    if (millis() < keepAliveTimeMarker + TIMESPAN_KEEPALIVE) {
-        sendKeepAlive();
-    }
+    sendKeepAlive();
 
     // TODO Send CCS
 
@@ -293,16 +291,20 @@ State stateJmp(State s) {
 }
 
 void sendKeepAlive() {
-    uint8_t data[20];
-    data[0] = MSG_TYPE_KEEPALIVE; //TODO e se invece tenessimo in ram direttamente l'array?
-    data[1] = ADDRESS;
-    data[2] = requestedAction;
-    data[3] = currentAction;
-    memcpy(&(MANUFACTURER), &data[4], 8);
-    memcpy(&(MODEL), &data[12], 8);
+    if (keepAliveTimeMarker + TIMESPAN_KEEPALIVE <= millis()) {
+        uint8_t data[20];
+        data[0] = MSG_TYPE_KEEPALIVE; // TODO e se invece tenessimo in ram direttamente l'array?
+        data[1] = ADDRESS;
+        data[2] = requestedAction;
+        data[3] = currentAction;
+        memcpy(&(MANUFACTURER), &data[4], 8);
+        memcpy(&(MODEL), &data[12], 8);
 
-    nrf24.send(data, sizeof(data));
-    nrf24.waitPacketSent();
+        nrf24.send(data, sizeof(data));
+        nrf24.waitPacketSent();
+
+        keepAliveTimeMarker = millis();
+    }
 }
 
 /**
