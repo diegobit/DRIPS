@@ -74,6 +74,7 @@ State FUN_ST_INTERPRETATE();
 State handleIncomingRequests();
 State stateJmp(State s);
 void sendKeepAlive();
+bool isChannelFree();
 
 
 // ==== VARIABLES ==== //
@@ -302,4 +303,11 @@ void sendKeepAlive() {
 
     nrf24.send(data, sizeof(data));
     nrf24.waitPacketSent();
+}
+
+/**
+ * @return  true if no transmissions are heard on the channel
+ */
+bool isChannelFree() {
+    // TODO implement
 }
