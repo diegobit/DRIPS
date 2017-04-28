@@ -79,8 +79,6 @@ inline bool isExpired(const Vehicle *vehicle);
 
 // Singleton instance of the radio driver
 RH_NRF24 nrf24(10, 9); // CE, CS
-extern uint8_t requestedAction; // Actual action advertised by the car
-extern uint8_t currentAction; // The action agreed with the network
 Vehicle vehicles[3]; // The vehicles cache with info received from the network
 /**
  * This variable indicates the time at which the previous state ended.
