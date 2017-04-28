@@ -50,7 +50,7 @@ typedef enum State {
     ST_SAMPLE_R,
     ST_INTERPRETATE,
 
-    // The state returned by handleIncomingRequests() when no state change should occur.
+    // The state returned by handlePeriodicActions() when no state change should occur.
     // Never return this from a state handler.
     ST_CURRENT
 } State;
@@ -71,7 +71,7 @@ State FUN_ST_BEGIN();
 State FUN_ST_WAIT_TO_BLINK();
 State FUN_ST_BLINK();
 State FUN_ST_INTERPRETATE();
-State handleIncomingRequests();
+State handlePeriodicActions();
 State stateJmp(State s);
 void sendKeepAlive();
 bool isChannelFree();
@@ -89,7 +89,7 @@ Vehicle vehicles[3];
  * In case of ST_BEGIN, it indicates the time at which the previous
  * protocol execution ended.
  *
- * Note that handleIncomingRequests() can updates the value too, in order to prepare
+ * Note that handlePeriodicActions() can updates the value too, in order to prepare
  * it for ST_BEGIN when resetting the procedure.
  */
 unsigned long timeMarker = 0; // TODO REDUCE ACCURACY TO SAVE SPACE
@@ -120,7 +120,7 @@ void handleCCS() {
 }
 
 State FUN_ST_BEGIN() {
-    State r = handleIncomingRequests();
+    State r = handlePeriodicActions();
     if (r != ST_CURRENT) {
         return r;
     }
@@ -131,8 +131,6 @@ State FUN_ST_BEGIN() {
     }
 
     backoff = 0;
-
-    sendKeepAlive();
 
     // TODO Send CCS
 
@@ -148,6 +146,11 @@ State FUN_ST_BEGIN() {
 }
 
 State FUN_ST_WAIT_TO_BLINK() {
+    State r = handlePeriodicActions();
+    if (r != ST_CURRENT) {
+        return r;
+    }
+
     if (millis() < timeMarker + TIMESPAN_X) {
         return ST_WAIT_TO_BLINK;
     }
@@ -159,6 +162,11 @@ State FUN_ST_WAIT_TO_BLINK() {
 }
 
 State FUN_ST_BLINK() {
+    State r = handlePeriodicActions();
+    if (r != ST_CURRENT) {
+        return r;
+    }
+
     if (millis() < timeMarker + TIMESPAN_X) {
         return ST_BLINK;
     }
@@ -169,6 +177,11 @@ State FUN_ST_BLINK() {
 }
 
 State FUN_ST_INTERPRETATE() {
+    State r = handlePeriodicActions();
+    if (r != ST_CURRENT) {
+        return r;
+    }
+
     timeMarker = millis();
     return ST_BEGIN;
 }
@@ -177,7 +190,7 @@ State FUN_ST_INTERPRETATE() {
  * @return  if different than ST_CURRENT, indicates the state that the caller
  *          should immediately return.
  */
-State handleIncomingRequests() {
+State handlePeriodicActions() {
     if (keepAliveTimeMarker + TIMESPAN_KEEPALIVE <= millis()) {
         sendKeepAlive();
         keepAliveTimeMarker = millis();
