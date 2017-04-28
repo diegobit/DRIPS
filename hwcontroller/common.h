@@ -17,8 +17,6 @@
 #define FHT_N 128 // Numero samples
 #define WINDOW 0
 #define LIN_OUT 1
-//extern int fht_input[(FHT_N)];
-//extern inline void fht_reorder(void);
 
 /**
  * Sampling period, in microseconds.
