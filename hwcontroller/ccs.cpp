@@ -72,6 +72,7 @@ State handlePeriodicActions();
 void sendKeepAlive();
 void sendCCS();
 bool isChannelFree();
+inline bool isExpired(const Vehicle *vehicle);
 
 
 // ==== VARIABLES ==== //
@@ -319,13 +320,13 @@ void sendCCS() {
 
     // Find an unexpired vehicle to send the CCS using a Round-Robin policy
     for (uint8_t i = 1; i < 3+1; i++) {
-        if (millis() <= vehicles[(i + vehicleId) % 3].receivedTime + VEHICLE_CACHE_TTL) {
+        if (!isExpired(&vehicles[(i + vehicleId) % 3])) {
             vehicleId = (i + vehicleId) % 3;
             break;
         }
     }
 
-    if (millis() <= vehicles[vehicleId].receivedTime + VEHICLE_CACHE_TTL) {
+    if (!isExpired(&vehicles[vehicleId])) {
         // The cache is not expired, which means an actual vehicle has been found
         uint8_t data[3];
         data[0] = MSG_TYPE_CCS;
@@ -335,6 +336,10 @@ void sendCCS() {
         nrf24.send(data, sizeof(data));
         nrf24.waitPacketSent();
     }
+}
+
+bool isExpired(const Vehicle *vehicle) {
+    return vehicle->receivedTime + VEHICLE_CACHE_TTL < millis();
 }
 
 /**
