@@ -124,7 +124,6 @@ void handleCCS() {
             state = FUN_ST_INTERPRETATE();
         default:
             Serial.println(F("INVALID STATE"));
-            return ST_CURRENT;
     }
 }
 
@@ -305,11 +304,11 @@ State handlePeriodicActions() {
 void sendKeepAlive() {
     uint8_t data[20];
     data[0] = MSG_TYPE_KEEPALIVE; // TODO e se invece tenessimo in ram direttamente l'array?
-    data[1] = ADDRESS;
+    data[1] = ADDRESS[0];
     data[2] = requestedAction;
     data[3] = currentAction;
-    memcpy(&(MANUFACTURER), &data[4], 8);
-    memcpy(&(MODEL), &data[12], 8);
+    memcpy(&data[4], &(MANUFACTURER),  8);
+    memcpy(&data[12], &(MODEL), 8);
 
     nrf24.send(data, sizeof(data));
     nrf24.waitPacketSent();
@@ -330,7 +329,7 @@ void sendCCS() {
         // The cache is not expired, which means an actual vehicle has been found
         uint8_t data[3];
         data[0] = MSG_TYPE_CCS;
-        data[1] = ADDRESS;
+        data[1] = ADDRESS[0];
         data[2] = vehicles[vehicleId].address;
 
         nrf24.send(data, sizeof(data));
@@ -343,4 +342,5 @@ void sendCCS() {
  */
 bool isChannelFree() {
     // TODO implement
+    return true;
 }
