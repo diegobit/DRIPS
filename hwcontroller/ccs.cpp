@@ -330,7 +330,7 @@ void sendCCS() {
         uint8_t data[3];
         data[0] = MSG_TYPE_CCS;
         data[1] = ADDRESS;
-        data[2] = vehicles[id].address;
+        data[2] = vehicles[vehicleId].address;
 
         nrf24.send(data, sizeof(data));
         nrf24.waitPacketSent();
