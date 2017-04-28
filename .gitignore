@@ -3,6 +3,7 @@
 
 ## Visual Paradigm
 *.vpp.bak_*
+*.vpp.lck
 
 ## VsCode
 .vscode
