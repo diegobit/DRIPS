@@ -23,6 +23,9 @@ const uint16_t TIMESPAN_NOOP = 0;
 /** Time to wait from keepAliveTimeMarker before sending another keepAlive */
 const unsigned long TIMESPAN_KEEPALIVE = 0;
 
+/** Maximum backoff time for the KeepAlive */
+const uint16_t TIMESPAN_KEEPALIVE_BACKOFF = 0;
+
 /** Time after which vehicles in the vehicle cache expire */
 const uint16_t VEHICLE_CACHE_TTL = 0;
 
@@ -90,7 +93,7 @@ Vehicle vehicles[3]; // The vehicles cache with info received from the network
 unsigned long timeMarker = 0; // TODO REDUCE ACCURACY TO SAVE SPACE
 unsigned long keepAliveTimeMarker = 0;
 bool advertiseCCS = false;
-uint16_t backoff = 0;
+uint16_t backoff = 0; // 0 means no backoff (*not* a zero-length backoff)
 char currentPeer = '\0'; // TODO Remember to assign it where needed!
 State state = ST_BEGIN;
 
@@ -203,7 +206,7 @@ State FUN_ST_INTERPRETATE() {
 State handlePeriodicActions() {
     if (keepAliveTimeMarker + TIMESPAN_KEEPALIVE <= millis()) {
         sendKeepAlive();
-        keepAliveTimeMarker = millis();
+        keepAliveTimeMarker = millis() + random(0, TIMESPAN_KEEPALIVE_BACKOFF);
     }
 
     if (nrf24.available())
