@@ -29,10 +29,7 @@ const uint16_t VEHICLE_CACHE_TTL = 0;
 /** Duration of the wait after sending a CCS, and duration of the blinking of the LEDs. */
 const uint16_t TIMESPAN_X = 0;
 
-/** Value for the lower end of the random backoff interval (ms). Must be strictly > 0. */
-const uint16_t TIMESPAN_Y = 0;
-
-/** Value for the upper end of the random backoff interval (ms). Must be strictly > TIMESPAN_Y. */
+/** Value for the max length of the random backoff interval (ms). */
 const uint16_t TIMESPAN_Z = 0;
 
 /** CCS led frequency */
@@ -257,7 +254,7 @@ State handlePeriodicActions() {
                         timeMarker = millis();
                         return ST_WAIT_TO_BLINK;
                     } else {
-                        backoff = random(TIMESPAN_Y, TIMESPAN_Z);
+                        backoff = random(1, TIMESPAN_Z);
                         timeMarker = millis();
                         return ST_BEGIN;
                     }
@@ -289,7 +286,7 @@ State handlePeriodicActions() {
                     advertiseCCS = false;
 
                     // Choose backoff
-                    backoff = random(TIMESPAN_Y, TIMESPAN_Z);
+                    backoff = random(1, TIMESPAN_Z);
                     timeMarker = millis();
 
                     // Instruct to go back to begin
