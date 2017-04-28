@@ -74,6 +74,7 @@ State FUN_ST_INTERPRETATE();
 State handlePeriodicActions();
 State stateJmp(State s);
 void sendKeepAlive();
+void sendCCS();
 bool isChannelFree();
 
 
@@ -83,7 +84,7 @@ bool isChannelFree();
 RH_NRF24 nrf24(10, 9); // CE, CS
 extern uint8_t requestedAction; // Actual action advertised by the car
 extern uint8_t currentAction; // The action agreed with the network
-Vehicle vehicles[3];
+Vehicle vehicles[3]; // The vehicles cache with info received from the network
 /**
  * This variable indicates the time at which the previous state ended.
  * In case of ST_BEGIN, it indicates the time at which the previous
@@ -132,7 +133,7 @@ State FUN_ST_BEGIN() {
 
     backoff = 0;
 
-    // TODO Send CCS
+    sendCCS();
 
     // TODO What if, instead of trying to send and then hoping nothing collides, we first
     // listen to the channel to see if someone's talking? Kind of what 802.11 does:
@@ -319,6 +320,29 @@ void sendKeepAlive() {
 
     nrf24.send(data, sizeof(data));
     nrf24.waitPacketSent();
+}
+
+void sendCCS() {
+    static uint8_t vehicleId = 0;
+
+    // Find an unexpired vehicle to send the CCS using a Round-Robin policy
+    for (uint8_t i = 1; i < 3+1; i++) {
+        if (millis() <= vehicles[(i + vehicleId) % 3].receivedTime + VEHICLE_CACHE_TTL) {
+            vehicleId = (i + vehicleId) % 3;
+            break;
+        }
+    }
+
+    if (millis() <= vehicles[vehicleId].receivedTime + VEHICLE_CACHE_TTL) {
+        // The cache is not expired, which means an actual vehicle has been found
+        uint8_t data[3];
+        data[0] = MSG_TYPE_CCS;
+        data[1] = ADDRESS;
+        data[2] = vehicles[id].address;
+
+        nrf24.send(data, sizeof(data));
+        nrf24.waitPacketSent();
+    }
 }
 
 /**
