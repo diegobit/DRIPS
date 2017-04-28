@@ -173,15 +173,42 @@ State FUN_ST_WAIT_TO_BLINK() {
 }
 
 State FUN_ST_BLINK() {
+    static bool sampled = false;
+    const uint16_t expectedFhtTime = 1998 * _us; // TODO Big Comment
+    const uint16_t expectedProcessingTime = 3 * ((uint16_t)SAMPLING_PERIOD * (uint16_t)FHT_N + expectedFhtTime) / 1000; // ms
+
     State r = handlePeriodicActions();
     if (r != ST_CURRENT) {
         return r;
     }
 
     if (millis() < timeMarker + TIMESPAN_X) {
+        /**
+         * Represents the time at which we should start sampling the data.
+         *
+         *   |------------- TIMESPAN_X -----------|
+         *
+         *   [........( sampling and fft )........]      <-- time diagram
+         *
+         *            |--------|
+         *       expectedProcessingTime
+         *
+         * We compute the deadline time as follows:
+         *     timeMarker                       // time at which ST_WAIT_TO_BLINK ended
+         *   + (TIMESPAN_X / 2)                 // we center the start of the sampling within the total blinking period
+         *   - (expectedProcessingTime / 2)     // we shift left so that the whole sampling is centered within the total blinking period
+         */
+        const unsigned long deadline = timeMarker + (TIMESPAN_X / 2) - (expectedProcessingTime / 2);
+
+        if (!sampled && deadline < millis()) {
+            // TODO Sample the fuck out of it
+            sampled = true;
+        }
+
         return ST_BLINK;
     }
 
+    sampled = false;
     advertiseCCS = false;
 
     // TODO do sampling and FFT

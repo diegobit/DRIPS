@@ -1,16 +1,6 @@
 #pragma GCC optimize ("O3")
-#define _us 1
-
 #include "common.h"
 #include "ccs.h"
-
-/**
- * FFT Parameters
- */
-#define LOG_OUT 0
-#define FHT_N 128 // Numero samples
-#define WINDOW 0
-#define LIN_OUT 1
 
 /**
  * Includes
@@ -53,23 +43,6 @@ extern uint8_t requestedAction;
 uint8_t visibleAction = requestedAction;
 
 bool buttonPressed = false;
-
-/**
- * Sampling period, in microseconds.
- * 
- * The sampling frequency must be high enough to be able to read the signal multiple times, and
- * must be low enough to be able to read enough samples to see an entire period of the signal:
- * 
- *  · SAMPLING_FREQ  >=  2 * SIGNAL_MAX_FREQ
- *  · 1/SAMPLING_FREQ * FFT_N  >=  2 * 1/SIGNAL_MIN_FREQ
- *  
- *  In other terms, you must satisfy these two inequalities:
- *  
- *  · SAMPLING_FREQ  >=  2 * SIGNAL_MAX_FREQ
- *  · SAMPLING_FREQ  <=  SIGNAL_MIN_FREQ * FFT_N / 2
- *  
- */
-#define SAMPLING_PERIOD (400*_us)
 
 /**
  * Basic frequency in µs for the timer.
