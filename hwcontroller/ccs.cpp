@@ -72,7 +72,6 @@ State FUN_ST_WAIT_TO_BLINK();
 State FUN_ST_BLINK();
 State FUN_ST_INTERPRETATE();
 State handlePeriodicActions();
-State stateJmp(State s);
 void sendKeepAlive();
 void sendCCS();
 bool isChannelFree();
@@ -117,7 +116,19 @@ void setupCCS() {
  * it can continue the next time it get called.
  */
 void handleCCS() {
-    state = stateJmp(state);
+    switch (state) {
+        case ST_BEGIN:
+            state = FUN_ST_BEGIN();
+        case ST_WAIT_TO_BLINK:
+            state = FUN_ST_WAIT_TO_BLINK();
+        case ST_BLINK:
+            state = FUN_ST_BLINK();
+        case ST_INTERPRETATE:
+            state = FUN_ST_INTERPRETATE();
+        default:
+            Serial.println(F("INVALID STATE"));
+            return ST_CURRENT;
+    }
 }
 
 State FUN_ST_BEGIN() {
@@ -288,25 +299,6 @@ State handlePeriodicActions() {
     }
 
     return ST_CURRENT;
-}
-
-/**
- * Immediately invokes state s, then returns the new state requested by s.
- */
-State stateJmp(State s) {
-    switch (s) {
-        case ST_BEGIN:
-            return FUN_ST_BEGIN();
-        case ST_WAIT_TO_BLINK:
-            return FUN_ST_WAIT_TO_BLINK();
-        case ST_BLINK:
-            return FUN_ST_BLINK();
-        case ST_INTERPRETATE:
-            return FUN_ST_INTERPRETATE();
-        default:
-            Serial.println(F("UNHANDLED STATE JMP"));
-            return ST_CURRENT;
-    }
 }
 
 void sendKeepAlive() {
