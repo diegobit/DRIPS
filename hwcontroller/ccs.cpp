@@ -45,9 +45,6 @@ typedef enum State {
     ST_BEGIN,
     ST_WAIT_TO_BLINK,
     ST_BLINK,
-    ST_SAMPLE_L,
-    ST_SAMPLE_F,
-    ST_SAMPLE_R,
     ST_INTERPRETATE,
 
     // The state returned by handlePeriodicActions() when no state change should occur.
@@ -163,7 +160,9 @@ State FUN_ST_WAIT_TO_BLINK() {
         return r;
     }
 
-    if (millis() < timeMarker + TIMESPAN_X) {
+    if (millis() < timeMarker + TIMESPAN_X) { // TODO improve accuracy by waiting (TIMESPAN_X - half of the
+                                              // time between consecutive received CCSs), only if I'm on
+                                              // the receiver side
         return ST_WAIT_TO_BLINK;
     }
 
@@ -185,7 +184,9 @@ State FUN_ST_BLINK() {
 
     advertiseCCS = false;
 
-    return ST_SAMPLE_L;
+    // TODO do sampling and FFT
+
+    return ST_INTERPRETATE;
 }
 
 State FUN_ST_INTERPRETATE() {
@@ -270,7 +271,7 @@ State handlePeriodicActions() {
                         nrf24.send(data, sizeof(data));
                         nrf24.waitPacketSent();
                     }
-                } else if (state == ST_SAMPLE_L || state == ST_SAMPLE_F || state == ST_SAMPLE_R || state == ST_INTERPRETATE) {
+                } else if (state == ST_INTERPRETATE) {
                     if (isForMe) {
                         // Send non-pardoned SCS
                         uint8_t data[2]; // FIXME Must we send the string terminator too?
