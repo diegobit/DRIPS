@@ -305,6 +305,10 @@ uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, u
     return fht_lin_out;
 }
 
+void interpretateSensorData(uint16_t *left, uint16_t *front, uint16_t *right) {
+    // TODO look for frequencies and build a representation of the crossroad
+}
+
 
 void setup() {
     // set up the ADC
@@ -358,7 +362,7 @@ void loop() {
 
     handleTurnButton();
 
-    // TODO: Interpret the data
+    interpretateSensorData(left, front, right);
     // sendFrequencyMessage('L', left);
     // sendFrequencyMessage('F', front);
     // sendFrequencyMessage('R', right);
