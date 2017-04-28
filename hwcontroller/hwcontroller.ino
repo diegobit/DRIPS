@@ -346,8 +346,6 @@ void loop() {
     static uint16_t front[FHT_N / 2]; // Allocate the space on the stack
     static uint16_t *right;           // Don't allocate space as we'll use this just as a reference to fht_lin_out
 
-    handleTurnButton();
-
     readIrFrequencies(SENSOR_L, 'l', 'L', left);
 
     handleTurnButton();
@@ -366,6 +364,8 @@ void loop() {
     // sendFrequencyMessage('R', right);
 
     handleCCS(/* params will be passed here... */);
+
+    handleTurnButton();
 
     delay(100);
 }
