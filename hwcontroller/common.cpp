@@ -13,5 +13,6 @@ void __assert(bool success, String msg) {
 #endif
 
 uint8_t requestedAction = EA_NONE;
+uint8_t currentAction = EA_NONE;
 
 RoadInfo crossroad[3];

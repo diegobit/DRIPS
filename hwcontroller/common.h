@@ -30,6 +30,11 @@ typedef struct RoadInfo {
 extern uint8_t requestedAction;
 
 /**
+ * The action agreed with the network
+ */
+extern uint8_t currentAction;
+
+/**
  * Current model of the crossroad.
  *
  * Position 0: left road

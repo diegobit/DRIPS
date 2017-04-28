@@ -178,6 +178,11 @@ State FUN_ST_INTERPRETATE() {
  *          should immediately return.
  */
 State handleIncomingRequests() {
+    if (keepAliveTimeMarker + TIMESPAN_KEEPALIVE <= millis()) {
+        sendKeepAlive();
+        keepAliveTimeMarker = millis();
+    }
+
     if (nrf24.available())
     {
         // Should be a message for us now
@@ -291,20 +296,16 @@ State stateJmp(State s) {
 }
 
 void sendKeepAlive() {
-    if (keepAliveTimeMarker + TIMESPAN_KEEPALIVE <= millis()) {
-        uint8_t data[20];
-        data[0] = MSG_TYPE_KEEPALIVE; // TODO e se invece tenessimo in ram direttamente l'array?
-        data[1] = ADDRESS;
-        data[2] = requestedAction;
-        data[3] = currentAction;
-        memcpy(&(MANUFACTURER), &data[4], 8);
-        memcpy(&(MODEL), &data[12], 8);
+    uint8_t data[20];
+    data[0] = MSG_TYPE_KEEPALIVE; // TODO e se invece tenessimo in ram direttamente l'array?
+    data[1] = ADDRESS;
+    data[2] = requestedAction;
+    data[3] = currentAction;
+    memcpy(&(MANUFACTURER), &data[4], 8);
+    memcpy(&(MODEL), &data[12], 8);
 
-        nrf24.send(data, sizeof(data));
-        nrf24.waitPacketSent();
-
-        keepAliveTimeMarker = millis();
-    }
+    nrf24.send(data, sizeof(data));
+    nrf24.waitPacketSent();
 }
 
 /**
