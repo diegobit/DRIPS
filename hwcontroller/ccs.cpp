@@ -93,12 +93,19 @@ unsigned long keepAliveTimeMarker = 0;
 bool advertiseCCS = false;
 uint16_t backoff = 0; // 0 means no backoff (*not* a zero-length backoff)
 char currentPeer = '\0'; // TODO Remember to assign it where needed!
+uint16_t *fhtLeft;
+uint16_t *fhtFront;
+uint16_t *fhtRight;
 State state = ST_BEGIN;
 
 
 // ==== FUNCTION IMPLEMENTATIONS ==== //
 
-void setupCCS() {
+void setupCCS(uint16_t *_fhtLeft, uint16_t *_fhtFront, uint16_t *_fhtRight) {
+    fhtLeft = _fhtLeft;
+    fhtFront = _fhtFront;
+    fhtRight = _fhtRight;
+
     if (!nrf24.init()) {
         Serial.println(F("Radio init failed!"));
     }
@@ -182,24 +189,25 @@ State FUN_ST_BLINK() {
 
     if (millis() < timeMarker + TIMESPAN_X) {
         /**
-         * Represents the time at which we should start sampling the data.
+         * Represents the time at which we should read the sampled (and transformed) data.
          *
          *   |------------- TIMESPAN_X -----------|
          *
          *   [........( sampling and fft )........]      <-- time diagram
          *
-         *            |--------|
-         *       expectedProcessingTime
+         *                      |--------|
+         *              expectedProcessingTime / 2
          *
          * We compute the deadline time as follows:
          *     timeMarker                       // time at which ST_WAIT_TO_BLINK ended
          *   + (TIMESPAN_X / 2)                 // we center the start of the sampling within the total blinking period
-         *   - (expectedProcessingTime / 2)     // we shift left so that the whole sampling is centered within the total blinking period
+         *   + (expectedProcessingTime / 2)     // we shift right so that the whole sampling is centered within the total blinking period
          */
-        const unsigned long deadline = timeMarker + (TIMESPAN_X / 2) - (expectedProcessingTime / 2);
+        const unsigned long deadline = timeMarker + (TIMESPAN_X / 2) + (expectedProcessingTime / 2);
 
         if (!sampled && deadline < millis()) {
-            // TODO Sample the fuck out of it
+            // We already have the FHTs done in fhtLeft, fhtFront, fhtRight.
+            // TODO Extract the frequency that we're interested in, and pass it to ST_INTERPRETATE.
             sampled = true;
         }
 
@@ -208,8 +216,6 @@ State FUN_ST_BLINK() {
 
     sampled = false;
     advertiseCCS = false;
-
-    // TODO do sampling and FFT
 
     return ST_INTERPRETATE;
 }

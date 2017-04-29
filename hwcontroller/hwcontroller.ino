@@ -35,6 +35,11 @@ const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
 const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);
 const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 
+// FHT outputs
+static uint16_t fhtLeft[FHT_N / 2];   // Allocate the space
+static uint16_t fhtFront[FHT_N / 2];  // Allocate the space
+static uint16_t *fhtRight;            // Don't allocate space as we'll use this just as a reference to fht_lin_out
+
 // Action shown by the turn leds (can be different from requestedAction while the
 // user is switching through the actions with the button)
 uint8_t visibleAction = requestedAction;
@@ -293,7 +298,7 @@ void setup() {
 
     randomSeed(analogRead(RND_SEED));
 
-    setupCCS();
+    setupCCS(fhtLeft, fhtFront, fhtRight);
 
     pinMode(SENSOR_L, INPUT);
     pinMode(SENSOR_F, INPUT);
@@ -316,28 +321,23 @@ void setup() {
 }
 
 void loop() {
-    static uint16_t left[FHT_N / 2];  // Allocate the space on the stack
-    static uint16_t front[FHT_N / 2]; // Allocate the space on the stack
-    static uint16_t *right;           // Don't allocate space as we'll use this just as a reference to fht_lin_out
-
-    readIrFrequencies(SENSOR_L, 'l', 'L', left);
+    readIrFrequencies(SENSOR_L, 'l', 'L', fhtLeft);
 
     handleTurnButton();
 
-    readIrFrequencies(SENSOR_F, 'f', 'F', front);
+    readIrFrequencies(SENSOR_F, 'f', 'F', fhtFront);
 
     handleTurnButton();
 
-    right = readIrFrequencies(SENSOR_R, 'r', 'R', NULL);
+    fhtRight = readIrFrequencies(SENSOR_R, 'r', 'R', NULL);
 
     handleTurnButton();
 
-    interpretateSensorData(left, front, right);
-    // sendFrequencyMessage('L', left);
-    // sendFrequencyMessage('F', front);
-    // sendFrequencyMessage('R', right);
+    interpretateSensorData(fhtLeft, fhtFront, fhtRight);
 
-    handleCCS(/* params will be passed here... */);
+    handleTurnButton();
+
+    handleCCS();
 
     handleTurnButton();
 
