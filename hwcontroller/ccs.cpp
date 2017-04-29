@@ -29,7 +29,11 @@ const uint16_t TIMESPAN_KEEPALIVE_BACKOFF = 0;
 /** Time after which vehicles in the vehicle cache expire */
 const uint16_t VEHICLE_CACHE_TTL = 0;
 
-/** Duration of the wait after sending a CCS, and duration of the blinking of the LEDs. */
+/**
+ * Duration of the wait after sending a CCS, and duration of the blinking of the LEDs.
+ * Must be at least twice the duration of a whole main loop iteration, so that we have
+ * enough margin to sample the data in ST_BLINK while the peer is still blinking.
+ */
 const uint16_t TIMESPAN_X = 0;
 
 /** Value for the max length of the random backoff interval (ms). */
