@@ -191,12 +191,12 @@ State FUN_ST_BLINK() {
         /**
          * Represents the time at which we should read the sampled (and transformed) data.
          *
-         *   |------------- TIMESPAN_X -----------|
+         *   |------------ TIMESPAN_X ------------|
          *
          *   [........( sampling and fft )........]      <-- time diagram
-         *
-         *                      |--------|
-         *              expectedProcessingTime / 2
+         *                               ↳ we want to read here
+         *            |------------------|
+         *           expectedProcessingTime
          *
          * We compute the deadline time as follows:
          *     timeMarker                       // time at which ST_WAIT_TO_BLINK ended
