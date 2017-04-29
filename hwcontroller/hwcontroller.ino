@@ -333,11 +333,12 @@ void loop() {
 
     handleTurnButton();
 
-    interpretateSensorData(fhtLeft, fhtFront, fhtRight);
+    // Run right after the FHTs, for better timing
+    handleCCS();
 
     handleTurnButton();
 
-    handleCCS();
+    interpretateSensorData(fhtLeft, fhtFront, fhtRight);
 
     handleTurnButton();
 
