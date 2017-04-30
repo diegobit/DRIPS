@@ -165,7 +165,7 @@ namespace monitor
 
         Type HandleInfoMessage(string msg)
 		{
-			if (msg.Length == 23)
+			if (msg.Length == 24)
 			{
 				RoadID roadID = (RoadID) msg[1];
 
@@ -175,14 +175,16 @@ namespace monitor
 
 					string manufacturer = msg.Substring(2, 8).Trim();
 					string model = msg.Substring(10, 8).Trim();
-					Action requestedAction = (ReqAction) msg[21];
-					Action currentAction = (CurrAction) msg[22];
+					Priority priority = (Priority) msg[21];
+					Action requestedAction = (Action) msg[22];
+					Action currentAction = (Action) msg[23];
 
-					if (Enum.IsDefined(typeof(Action), requestedAction) ||
+					if (Enum.IsDefined(typeof(Priority), priority) ||
+                        Enum.IsDefined(typeof(Action), requestedAction) ||
                         Enum.IsDefined(typeof(Action), currentAction))
 					{
 						monitor.UpdateRoad(roadID, orientation, manufacturer, model,
-						                   requestedAction, currentAction);
+						                   priority, requestedAction, currentAction);
 						return Type.Info;
 					}
 				}

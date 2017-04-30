@@ -66,6 +66,8 @@ del messaggio sia diverso da quello dell'auto corrente, la procedura viene inter
  +                             Model                             +
  |                                                               |
  +---------------------------------------------------------------+
+ |   Priority    |
+ +---------------+
 
  Msg Type = 75 (carattere K)
  Sender Addr = l'indirizzo che identifica l'auto che ha emesso il CCS.
@@ -73,6 +75,7 @@ del messaggio sia diverso da quello dell'auto corrente, la procedura viene inter
  Current Act = l'azione che l'auto sta facendo a seguito della coordinazione con la rete
  Manufacturer = il produttore dell'auto
  Model = il modello dell'auto
+ Priority = (boolean) se l'azione richiesta dall'auto ha priorità su quelle delle altre auto
 
 ### CCS
 
