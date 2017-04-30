@@ -179,7 +179,12 @@ void handleTurnButton() {
     } else {
         // Button is not currently held down
         if (buttonPressed) {
-            requestedAction = visibleAction;
+            if (visibleAction == EA_PRIORITY) {
+                hasPriority = true;
+            } else {
+                requestedAction = visibleAction;
+                hasPriority = false;
+            }
             buttonPressed = false;
         }
     }

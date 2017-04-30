@@ -62,6 +62,11 @@ extern uint8_t requestedAction;
 extern uint8_t currentAction;
 
 /**
+ * Whether the car should be the first to act on the crossroad
+ */
+extern bool hasPriority;
+
+/**
  * Current model of the crossroad.
  *
  * Position 0: left road

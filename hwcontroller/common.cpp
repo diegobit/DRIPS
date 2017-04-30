@@ -14,5 +14,6 @@ void __assert(bool success, String msg) {
 
 uint8_t requestedAction = EA_NONE;
 uint8_t currentAction = EA_NONE;
+bool hasPriority = false;
 
 RoadInfo crossroad[3];
