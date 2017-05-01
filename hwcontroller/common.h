@@ -57,8 +57,6 @@ typedef struct RoadInfo {
     CurrentAction currentAction;
 } RoadInfo;
 
-void initCrossroad();
-
 /**
  * Action advertised by the car
  */

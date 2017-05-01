@@ -16,15 +16,10 @@ RequestedAction requestedAction = ERA_STRAIGHT;
 CurrentAction currentAction = ECA_STRAIGHT;
 bool hasPriority = false;
 
-RoadInfo crossroad[3];
+#define _8_SPACES { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }
 
-void initCrossroad() {
-    for (uint8_t i = 0; i < 3; i++) {
-        memcpy(&(crossroad[i].manufacturer), &("        "), 8);
-        memcpy(&(crossroad[i].model), &("        "), 8);
-        crossroad[i].orientation = 0;
-        crossroad[i].priority = false;
-        crossroad[i].requestedAction = ERA_STRAIGHT;
-        crossroad[i].currentAction = ECA_STRAIGHT;
-    }
-}
+RoadInfo crossroad[3] = {
+    { _8_SPACES, _8_SPACES, 0, false, ERA_STRAIGHT, ECA_STRAIGHT },
+    { _8_SPACES, _8_SPACES, 0, false, ERA_STRAIGHT, ECA_STRAIGHT },
+    { _8_SPACES, _8_SPACES, 0, false, ERA_STRAIGHT, ECA_STRAIGHT }
+};

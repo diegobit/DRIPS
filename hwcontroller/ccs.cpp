@@ -68,7 +68,6 @@ typedef struct Vehicle {
 
 
 // ==== FUNCTION DECLARATIONS ==== //
-void initVehicle();
 State FUN_ST_BEGIN();
 State FUN_ST_WAIT_TO_BLINK();
 State FUN_ST_BLINK();
@@ -84,7 +83,16 @@ inline bool isExpired(const Vehicle *vehicle);
 
 // Singleton instance of the radio driver
 RH_NRF24 nrf24(10, 9); // CE, CS
-Vehicle vehicles[3]; // The vehicles cache with info received from the network
+
+#define _8_SPACES { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }
+
+/** The vehicles cache with info received from the network */
+Vehicle vehicles[3] = {
+    { 0, _8_SPACES, _8_SPACES, false, 0, ERA_STRAIGHT, ECA_STRAIGHT },
+    { 0, _8_SPACES, _8_SPACES, false, 0, ERA_STRAIGHT, ECA_STRAIGHT },
+    { 0, _8_SPACES, _8_SPACES, false, 0, ERA_STRAIGHT, ECA_STRAIGHT }
+};
+
 /**
  * This variable indicates the time at which the previous state ended.
  * In case of ST_BEGIN, it indicates the time at which the previous
@@ -106,25 +114,10 @@ State state = ST_BEGIN;
 
 // ==== FUNCTION IMPLEMENTATIONS ==== //
 
-void initVehicles() {
-    for (uint8_t i = 0; i < 3; i++) {
-        vehicles[i].address = 0;
-        memcpy(&(vehicles[i].manufacturer), &("        "), 8);
-        memcpy(&(vehicles[i].model), &("        "), 8);
-        vehicles[i].priority = false;
-        vehicles[i].receivedTime = 0;
-        vehicles[i].requestedAction = ERA_STRAIGHT; // TODO good initialization?
-        vehicles[i].currentAction = ECA_STRAIGHT;
-    }
-}
-
 void setupCCS(uint16_t *_fhtLeft, uint16_t *_fhtFront, uint16_t *_fhtRight) {
     fhtLeft = _fhtLeft;
     fhtFront = _fhtFront;
     fhtRight = _fhtRight;
-
-    initCrossroad();
-    initVehicles();
 
     if (!nrf24.init()) {
         Serial.println(F("Radio init failed!"));
