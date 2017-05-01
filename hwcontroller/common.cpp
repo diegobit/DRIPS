@@ -12,8 +12,8 @@ void __assert(bool success, String msg) {
 }
 #endif
 
-uint8_t requestedAction = EA_NONE;
-uint8_t currentAction = EA_NONE;
+RequestedAction requestedAction = ERA_STRAIGHT;
+CurrentAction currentAction = ECA_STRAIGHT;
 bool hasPriority = false;
 
 RoadInfo crossroad[3];

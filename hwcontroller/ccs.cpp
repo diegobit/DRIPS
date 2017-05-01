@@ -63,9 +63,9 @@ typedef struct Vehicle {
     char manufacturer[8];
     char model[8];
     bool priority;
-    uint8_t requestedAction;
-    uint8_t currentAction;
     unsigned long receivedTime;
+    RequestedAction requestedAction;
+    CurrentAction currentAction;
 } Vehicle;
 
 

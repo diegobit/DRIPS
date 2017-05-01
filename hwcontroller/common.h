@@ -35,12 +35,18 @@
  */
 #define SAMPLING_PERIOD (400*_us)
 
-enum Actions {
-    EA_NONE = 0,
-    EA_TURN_LEFT = 1,
-    EA_TURN_RIGHT = 2,
-    EA_PRIORITY = 3
-};
+typedef enum RequestedAction {
+    ERA_STRAIGHT = 'A',
+    ERA_TURN_LEFT = 'L',
+    ERA_TURN_RIGHT = 'R'
+} RequestedAction;
+
+typedef enum CurrentAction {
+    ECA_STRAIGHT = 'A',
+    ECA_TURN_LEFT = 'L',
+    ECA_TURN_RIGHT = 'R',
+    ECA_TURN_STILL = 'S',
+} CurrentAction;
 
 typedef struct RoadInfo {
     char manufacturer[8];
@@ -54,12 +60,12 @@ typedef struct RoadInfo {
 /**
  * Action advertised by the car
  */
-extern uint8_t requestedAction;
+extern RequestedAction requestedAction;
 
 /**
  * The action agreed with the network
  */
-extern uint8_t currentAction;
+extern CurrentAction currentAction;
 
 /**
  * Whether the car should be the first to act on the crossroad

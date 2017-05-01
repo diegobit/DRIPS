@@ -35,6 +35,14 @@ const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
 const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);
 const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 
+typedef enum VisibleAction {
+    EVA_STRAIGHT = 0,
+    EVA_TURN_LEFT = 1,
+    EVA_TURN_RIGHT = 2,
+    EVA_PRIORITY = 3
+} VisibleAction;
+
+
 // FHT outputs
 static uint16_t fhtLeft[FHT_N / 2];   // Allocate the space
 static uint16_t fhtFront[FHT_N / 2];  // Allocate the space
@@ -42,7 +50,7 @@ static uint16_t *fhtRight;            // Don't allocate space as we'll use this 
 
 // Action shown by the turn leds (can be different from requestedAction while the
 // user is switching through the actions with the button)
-uint8_t visibleAction = requestedAction;
+VisibleAction visibleAction = EVA_STRAIGHT;
 
 bool buttonPressed = false;
 
@@ -88,13 +96,13 @@ uint16_t LED_TURN_COUNTER = 0;
 
 #define FLASH_TURN_LED(counter, period, pinL, pinR) {\
     if (counter == ((period)/2) - 1) {\
-        if (visibleAction == EA_TURN_LEFT) {\
+        if (visibleAction == EVA_TURN_LEFT) {\
             digitalWrite((pinL), HIGH);\
             digitalWrite((pinR), LOW);\
-        } else if (visibleAction == EA_TURN_RIGHT) {\
+        } else if (visibleAction == EVA_TURN_RIGHT) {\
             digitalWrite((pinL), LOW);\
             digitalWrite((pinR), HIGH);\
-        } else if (visibleAction == EA_PRIORITY) {\
+        } else if (visibleAction == EVA_PRIORITY) {\
             digitalWrite((pinL), HIGH);\
             digitalWrite((pinR), HIGH);\
         } else {\
@@ -103,13 +111,13 @@ uint16_t LED_TURN_COUNTER = 0;
         }\
         counter++;\
     } else if (counter == (period) - 1) {\
-        if (visibleAction == EA_TURN_LEFT) {\
+        if (visibleAction == EVA_TURN_LEFT) {\
             digitalWrite((pinL), LOW);\
             digitalWrite((pinR), LOW);\
-        } else if (visibleAction == EA_TURN_RIGHT) {\
+        } else if (visibleAction == EVA_TURN_RIGHT) {\
             digitalWrite((pinL), LOW);\
             digitalWrite((pinR), LOW);\
-        } else if (visibleAction == EA_PRIORITY) {\
+        } else if (visibleAction == EVA_PRIORITY) {\
             digitalWrite((pinL), LOW);\
             digitalWrite((pinR), LOW);\
         } else {\
@@ -171,19 +179,40 @@ void handleTurnButton() {
         //                              x % 256
         if ((uint8_t)(curMillis - buttonMillis) >= TURN_BUTTON_DELAY) {
             buttonMillis = curMillis;
-            visibleAction++;
-            if (visibleAction > EA_PRIORITY) {
-                visibleAction = EA_NONE;
+            switch (visibleAction) {
+                case EVA_STRAIGHT:
+                    visibleAction = EVA_TURN_LEFT;
+                    break;
+                case EVA_TURN_LEFT:
+                    visibleAction = EVA_TURN_RIGHT;
+                    break;
+                case EVA_TURN_RIGHT:
+                    visibleAction = EVA_PRIORITY;
+                    break;
+                case EVA_PRIORITY:
+                    visibleAction = EVA_STRAIGHT;
+                    break;
             }
         }
     } else {
         // Button is not currently held down
         if (buttonPressed) {
-            if (visibleAction == EA_PRIORITY) {
-                hasPriority = true;
-            } else {
-                requestedAction = visibleAction;
-                hasPriority = false;
+            switch (visibleAction) {
+                case EVA_STRAIGHT:
+                    requestedAction = ERA_STRAIGHT;
+                    hasPriority = false;
+                    break;
+                case EVA_TURN_LEFT:
+                    requestedAction = ERA_TURN_LEFT;
+                    hasPriority = false;
+                    break;
+                case EVA_TURN_RIGHT:
+                    requestedAction = ERA_TURN_RIGHT;
+                    hasPriority = false;
+                    break;
+                case EVA_PRIORITY:
+                    hasPriority = true;
+                    break;
             }
             buttonPressed = false;
         }
