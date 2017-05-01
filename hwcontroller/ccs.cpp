@@ -12,8 +12,6 @@
 #define MSG_TYPE_KEEPALIVE 'K'
 #define MSG_TYPE_CCS 'C'
 #define MSG_TYPE_SCS 'S'
-#define MSG_PRIORITY_YES 'Y'
-#define MSG_PRIORITY_NO 'N'
 
 /**
  * Time to wait between consecutive attempts to send a CCS.
@@ -347,7 +345,7 @@ void sendKeepAlive() {
     data[3] = currentAction;
     memcpy(&data[4], &(MANUFACTURER),  8);
     memcpy(&data[12], &(MODEL), 8);
-    data[20] = hasPriority ? MSG_PRIORITY_YES : MSG_PRIORITY_NO;
+    data[20] = hasPriority;
 
     nrf24.send(data, sizeof(data));
     nrf24.waitPacketSent();
