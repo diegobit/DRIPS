@@ -283,7 +283,7 @@ State handlePeriodicActions() {
                 vehicles[index].currentAction = buf[3];
                 memcpy(&(vehicles[index].manufacturer), &buf[4], 8);
                 memcpy(&(vehicles[index].model), &buf[12], 8);
-                vehicles[index].priority = buf[13];
+                vehicles[index].priority = buf[20];
                 vehicles[index].receivedTime = millis();
 
             } else if (buf[0] == MSG_TYPE_CCS) {
