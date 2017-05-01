@@ -110,8 +110,8 @@ uint16_t LED_TURN_COUNTER = 0;
             digitalWrite((pinL), LOW);\
             digitalWrite((pinR), LOW);\
         } else if (visibleAction == EA_PRIORITY) {\
-            digitalWrite((pinL), HIGH);\
-            digitalWrite((pinR), HIGH);\
+            digitalWrite((pinL), LOW);\
+            digitalWrite((pinR), LOW);\
         } else {\
             digitalWrite((pinL), LOW);\
             digitalWrite((pinR), LOW);\
