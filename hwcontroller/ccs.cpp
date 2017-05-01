@@ -12,6 +12,8 @@
 #define MSG_TYPE_KEEPALIVE 'K'
 #define MSG_TYPE_CCS 'C'
 #define MSG_TYPE_SCS 'S'
+#define MSG_PRIORITY_YES 'Y'
+#define MSG_PRIORITY_NO 'N'
 
 /**
  * Time to wait between consecutive attempts to send a CCS.
@@ -338,13 +340,14 @@ State handlePeriodicActions() {
 }
 
 void sendKeepAlive() {
-    uint8_t data[20];
+    uint8_t data[21];
     data[0] = MSG_TYPE_KEEPALIVE; // TODO e se invece tenessimo in ram direttamente l'array?
     data[1] = ADDRESS[0];
     data[2] = requestedAction;
     data[3] = currentAction;
     memcpy(&data[4], &(MANUFACTURER),  8);
     memcpy(&data[12], &(MODEL), 8);
+    data[20] = hasPriority ? MSG_PRIORITY_YES : MSG_PRIORITY_NO;
 
     nrf24.send(data, sizeof(data));
     nrf24.waitPacketSent();
