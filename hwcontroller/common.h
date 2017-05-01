@@ -53,8 +53,8 @@ typedef struct RoadInfo {
     char model[8];
     uint16_t orientation;
     bool priority;
-    uint8_t requestedAction;
-    uint8_t currentAction;
+    RequestedAction requestedAction;
+    CurrentAction currentAction;
 } RoadInfo;
 
 /**
