@@ -68,6 +68,7 @@ typedef struct Vehicle {
 
 
 // ==== FUNCTION DECLARATIONS ==== //
+void initVehicle();
 State FUN_ST_BEGIN();
 State FUN_ST_WAIT_TO_BLINK();
 State FUN_ST_BLINK();
@@ -105,10 +106,25 @@ State state = ST_BEGIN;
 
 // ==== FUNCTION IMPLEMENTATIONS ==== //
 
+void initVehicles() {
+    for (uint8_t i = 0; i < 3; i++) {
+        vehicles[i].address = 0;
+        memcpy(&(vehicles[i].manufacturer), &("        "), 8);
+        memcpy(&(vehicles[i].model), &("        "), 8);
+        vehicles[i].priority = false;
+        vehicles[i].receivedTime = 0;
+        vehicles[i].requestedAction = ERA_STRAIGHT; // TODO good initialization?
+        vehicles[i].currentAction = ECA_STRAIGHT;
+    }
+}
+
 void setupCCS(uint16_t *_fhtLeft, uint16_t *_fhtFront, uint16_t *_fhtRight) {
     fhtLeft = _fhtLeft;
     fhtFront = _fhtFront;
     fhtRight = _fhtRight;
+
+    initCrossroad();
+    initVehicles();
 
     if (!nrf24.init()) {
         Serial.println(F("Radio init failed!"));
