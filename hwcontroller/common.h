@@ -35,13 +35,13 @@
  */
 #define SAMPLING_PERIOD (400*_us)
 
-typedef enum RequestedAction {
+typedef enum RequestedAction : char {
     ERA_STRAIGHT = 'A',
     ERA_TURN_LEFT = 'L',
     ERA_TURN_RIGHT = 'R'
 } RequestedAction;
 
-typedef enum CurrentAction {
+typedef enum CurrentAction : char {
     ECA_STRAIGHT = 'A',
     ECA_TURN_LEFT = 'L',
     ECA_TURN_RIGHT = 'R',

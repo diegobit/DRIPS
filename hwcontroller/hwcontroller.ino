@@ -35,7 +35,7 @@ const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
 const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);
 const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 
-typedef enum VisibleAction {
+typedef enum VisibleAction : uint8_t {
     EVA_STRAIGHT = 0,
     EVA_TURN_LEFT = 1,
     EVA_TURN_RIGHT = 2,

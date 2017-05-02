@@ -45,7 +45,7 @@ const int CCS_K = 0;
 
 // ==== TYPE DEFINITIONS ==== //
 
-typedef enum State {
+typedef enum State : uint8_t {
     ST_BEGIN,
     ST_WAIT_TO_BLINK,
     ST_BLINK,
