@@ -286,8 +286,8 @@ State handlePeriodicActions() {
 
                 // replace the oldest entry with the new info
                 vehicles[index].address = buf[1];
-                vehicles[index].requestedAction = buf[2];
-                vehicles[index].currentAction = buf[3];
+                vehicles[index].requestedAction = buf[2]; // FIXME Use a static_cast or a function which checks for validity
+                vehicles[index].currentAction = buf[3]; // FIXME Use a static_cast or a function which checks for validity
                 memcpy(&(vehicles[index].manufacturer), &buf[4], 8);
                 memcpy(&(vehicles[index].model), &buf[12], 8);
                 vehicles[index].priority = buf[20] != 0;
