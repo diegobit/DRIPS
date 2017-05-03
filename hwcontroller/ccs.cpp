@@ -109,6 +109,9 @@ char currentPeer = '\0'; // TODO Remember to assign it where needed!
 uint16_t *fhtLeft;
 uint16_t *fhtFront;
 uint16_t *fhtRight;
+uint8_t leftCCSIntensity = 0;
+uint8_t frontCCSIntensity = 0;
+uint8_t rightCCSIntensity = 0;
 State state = ST_BEGIN;
 
 
@@ -220,7 +223,22 @@ State FUN_ST_BLINK() {
 
         if (!sampled && deadline < millis()) {
             // We already have the FHTs done in fhtLeft, fhtFront, fhtRight.
-            // TODO Extract the frequency that we're interested in, and pass it to ST_INTERPRETATE.
+            // We extract the frequency we're interested in, and we pass it to ST_INTERPRETATE.
+
+            leftCCSIntensity = fhtLeft[LED_CCS_BIN];
+            frontCCSIntensity = fhtFront[LED_CCS_BIN];
+            rightCCSIntensity = fhtRight[LED_CCS_BIN];
+            if (LED_CCS_BIN > 0) {
+                leftCCSIntensity = max(leftCCSIntensity, fhtLeft[LED_CCS_BIN-1]);
+                frontCCSIntensity = max(leftCCSIntensity, fhtLeft[LED_CCS_BIN-1]);
+                rightCCSIntensity = max(leftCCSIntensity, fhtLeft[LED_CCS_BIN-1]);
+            }
+            if (LED_CCS_BIN < (FHT_N / 2)-1) {
+                leftCCSIntensity = max(leftCCSIntensity, fhtLeft[LED_CCS_BIN+1]);
+                frontCCSIntensity = max(leftCCSIntensity, fhtLeft[LED_CCS_BIN+1]);
+                rightCCSIntensity = max(leftCCSIntensity, fhtLeft[LED_CCS_BIN+1]);
+            }
+
             sampled = true;
         }
 
@@ -237,6 +255,15 @@ State FUN_ST_INTERPRETATE() {
     State r = handlePeriodicActions();
     if (r != ST_CURRENT) {
         return r;
+    }
+
+    // Do something with leftCCSIntensity, frontCCSIntensity, rightCCSIntensity
+    if (leftCCSIntensity > frontCCSIntensity && leftCCSIntensity > rightCCSIntensity) {
+
+    } else if (frontCCSIntensity > leftCCSIntensity && frontCCSIntensity > rightCCSIntensity) {
+
+    } else if (rightCCSIntensity > leftCCSIntensity && rightCCSIntensity > frontCCSIntensity) {
+
     }
 
     timeMarker = millis();

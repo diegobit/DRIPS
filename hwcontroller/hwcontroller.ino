@@ -55,28 +55,6 @@ VisibleAction visibleAction = EVA_STRAIGHT;
 bool buttonPressed = false;
 
 /**
- * Basic frequency in µs for the timer.
- */
-#define TIMER_PERIOD (100*_us)
-
-/*
- * Unit: TIMER_PERIOD. These values MUST be even.
- *
- * Example of what happens with value 4:
- *
- *    0 ____ 1 ____ 2 ^^^^ 3 ^^^^ 0
- *
- * (between each number there is a delay of TIMER_PERIOD)
-*/
-#define LED1_PERIOD       10
-#define LED2_PERIOD       20
-#define LED3_PERIOD       30
-#define LED4_PERIOD       40
-#define LED5_PERIOD       50
-#define LED_CCS_PERIOD    60
-#define LED_TURN_PERIOD   10000
-
-/**
  * The type of these must be such that its greatest value
  * is > max(LED_CCS_PERIOD, LED1_PERIOD, ..., LED5_PERIOD)
  */

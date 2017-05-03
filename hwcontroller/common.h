@@ -35,6 +35,35 @@
  */
 #define SAMPLING_PERIOD (400*_us)
 
+/**
+ * Basic frequency in µs for the timer.
+ */
+#define TIMER_PERIOD (100*_us)
+
+/*
+ * Unit: TIMER_PERIOD. These values MUST be even.
+ *
+ * Example of what happens with value 4:
+ *
+ *    0 ____ 1 ____ 2 ^^^^ 3 ^^^^ 0
+ *
+ * (between each number there is a delay of TIMER_PERIOD)
+*/
+const uint8_t LED1_PERIOD     = 10;
+const uint8_t LED2_PERIOD     = 20;
+const uint8_t LED3_PERIOD     = 30;
+const uint8_t LED4_PERIOD     = 40;
+const uint8_t LED5_PERIOD     = 50;
+const uint8_t LED_CCS_PERIOD  = 60;
+const uint16_t LED_TURN_PERIOD = 10000;
+
+const uint8_t LED1_BIN = (FHT_N * (uint16_t)SAMPLING_PERIOD) / (LED1_PERIOD * TIMER_PERIOD);
+const uint8_t LED2_BIN = (FHT_N * (uint16_t)SAMPLING_PERIOD) / (LED2_PERIOD * TIMER_PERIOD);
+const uint8_t LED3_BIN = (FHT_N * (uint16_t)SAMPLING_PERIOD) / (LED3_PERIOD * TIMER_PERIOD);
+const uint8_t LED4_BIN = (FHT_N * (uint16_t)SAMPLING_PERIOD) / (LED4_PERIOD * TIMER_PERIOD);
+const uint8_t LED5_BIN = (FHT_N * (uint16_t)SAMPLING_PERIOD) / (LED5_PERIOD * TIMER_PERIOD);
+const uint8_t LED_CCS_BIN = (FHT_N * (uint16_t)SAMPLING_PERIOD) / (LED_CCS_PERIOD * TIMER_PERIOD);
+
 typedef enum RequestedAction : char {
     ERA_STRAIGHT = 'A',
     ERA_TURN_LEFT = 'L',
