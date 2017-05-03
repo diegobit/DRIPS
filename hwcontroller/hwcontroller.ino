@@ -76,11 +76,20 @@ bool buttonPressed = false;
 #define LED_CCS_PERIOD    60
 #define LED_TURN_PERIOD   10000
 
-uint16_t LED1_COUNTER = 0;
-uint16_t LED2_COUNTER = 0;
+/**
+ * The type of these must be such that its greatest value
+ * is > max(LED_CCS_PERIOD, LED1_PERIOD, ..., LED5_PERIOD)
+ */
+uint8_t LED1_COUNTER = 0;
+uint8_t LED2_COUNTER = 0;
 uint8_t LED3_COUNTER = 0;
 uint8_t LED4_COUNTER = 0;
 uint8_t LED5_COUNTER = 0;
+
+/**
+ * The type of this must be such that its greatest value
+ * is > LED_TURN_PERIOD
+ */
 uint16_t LED_TURN_COUNTER = 0;
 
 #define FLASH_IR_LED(counter, period, pin) {\
