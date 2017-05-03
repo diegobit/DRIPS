@@ -109,9 +109,9 @@ char currentPeer = '\0'; // TODO Remember to assign it where needed!
 uint16_t *fhtLeft;
 uint16_t *fhtFront;
 uint16_t *fhtRight;
-uint8_t leftCCSIntensity = 0;
-uint8_t frontCCSIntensity = 0;
-uint8_t rightCCSIntensity = 0;
+uint16_t leftCCSIntensity = 0;
+uint16_t frontCCSIntensity = 0;
+uint16_t rightCCSIntensity = 0;
 State state = ST_BEGIN;
 
 
