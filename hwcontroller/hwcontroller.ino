@@ -96,7 +96,7 @@ uint16_t LED_TURN_COUNTER = 0;
     if (counter == ((period)/2) - 1) {\
         digitalWrite((pin), HIGH);\
         counter++;\
-    } else if (counter == (period) - 1) {\
+    } else if (counter >= (period) - 1) {\
         digitalWrite((pin), LOW);\
         counter = 0;\
     } else {\
@@ -120,7 +120,7 @@ uint16_t LED_TURN_COUNTER = 0;
             digitalWrite((pinR), LOW);\
         }\
         counter++;\
-    } else if (counter == (period) - 1) {\
+    } else if (counter >= (period) - 1) {\
         if (visibleAction == EVA_TURN_LEFT) {\
             digitalWrite((pinL), LOW);\
             digitalWrite((pinR), LOW);\
