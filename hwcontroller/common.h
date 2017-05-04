@@ -74,7 +74,7 @@ typedef enum CurrentAction : char {
     ECA_STRAIGHT = 'A',
     ECA_TURN_LEFT = 'L',
     ECA_TURN_RIGHT = 'R',
-    ECA_TURN_STILL = 'S',
+    ECA_STILL = 'S',
 } CurrentAction;
 
 typedef struct RoadInfo {
