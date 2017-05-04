@@ -51,10 +51,10 @@
 */
 const uint8_t LED1_PERIOD     = 160;
 const uint8_t LED2_PERIOD     = 40;
-const uint8_t LED3_PERIOD     = 23;
-const uint8_t LED4_PERIOD     = 15;
-const uint8_t LED5_PERIOD     = 11;
-const uint8_t LED_CCS_PERIOD  = 9;
+const uint8_t LED3_PERIOD     = 24;
+const uint8_t LED4_PERIOD     = 16;
+const uint8_t LED5_PERIOD     = 12;
+const uint8_t LED_CCS_PERIOD  = 10;
 const uint16_t LED_TURN_PERIOD = 10000;
 
 const uint8_t LED1_BIN = (FHT_N * (uint16_t)SAMPLING_PERIOD) / (LED1_PERIOD * TIMER_PERIOD);
