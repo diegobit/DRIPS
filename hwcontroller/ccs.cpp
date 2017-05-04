@@ -105,7 +105,7 @@ unsigned long timeMarker = 0; // TODO REDUCE ACCURACY TO SAVE SPACE
 unsigned long keepAliveTimeMarker = 0;
 bool advertiseCCS = false;
 uint16_t backoff = 0; // 0 means no backoff (*not* a zero-length backoff)
-char currentPeer = '\0'; // TODO Remember to assign it where needed!
+Vehicle currentPeer = { .address = '\0' }; // TODO Remember to assign it where needed!
 uint16_t *fhtLeft;
 uint16_t *fhtFront;
 uint16_t *fhtRight;
@@ -336,11 +336,11 @@ State handlePeriodicActions() {
                     }
                 } else if (state == ST_WAIT_TO_BLINK || state == ST_BLINK) {
                     const char sender = buf[2];
-                    if (!(isForMe && sender == currentPeer)) {
+                    if (!(isForMe && sender == currentPeer.address)) {
                         // Send pardoned SCS
                         uint8_t data[2]; // FIXME Must we send the string terminator too?
                         data[0] = MSG_TYPE_SCS;
-                        data[1] = currentPeer;
+                        data[1] = currentPeer.address;
                         nrf24.send(data, sizeof(data));
                         nrf24.waitPacketSent();
                     }
