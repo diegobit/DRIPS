@@ -109,7 +109,7 @@ char currentPeer = '\0'; // TODO Remember to assign it where needed!
 uint16_t *fhtLeft;
 uint16_t *fhtFront;
 uint16_t *fhtRight;
-uint16_t leftCCSIntensity = 0;
+uint16_t leftCCSIntensity = 0; // NOTE we can change it to uint8_t by scaling the value down in FUN_ST_BLINK
 uint16_t frontCCSIntensity = 0;
 uint16_t rightCCSIntensity = 0;
 State state = ST_BEGIN;
