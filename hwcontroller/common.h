@@ -87,17 +87,11 @@ typedef struct RoadInfo {
 } RoadInfo;
 
 inline bool isValidRequestedAction(int val) {
-    if (val == ERA_STRAIGHT || val == ERA_TURN_LEFT || val == ERA_TURN_RIGHT) {
-        return true;
-    }
-    return false;
+    return val == ERA_STRAIGHT || val == ERA_TURN_LEFT || val == ERA_TURN_RIGHT;
 }
 
 inline bool isValidCurrentAction(int val) {
-    if (val == ECA_STRAIGHT || val == ECA_TURN_LEFT || val == ECA_TURN_RIGHT || val == ECA_STILL) {
-        return true;
-    }
-    return false;
+    return val == ECA_STRAIGHT || val == ECA_TURN_LEFT || val == ECA_TURN_RIGHT || val == ECA_STILL;
 }
 
 /**
