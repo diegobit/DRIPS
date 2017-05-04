@@ -312,13 +312,15 @@ State handlePeriodicActions() {
                 }
 
                 // replace the oldest entry with the new info
-                vehicles[index].address = buf[1];
-                vehicles[index].requestedAction = buf[2]; // FIXME Use a static_cast or a function which checks for validity
-                vehicles[index].currentAction = buf[3]; // FIXME Use a static_cast or a function which checks for validity
-                memcpy(&(vehicles[index].manufacturer), &buf[4], 8);
-                memcpy(&(vehicles[index].model), &buf[12], 8);
-                vehicles[index].priority = buf[20] != 0;
-                vehicles[index].receivedTime = millis();
+                if (isValidRequestedAction(buf[2]) && isValidCurrentAction(buf[3])) {
+                    vehicles[index].address = buf[1];
+                    vehicles[index].requestedAction = buf[2];
+                    vehicles[index].currentAction = buf[3];
+                    memcpy(&(vehicles[index].manufacturer), &buf[4], 8);
+                    memcpy(&(vehicles[index].model), &buf[12], 8);
+                    vehicles[index].priority = buf[20] != 0;
+                    vehicles[index].receivedTime = millis();
+                }
 
             } else if (buf[0] == MSG_TYPE_CCS) {
                 // CCS
