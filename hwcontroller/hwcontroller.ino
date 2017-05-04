@@ -253,11 +253,11 @@ void sendFrequencyMessage(char type, uint16_t *data) {
 
 void fht_constant_detrend() {
     uint16_t mean = 0;
-    for (uint16_t i = 0; i < FHT_N; i++) {
+    for (uint8_t i = 0; i < FHT_N; i++) {
         mean += fht_input[i];
     }
     mean = mean / FHT_N;
-    for (uint16_t i = 0; i < FHT_N; i++) {
+    for (uint8_t i = 0; i < FHT_N; i++) {
         fht_input[i] -= mean;
     }
 }
