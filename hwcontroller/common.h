@@ -33,7 +33,7 @@
  *  · SAMPLING_FREQ  <=  SIGNAL_MIN_FREQ * FFT_N / 2
  *  
  */
-#define SAMPLING_PERIOD (400*_us)
+#define SAMPLING_PERIOD (470*_us)
 
 /**
  * Basic frequency in µs for the timer.
