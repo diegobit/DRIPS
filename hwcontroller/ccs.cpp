@@ -402,6 +402,8 @@ void sendCCS() {
 
     if (!isExpired(&vehicles[vehicleId])) {
         // The cache is not expired, which means an actual vehicle has been found
+        currentPeer = vehicles[vehicleId];
+
         uint8_t data[3];
         data[0] = MSG_TYPE_CCS;
         data[1] = ADDRESS[0];
