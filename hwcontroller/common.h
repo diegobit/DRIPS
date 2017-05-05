@@ -78,6 +78,7 @@ typedef enum CurrentAction : char {
 } CurrentAction;
 
 typedef struct RoadInfo {
+    unsigned long validUntil;
     char manufacturer[8];
     char model[8];
     uint16_t orientation;

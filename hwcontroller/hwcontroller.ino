@@ -327,6 +327,11 @@ uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, u
 
 void interpretateSensorData(uint16_t *left, uint16_t *front, uint16_t *right) {
     // TODO look for frequencies and build a representation of the crossroad
+
+    /*if ( c'è qualcosa a sx ) {
+        crossroad[0].validUntil = millis() + k;
+        crossroad[0].orientation = 180;
+    }*/
 }
 
 

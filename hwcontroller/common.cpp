@@ -19,7 +19,7 @@ bool hasPriority = false;
 #define _8_SPACES { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }
 
 RoadInfo crossroad[3] = {
-    { _8_SPACES, _8_SPACES, 0, false, ERA_STRAIGHT, ECA_STRAIGHT },
-    { _8_SPACES, _8_SPACES, 0, false, ERA_STRAIGHT, ECA_STRAIGHT },
-    { _8_SPACES, _8_SPACES, 0, false, ERA_STRAIGHT, ECA_STRAIGHT }
+    { 0, _8_SPACES, _8_SPACES, 0, false, ERA_STRAIGHT, ECA_STRAIGHT },
+    { 0, _8_SPACES, _8_SPACES, 0, false, ERA_STRAIGHT, ECA_STRAIGHT },
+    { 0, _8_SPACES, _8_SPACES, 0, false, ERA_STRAIGHT, ECA_STRAIGHT }
 };

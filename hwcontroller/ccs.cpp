@@ -265,13 +265,36 @@ State FUN_ST_INTERPRETATE() {
         return r;
     }
 
+    const uint8_t diffThresholdPercentage = 20;
+
+    int8_t destIndex = -1;
+
     // Do something with leftCCSIntensity, frontCCSIntensity, rightCCSIntensity
-    if (leftCCSIntensity > frontCCSIntensity && leftCCSIntensity > rightCCSIntensity) {
+    if (leftCCSIntensity * (100-diffThresholdPercentage) / 100 > frontCCSIntensity &&
+        leftCCSIntensity * (100-diffThresholdPercentage) / 100 > rightCCSIntensity) {
 
-    } else if (frontCCSIntensity > leftCCSIntensity && frontCCSIntensity > rightCCSIntensity) {
+            destIndex = 0;
 
-    } else if (rightCCSIntensity > leftCCSIntensity && rightCCSIntensity > frontCCSIntensity) {
+    } else if (frontCCSIntensity * (100-diffThresholdPercentage) / 100 > leftCCSIntensity &&
+               frontCCSIntensity * (100-diffThresholdPercentage) / 100 > rightCCSIntensity) {
 
+            destIndex = 1;
+
+    } else if (rightCCSIntensity * (100-diffThresholdPercentage) / 100 > leftCCSIntensity &&
+               rightCCSIntensity * (100-diffThresholdPercentage) / 100 > frontCCSIntensity) {
+
+            destIndex = 2;
+    }
+
+    if (destIndex >= 0) {
+        if (crossroad[destIndex].validUntil > millis()) {
+            // The "orientation" field is set by interpretateSensorData in the main file.
+            memcpy(&crossroad[destIndex].manufacturer, currentPeer.manufacturer, 8);
+            memcpy(&crossroad[destIndex].model, currentPeer.model, 8);
+            crossroad[destIndex].priority = currentPeer.priority;
+            crossroad[destIndex].requestedAction = currentPeer.requestedAction;
+            crossroad[destIndex].currentAction = currentPeer.currentAction;
+        }
     }
 
     timeMarker = millis();
