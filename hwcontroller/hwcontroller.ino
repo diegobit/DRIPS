@@ -7,6 +7,7 @@
  */
 #include <FHT.h>
 #include <FlexiTimer2.h>
+#include <limits.h>
 
 /**
  * Ports
@@ -251,6 +252,27 @@ void sendFrequencyMessage(char type, uint16_t *data) {
     Serial.print('\n');
 }
 
+/*
+ * Sends an info-message to the serial port
+ * Manufacturer and model should be already padded
+ */
+void sendInfoMessage(const char roadId, const unsigned long validUntil, const char *manufacturer, const char *model,
+                     const uint16_t orientation, const bool priority, const RequestedAction requestedAction, const CurrentAction currentAction) {
+
+  Serial.print('I');
+  Serial.print(roadId);
+  Serial.print(validUntil < millis() ? '1' : '0');
+  Serial.write(manufacturer, 8);
+  Serial.write(model, 8);
+  if (orientation < 10) Serial.print(F("  "));
+  else if (orientation < 100) Serial.write(' ');
+  Serial.print(orientation);
+  Serial.print(priority);
+  Serial.print(requestedAction);
+  Serial.print(currentAction);
+  Serial.print('\n');
+}
+
 void fht_constant_detrend() {
     uint16_t mean = 0;
     for (uint8_t i = 0; i < FHT_N; i++) {
@@ -332,6 +354,26 @@ void interpretateSensorData(uint16_t *left, uint16_t *front, uint16_t *right) {
         crossroad[0].validUntil = millis() + k;
         crossroad[0].orientation = 180;
     }*/
+
+    for (uint8_t i = 0; i < 3; i++) {
+        if (crossroad[i].validUntil < millis()) {
+            memset(crossroad[i].manufacturer, ' ', 8);
+            memset(crossroad[i].model, ' ', 8);
+            crossroad[i].priority = false;
+            crossroad[i].requestedAction = ERA_NONE;
+            crossroad[i].currentAction = ECA_NONE;
+            // We don't reset orientation because:
+            //  * here the road is not valid, thus empty, so the orientation is not significant
+            //  * when the road will become valid again, the orientation will be set too
+        }
+    }
+
+    for (uint8_t i = 0; i < 3; i++) {
+        sendInfoMessage(i == 0 ? 'L' : i == 1 ? 'F' : 'R', crossroad[i].validUntil,
+                        crossroad[i].manufacturer, crossroad[i].model, crossroad[i].orientation,
+                        crossroad[i].priority, crossroad[i].requestedAction, crossroad[i].currentAction);
+    }
+    sendInfoMessage('M', ULONG_MAX, MANUFACTURER, MODEL, 0, hasPriority, requestedAction, currentAction);
 }
 
 

@@ -7,8 +7,8 @@
 
 #define DEBUG 1
 #define ADDRESS "1" // Must be 1 character long.
-#define MANUFACTURER "ALFARMEO" // Must be 8 characters long
-#define MODEL "GIULIA  " // Must be 8 characters long
+const char MANUFACTURER[8] = { 'A', 'L', 'F', 'A', 'R', 'M', 'E', 'O' };
+const char MODEL[8] = { 'G', 'I', 'U', 'L', 'I', 'A', ' ', ' ' };
 
 /**
  * FFT Parameters
@@ -65,12 +65,14 @@ const uint8_t LED5_BIN = (FHT_N * (uint16_t)SAMPLING_PERIOD) / (LED5_PERIOD * TI
 const uint8_t LED_CCS_BIN = (FHT_N * (uint16_t)SAMPLING_PERIOD) / (LED_CCS_PERIOD * TIMER_PERIOD);
 
 typedef enum RequestedAction : char {
+    ERA_NONE = '0',
     ERA_STRAIGHT = 'A',
     ERA_TURN_LEFT = 'L',
     ERA_TURN_RIGHT = 'R'
 } RequestedAction;
 
 typedef enum CurrentAction : char {
+    ECA_NONE = '0',
     ECA_STRAIGHT = 'A',
     ECA_TURN_LEFT = 'L',
     ECA_TURN_RIGHT = 'R',
