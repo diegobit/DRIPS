@@ -165,27 +165,30 @@ namespace monitor
 
         Type HandleInfoMessage(string msg)
 		{
-			if (msg.Length == 24)
+			if (msg.Length == 25) // 25 because I don't count the '\n'
 			{
 				RoadID roadID = (RoadID) msg[1];
 
 				if (Enum.IsDefined(typeof(RoadID), roadID))
 				{
-					int orientation = Convert.ToInt32(msg.Substring(18, 3).Trim());
-
-					string manufacturer = msg.Substring(2, 8).Trim();
-					string model = msg.Substring(10, 8).Trim();
-					Priority priority = (Priority) msg[21];
-					Action requestedAction = (Action) msg[22];
-					Action currentAction = (Action) msg[23];
-
-					if (Enum.IsDefined(typeof(Priority), priority) ||
-                        Enum.IsDefined(typeof(Action), requestedAction) ||
-                        Enum.IsDefined(typeof(Action), currentAction))
+					if (msg[2] == '1' || msg[2] == '0')
 					{
-						monitor.UpdateRoad(roadID, orientation, manufacturer, model,
-						                   priority, requestedAction, currentAction);
-						return Type.Info;
+						bool isEmpty = msg[2] == '1';
+						string manufacturer = msg.Substring(3, 8).Trim();
+						string model = msg.Substring(11, 8).Trim();
+						int orientation = Convert.ToInt32(msg.Substring(19, 3).Trim());
+						Priority priority = (Priority)msg[22];
+						RequestedAction requestedAction = (RequestedAction)msg[23];
+						CurrentAction currentAction = (CurrentAction)msg[24];
+
+						if (Enum.IsDefined(typeof(Priority), priority) ||
+							Enum.IsDefined(typeof(RequestedAction), requestedAction) ||
+							Enum.IsDefined(typeof(CurrentAction), currentAction))
+						{
+							monitor.UpdateRoad(roadID, isEmpty, orientation, manufacturer, model,
+											   priority, requestedAction, currentAction);
+							return Type.Info;
+						}
 					}
 				}
 			}

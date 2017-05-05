@@ -29,13 +29,21 @@ namespace monitor
 		High = 'Y'
 	}
 
-	public enum Action
+	public enum RequestedAction
 	{
 		None = '0',
-		Still = 'S',
-		Left = 'L',
 		Straight = 'A',
+		Left = 'L',
 		Right = 'R'
+	}
+
+	public enum CurrentAction
+	{
+		None = '0',
+		Straight = 'A',
+		Left = 'L',
+		Right = 'R',
+		Still = 'S',
 	}
 
 
@@ -60,20 +68,29 @@ namespace monitor
 			s.StartReading();
 		}
 
-		public void UpdateRoad(RoadID roadID, int orientation, string manufacturer, string model,
-							   Priority priority, Action requestedAction, Action currentAction)
+		public void UpdateRoad(RoadID roadID, bool isEmpty, int orientation, string manufacturer, string model,
+							   Priority priority, RequestedAction requestedAction, CurrentAction currentAction)
 		{
             if (!crossroad.TryGetValue(roadID, out Road r))
             {
                 r = new Road(roadID);
                 crossroad.Add(roadID, r);
             }
-            r.Orientation = orientation;
-			r.Manufacturer = manufacturer;
-			r.Model = model;
-			r.Priority = priority;
-			r.RequestedAction = requestedAction;
-			r.CurrentAction = currentAction;
+
+			if (isEmpty)
+			{
+				r.RemoveCar();
+			}
+			else
+			{
+				r.IsEmpty = isEmpty;
+				r.Orientation = orientation;
+				r.Manufacturer = manufacturer;
+				r.Model = model;
+				r.Priority = priority;
+				r.RequestedAction = requestedAction;
+				r.CurrentAction = currentAction;
+			}
 
 			window.UpdateRoad(r);
 		}

@@ -4,12 +4,13 @@
 	{
 		public RoadID Id { get; private set; }
 
+		public bool IsEmpty { get; set; } = true;
 		public string Manufacturer { get; set; } = "";
 		public string Model { get; set; } = "";
 		public int Orientation { get; set; } = -1;
 		public Priority Priority { get; set; } = Priority.None;
-		public Action RequestedAction { get; set; } = Action.None;
-		public Action CurrentAction { get; set; } = Action.None;
+		public RequestedAction RequestedAction { get; set; } = RequestedAction.None;
+		public CurrentAction CurrentAction { get; set; } = CurrentAction.None;
 
 
 
@@ -21,42 +22,25 @@
 
 
 		/*
-		 * Returns true if the road is empty, false if there's a car
-		 */
-		public bool IsEmpty()
-		{
-			return Manufacturer == "" & Model == "" && Orientation == -1 &&
-                Priority == Priority.None && CurrentAction == Action.None && RequestedAction == Action.None;
-		}
-
-		/*
-		 * Returns true if there's a car on the road, but I only know it's orientation
-		 */
-		public bool IsPartial()
-		{
-			return Manufacturer == "" && Model == "" && Orientation != -1 &&
-                Priority == Priority.None && CurrentAction == Action.None && RequestedAction == Action.None;
-		}
-
-		/*
-		 * Returns true if there's a car on the road, and I have all the informations about it
+		 * @return true if there is a car on the road, and I know all about it
 		 */
 		public bool IsComplete()
 		{
-			return Manufacturer != "" && Model != "" && Orientation != -1 &&
-                Priority != Priority.None && CurrentAction != Action.None && RequestedAction != Action.None;
+			return !IsEmpty && Manufacturer != "" && Model != "" && Orientation != -1 &&
+                Priority != Priority.None && CurrentAction != CurrentAction.None && RequestedAction != RequestedAction.None;
 		}
 
 
 
 		public void RemoveCar()
 		{
+			IsEmpty = true;
 			Manufacturer = null;
 			Model = null;
 			Orientation = -1;
-			Priority = 0;
-			CurrentAction = 0;
-			RequestedAction = 0;
+			Priority = Priority.None;
+			RequestedAction = RequestedAction.None;
+			CurrentAction = CurrentAction.None;
 		}
 	}
 }

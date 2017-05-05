@@ -86,53 +86,84 @@ public partial class MainWindow : Window
         roads.TryGetValue(road.Id, out Tuple<Image, Label, Image, Image> car);
         string expectedImagePath = "monitor.resources.car" + resDiv + road.Manufacturer + resDiv + road.Model + imageExtension;
 
-		// Update text beside the car
-		Application.Invoke(delegate
+		if (road.IsEmpty)
 		{
-            car.Item2.Text = MakeCarLabelText(road);
-		});
-
-        // Update car image
-        if (car.Item1 != null)
-		{
-			// Image present, I check whether I have to update its image
-			string prevPath = car.Item1.Name;
-			if (prevPath != (road.Id + expectedImagePath))
+			// Empty road, reset everything
+			Application.Invoke(delegate
 			{
-                // The car has changed. Load the new image and place it;
-			    Image carImg = LoadCarImage(expectedImagePath, road.Id);
-                roads[road.Id] = Tuple.Create(carImg, car.Item2, car.Item3, car.Item4);
-                RemoveCar(prevPath);
-				PlaceCar(carImg, road);
-			}
+				if (car.Item1 != null)
+				{
+					container.Remove(car.Item1);
+				}
+				car.Item2.Text = MakeCarLabelText();
+				car.Item3.Hide();
+				car.Item4.Hide();
+			});
+			roads[road.Id] = Tuple.Create((Image)null, car.Item2, car.Item3, car.Item4);
 		}
 		else
 		{
-            // Image not present, I place it
-			Image carImg = LoadCarImage(expectedImagePath, road.Id);
-            roads[road.Id] = Tuple.Create(carImg, car.Item2, car.Item3, car.Item4);
-			PlaceCar(carImg, road);
- 		}
+			// There's a car on that road, update the view
+			// 1. Update car image
+			if (car.Item1 != null)
+			{
+				// There was a car image before, I check whether I have to update it
+				string prevPath = car.Item1.Name;
+				if (prevPath != (road.Id + expectedImagePath))
+				{
+					// The car has changed. Remove the old image from the view, load the new image and place it;
+					Application.Invoke(delegate
+					{
+						container.Remove(car.Item1);
+					});
+					Image carImg = LoadCarImage(expectedImagePath, road.Id);
+					roads[road.Id] = Tuple.Create(carImg, car.Item2, car.Item3, car.Item4);
+					PlaceCar(carImg, road);
+				}
+			}
+			else
+			{
+				// Image not present, I place it
+				Image carImg = LoadCarImage(expectedImagePath, road.Id);
+				roads[road.Id] = Tuple.Create(carImg, car.Item2, car.Item3, car.Item4);
+				PlaceCar(carImg, road);
+			}
 
-		// Update signals
-		Image leftSignal = car.Item3;
-		Image rightSignal = car.Item4;
-		leftSignal.Hide(); // Done to synchronize the GIF playback of the two signals
-		rightSignal.Hide();
-		if (road.Priority == Priority.High)
-		{
-			leftSignal.Show();
-			rightSignal.Show();
-		}
-		else if (road.RequestedAction == monitor.Action.Left)
-		{
-			leftSignal.Show();
-			rightSignal.Hide();
-		}
-		else if (road.RequestedAction == monitor.Action.Right)
-		{
-			leftSignal.Hide();
-			rightSignal.Show();
+			// 2. Update text beside the car
+			Application.Invoke(delegate
+			{
+				car.Item2.Text = MakeCarLabelText(road);
+
+				// 3. Update signals
+				Image leftSignal = car.Item3;
+				Image rightSignal = car.Item4;
+				//leftSignal.Hide(); // Done to synchronize the GIF playback of the two signals
+				//rightSignal.Hide();
+				if (road.Priority == Priority.High)
+				{
+					leftSignal.Hide(); // Done to synchronize the GIF playback of the two signals
+					rightSignal.Hide();
+					leftSignal.Show();
+					rightSignal.Show();
+				}
+				else if (road.RequestedAction == RequestedAction.Left)
+				{
+					leftSignal.Show();
+					rightSignal.Hide();
+				}
+				else if (road.RequestedAction == RequestedAction.Right)
+				{
+					leftSignal.Hide();
+					rightSignal.Show();
+				}
+				else
+				{
+					leftSignal.Hide();
+					rightSignal.Hide();
+				}
+			});
+
+
 		}
 	}
 
@@ -337,21 +368,15 @@ public partial class MainWindow : Window
 
 	string MakeCarLabelText(Road road)
 	{
-        if (road.IsEmpty())
+        if (road.IsEmpty)
             return MakeCarLabelText();
-        if (road.IsPartial())
-            return "Unknown model" + '\n';
-        if (road.IsComplete())
-            return road.Manufacturer + " " + road.Model + "\n" +
-                   "\n" +
-                   "Requested action: " + road.RequestedAction + "\n" +
-                   "Current action: " + road.CurrentAction + "\n" +
-                   "Priority: " + road.Priority + "\n";
-
-        // else
-        Console.WriteLine("ERROR: road in wrong state:");
-        Console.WriteLine(road);
-        return MakeCarLabelText();
+		if (!road.IsComplete())
+			return "Unknown model" + '\n';
+		return road.Manufacturer + " " + road.Model + "\n" +
+			   "\n" +
+			   "Requested action: " + road.RequestedAction + "\n" +
+			   "Current action: " + road.CurrentAction + "\n" +
+			   "Priority: " + road.Priority + "\n";
 	}
 
     /**
