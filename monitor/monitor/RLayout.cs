@@ -18,8 +18,6 @@ namespace monitor
 
 		protected override void OnSizeAllocated(Gdk.Rectangle allocation)
 		{
-			Console.WriteLine(allocation.Width + " "); 
-
 			if (Allocation.Width != allocation.Width || Allocation.Height != allocation.Height)
 			{
 				window.OnResize(new Gdk.Rectangle(0, 0, allocation.Width, allocation.Height));
