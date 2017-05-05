@@ -105,7 +105,15 @@ unsigned long timeMarker = 0; // TODO REDUCE ACCURACY TO SAVE SPACE
 unsigned long keepAliveTimeMarker = 0;
 bool advertiseCCS = false;
 uint16_t backoff = 0; // 0 means no backoff (*not* a zero-length backoff)
-Vehicle currentPeer = { .address = '\0' }; // TODO Remember to assign it where needed!
+Vehicle currentPeer = {
+    .address = '\0',
+    .manufacturer = _8_SPACES,
+    .model = _8_SPACES,
+    .priority = false,
+    .receivedTime = 0,
+    .requestedAction = ERA_STRAIGHT,
+    .currentAction = ECA_STILL
+};
 uint16_t *fhtLeft;
 uint16_t *fhtFront;
 uint16_t *fhtRight;
@@ -314,8 +322,8 @@ State handlePeriodicActions() {
                 // replace the oldest entry with the new info
                 if (isValidRequestedAction(buf[2]) && isValidCurrentAction(buf[3])) {
                     vehicles[index].address = buf[1];
-                    vehicles[index].requestedAction = buf[2];
-                    vehicles[index].currentAction = buf[3];
+                    vehicles[index].requestedAction = static_cast<RequestedAction>(buf[2]);
+                    vehicles[index].currentAction = static_cast<CurrentAction>(buf[3]);
                     memcpy(&(vehicles[index].manufacturer), &buf[4], 8);
                     memcpy(&(vehicles[index].model), &buf[12], 8);
                     vehicles[index].priority = buf[20] != 0;
