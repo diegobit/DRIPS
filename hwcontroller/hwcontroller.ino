@@ -282,6 +282,10 @@ void refreshMonitor() {
     sendInfoMessage('M', ULONG_MAX, MANUFACTURER, MODEL, 0, hasPriority, requestedAction, currentAction);
 }
 
+void computeCurrentAction() {
+    // ...
+}
+
 void fht_constant_detrend() {
     uint16_t mean = 0;
     for (uint8_t i = 0; i < FHT_N; i++) {
@@ -434,7 +438,7 @@ void loop() {
 
     interpretateSensorData(fhtLeft, fhtFront, fhtRight);
 
-    handleTurnButton();
+    computeCurrentAction();
 
     refreshMonitor();
 
