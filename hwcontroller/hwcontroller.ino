@@ -259,18 +259,18 @@ void sendFrequencyMessage(char type, uint16_t *data) {
 void sendInfoMessage(const char roadId, const unsigned long validUntil, const char *manufacturer, const char *model,
                      const uint16_t orientation, const bool priority, const RequestedAction requestedAction, const CurrentAction currentAction) {
 
-  Serial.print('I');
-  Serial.print(roadId);
-  Serial.print(validUntil < millis() ? '1' : '0');
-  Serial.write(manufacturer, 8);
-  Serial.write(model, 8);
-  if (orientation < 10) Serial.print(F("  "));
-  else if (orientation < 100) Serial.write(' ');
-  Serial.print(orientation);
-  Serial.print(priority);
-  Serial.print(requestedAction);
-  Serial.print(currentAction);
-  Serial.print('\n');
+    Serial.print('I');
+    Serial.print(roadId);
+    Serial.print(validUntil < millis() ? '1' : '0');
+    Serial.write(manufacturer, 8);
+    Serial.write(model, 8);
+    if (orientation < 10) Serial.print(F("  "));
+    else if (orientation < 100) Serial.write(' ');
+    Serial.print(orientation);
+    Serial.print(priority);
+    Serial.print(requestedAction);
+    Serial.print(currentAction);
+    Serial.print('\n');
 }
 
 void fht_constant_detrend() {
