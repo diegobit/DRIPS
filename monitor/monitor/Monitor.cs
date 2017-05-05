@@ -18,7 +18,7 @@ namespace monitor
 		None = '0',
 		Bottom = 'M',
 		Left = 'L',
-		Top = 'F',
+		Top = 'A',
 		Right = 'R'
 	}
 
