@@ -194,29 +194,12 @@ public partial class MainWindow : Window
 		return label;
 	}
 
-	void RemoveCar(string imageName)
-	{
-		foreach (Widget w in container.Children)
-		{
-			try
-			{
-				Image i = (Image) w;
-				if (i.Name == imageName)
-				{
-					Application.Invoke(delegate
-					{
-						container.Remove(w);
-					});
-				}
-			}
-			catch (InvalidCastException) { }
-		}
-	}
-
     void PlaceCar(Image car, Road road)
 	{
 		Tuple<int, int> pos = ComputeCarPosition(road.Id, car, Allocation);
-		car.Pixbuf = car.Pixbuf.RotateSimple((Gdk.PixbufRotation)road.Orientation); //TODO: only allowed 90 degrees step
+		int mod = road.Orientation % 90;
+		int rotation = road.Orientation + (90 - mod) * (mod > 45 ? 1 : -1); // round to nearest 90 degree step
+		car.Pixbuf = car.Pixbuf.RotateSimple((Gdk.PixbufRotation)road.Orientation); //TODO: allow more than 90 degrees steps
 
 		Application.Invoke(delegate
 		{
