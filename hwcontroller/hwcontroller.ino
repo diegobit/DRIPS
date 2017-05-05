@@ -262,6 +262,19 @@ void fht_constant_detrend() {
     }
 }
 
+void fht_denoise() {
+    uint16_t noise = 0;
+
+    uint8_t bins[6] = { LED1_BIN, LED2_BIN, LED3_BIN, LED4_BIN, LED5_BIN, LED_CCS_BIN };
+    for (uint8_t i = 1; i < 6; i++) {
+        noise = max(noise, fht_lin_out[(bins[i-1] + bins[i]) / 2]);
+    }
+
+    for (uint8_t i = 0; i < FHT_N / 2; i++) {
+        fht_lin_out[i] -= noise;
+    }
+}
+
 /**
  * @param pin           Pin number of the IR sensor
  * @param sampleMsgType Type of the sampling messages ('l', 'f', or 'r')
@@ -301,6 +314,8 @@ uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, u
     fht_mag_lin(); // take the output of the fft
 
     sendFrequencyMessage(freqMsgType, fht_lin_out);
+
+    fht_denoise(); // remove noise from output
 
     if (output != NULL) {
         memcpy(output, fht_lin_out, sizeof(fht_lin_out));
