@@ -5,12 +5,19 @@ import numpy as np
 # Under this level (included), a bin is considered noise
 maxnoise = 10
 
+# 44 23 71 9  88
+# 2  1  3  0  4
 def ranks(array):
     array = np.array(array)
     temp = array.argsort()
     ranks = np.empty(len(array), int)
     ranks[temp] = np.arange(len(array))
     return ranks.tolist()
+
+# 44 23 71 9  88
+# 3  1  0  2  4
+def ranksi(array):
+    return [x/len(array) for x in np.array(array).argsort().tolist()] # Normalize data in [0, 1]
 
 def getRandomSensorData(peaks):
     # background noise
@@ -24,7 +31,7 @@ def getRandomSensorData(peaks):
             v[peak-1] = random.randint(maxnoise, minval)
         if peak < 63:
             v[peak+1] = random.randint(maxnoise, minval)
-    return v
+    return [x/1024 for x in v] # Normalize data in [0, 1]
 
 
 def getRandomData(peaksL, peaksF, peaksR):
@@ -42,6 +49,13 @@ fright = 50
 # Acquire raw data
 
 out = []
+
+# 000
+for i in range(10000):
+    out.append([
+        getRandomData([], [], []),
+        [1, 0, 0, 0, 0, 0, 0, 0]
+    ])
 
 # 100
 for i in range(10000):
@@ -78,6 +92,20 @@ for i in range(10000):
         [0, 0, 0, 0, 0, 0, 1, 0]
     ])
 
+# 101
+for i in range(10000):
+    out.append([
+        getRandomData([fright], [], [fleft]),
+        [0, 0, 0, 0, 0, 1, 0, 0]
+    ])
+
+# 111
+for i in range(10000):
+    out.append([
+        getRandomData([fright], [ffront], [fleft]),
+        [0, 0, 0, 0, 0, 0, 0, 1]
+    ])
+
 # Preprocess data
 
 n_peaks = 5
@@ -100,17 +128,13 @@ for i in range(len(out)):
     fftF = [fftF[fleft], fftF[fleftfront], fftF[ffront], fftF[frightfront], fftF[fright]]
     fftR = [fftR[fleft], fftR[fleftfront], fftR[ffront], fftR[frightfront], fftR[fright]]
 
-    # We need ranks because our neural network model can't know about order by itself.
-    ranksL = ranks(fftL)
-    ranksF = ranks(fftF)
-    ranksR = ranks(fftR)
-
-    out[i][0] =  ranksL + ranksF + ranksR
+    out[i][0] = fftL + fftF + fftR + ranksi(fftL) + ranksi(fftF) + ranksi(fftR)
 
 
 
 print(out[0])
 print(out[1])
+print(out[-2])
 print(out[-1])
 
 with open('data.pickle', 'wb') as f:
