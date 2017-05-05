@@ -6,7 +6,7 @@
 #include <Arduino.h>
 
 #define DEBUG 1
-#define ADDRESS "1" // Must be 1 character long.
+const char ADDRESS = '1';
 const char MANUFACTURER[8] = { 'A', 'L', 'F', 'A', 'R', 'M', 'E', 'O' };
 const char MODEL[8] = { 'G', 'I', 'U', 'L', 'I', 'A', ' ', ' ' };
 

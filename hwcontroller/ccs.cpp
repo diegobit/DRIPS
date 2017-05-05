@@ -355,7 +355,7 @@ State handlePeriodicActions() {
 
             } else if (buf[0] == MSG_TYPE_CCS) {
                 // CCS
-                const bool isForMe = buf[1] == ADDRESS[0];
+                const bool isForMe = buf[1] == ADDRESS;
                 if (state == ST_BEGIN) {
                     if (isForMe) {
                         timeMarker = millis();
@@ -388,7 +388,7 @@ State handlePeriodicActions() {
 
             } else if (buf[0] == MSG_TYPE_SCS) {
                 // SCS
-                const bool pardoned = buf[1] == ADDRESS[0];
+                const bool pardoned = buf[1] == ADDRESS;
                 if (state == ST_BEGIN || (state == ST_WAIT_TO_BLINK && !pardoned) || (state == ST_BLINK && !pardoned)) {
                     advertiseCCS = false;
 
@@ -409,7 +409,7 @@ State handlePeriodicActions() {
 void sendKeepAlive() {
     uint8_t data[21];
     data[0] = MSG_TYPE_KEEPALIVE; // TODO e se invece tenessimo in ram direttamente l'array?
-    data[1] = ADDRESS[0];
+    data[1] = ADDRESS;
     data[2] = requestedAction;
     data[3] = currentAction;
     memcpy(&data[4], &(MANUFACTURER),  8);
@@ -437,7 +437,7 @@ void sendCCS() {
 
         uint8_t data[3];
         data[0] = MSG_TYPE_CCS;
-        data[1] = ADDRESS[0];
+        data[1] = ADDRESS;
         data[2] = vehicles[vehicleId].address;
 
         nrf24.send(data, sizeof(data));
