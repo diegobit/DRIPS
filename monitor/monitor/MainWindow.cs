@@ -387,11 +387,11 @@ public partial class MainWindow : Window
 	internal void OnResize(Gdk.Rectangle allocation)
     {
 		// Update sizes
-		cRadW = scaleValue(cFullRadW, allocation, true);
-		cRadH = scaleValue(cFullRadH, allocation, false);
-		labelW = scaleValue(labelFullW, allocation, true);
-		labelH = scaleValue(labelFullH, allocation, false);
-		fontSize = scaleValue(fontFullSize, allocation, false);
+		cRadW = ScaleValue(cFullRadW, allocation, true);
+		cRadH = ScaleValue(cFullRadH, allocation, false);
+		labelW = ScaleValue(labelFullW, allocation, true);
+		labelH = ScaleValue(labelFullH, allocation, false);
+		fontSize = ScaleValue(fontFullSize, allocation, false);
 		var newFontDesc = Pango.FontDescription.FromString(fontFamily + " " + fontSize);
 
 		// Crossroad
@@ -440,7 +440,7 @@ public partial class MainWindow : Window
 	/**
 	 * Given a value, it scales to the current window size
 	 */
-	int scaleValue(int v, Gdk.Rectangle allocation, bool useWidth)
+	int ScaleValue(int v, Gdk.Rectangle allocation, bool useWidth)
 	{
 		return useWidth ? (int)Math.Round((float)v * allocation.Width / cFullW, 0)
 						: (int)Math.Round((float)v * allocation.Height / cFullH, 0);
