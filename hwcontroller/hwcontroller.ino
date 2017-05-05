@@ -273,6 +273,15 @@ void sendInfoMessage(const char roadId, const unsigned long validUntil, const ch
     Serial.print('\n');
 }
 
+void refreshMonitor() {
+    for (uint8_t i = 0; i < 3; i++) {
+        sendInfoMessage(i == 0 ? 'L' : i == 1 ? 'F' : 'R', crossroad[i].validUntil,
+                        crossroad[i].manufacturer, crossroad[i].model, crossroad[i].orientation,
+                        crossroad[i].priority, crossroad[i].requestedAction, crossroad[i].currentAction);
+    }
+    sendInfoMessage('M', ULONG_MAX, MANUFACTURER, MODEL, 0, hasPriority, requestedAction, currentAction);
+}
+
 void fht_constant_detrend() {
     uint16_t mean = 0;
     for (uint8_t i = 0; i < FHT_N; i++) {
@@ -367,13 +376,6 @@ void interpretateSensorData(uint16_t *left, uint16_t *front, uint16_t *right) {
             //  * when the road will become valid again, the orientation will be set too
         }
     }
-
-    for (uint8_t i = 0; i < 3; i++) {
-        sendInfoMessage(i == 0 ? 'L' : i == 1 ? 'F' : 'R', crossroad[i].validUntil,
-                        crossroad[i].manufacturer, crossroad[i].model, crossroad[i].orientation,
-                        crossroad[i].priority, crossroad[i].requestedAction, crossroad[i].currentAction);
-    }
-    sendInfoMessage('M', ULONG_MAX, MANUFACTURER, MODEL, 0, hasPriority, requestedAction, currentAction);
 }
 
 
@@ -434,5 +436,7 @@ void loop() {
 
     handleTurnButton();
 
-    delay(100);
+    refreshMonitor();
+
+    handleTurnButton();
 }
