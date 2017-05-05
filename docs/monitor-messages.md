@@ -64,12 +64,17 @@ TABCCCCCCCCDDDDDDDDEEEFGH\n
 
  Orientation:       [0..360]    degrees counterclockwise
 
- Priority:          0           None (sent when unknown)
+ Priority:          0           None
                     N           regular car
                     Y           priority car (ambulance, police)
 
  RequestedAction,
- CurrentAction:     0           None (sent when unknown)
+                    0           None
+                    L           turn left
+                    A           go straight ahead
+                    R           turn right
+
+ CurrentAction:     0           None
                     S           Stay still
                     L           turn left
                     A           go straight ahead
