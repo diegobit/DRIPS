@@ -376,7 +376,7 @@ public partial class MainWindow : Window
      */
     string MakeCarLabelText()
     {
-        return "Road empty" + '\n';
+        return " " + '\n';
     }
 
 
