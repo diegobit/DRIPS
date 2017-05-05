@@ -387,35 +387,44 @@ public partial class MainWindow : Window
 		// Cars and labels
 		if (roads != null)
 		{
-			foreach (RoadID road in roads.Keys)
+			try
 			{
-				var r = roads[road];
-				Image car = r.Item1;
-				Label label = r.Item2;
-				Image leftSignal = r.Item3;
-				Image rightSignal = r.Item4;
-
-				if (car != null)
+				foreach (RoadID road in roads.Keys)
 				{
-					Tuple<int, int> pos = ComputeCarPosition(road, car, allocation);
-					container.Move(car, pos.Item1, pos.Item2); //TODO SIZE CAR
-				}
+					var r = roads[road];
+					Image car = r.Item1;
+					Label label = r.Item2;
+					Image leftSignal = r.Item3;
+					Image rightSignal = r.Item4;
 
-				if (label != null)
-				{
-					label.SetSizeRequest(labelW, labelH);
-					label.ModifyFont(newFontDesc);
+					if (car != null)
+					{
+						Tuple<int, int> pos = ComputeCarPosition(road, car, allocation);
+						container.Move(car, pos.Item1, pos.Item2); //TODO SIZE CAR
+					}
 
-					Tuple<int, int> pos = ComputeLabelPosition(road, allocation);
-					container.Move(label, pos.Item1, pos.Item2);
-				}
+					if (label != null)
+					{
+						label.SetSizeRequest(labelW, labelH);
+						label.ModifyFont(newFontDesc);
 
-				if (leftSignal != null && rightSignal != null)
-				{
-					Tuple<int, int, int, int> pos = ComputeSignalPositions(road, leftSignal, allocation);
-					container.Move(leftSignal, pos.Item1, pos.Item2);
-					container.Move(rightSignal, pos.Item3, pos.Item4);
+						Tuple<int, int> pos = ComputeLabelPosition(road, allocation);
+						container.Move(label, pos.Item1, pos.Item2);
+					}
+
+					if (leftSignal != null && rightSignal != null)
+					{
+						Tuple<int, int, int, int> pos = ComputeSignalPositions(road, leftSignal, allocation);
+						container.Move(leftSignal, pos.Item1, pos.Item2);
+						container.Move(rightSignal, pos.Item3, pos.Item4);
+					}
 				}
+			}
+			catch (InvalidOperationException)
+			{
+				// We are here because Roads has been modified by the thread reading on the serial port.
+				// We just stop updating the interface, we'll get another resize event soon
+				Console.WriteLine("OnResize operation aborted: `Roads` has been modified");
 			}
 		}
     }
