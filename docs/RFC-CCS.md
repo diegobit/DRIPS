@@ -65,7 +65,7 @@ del messaggio sia diverso da quello dell'auto corrente, la procedura viene inter
  |                                                               |
  +                             Model                             +
  |                                                               |
- +---------------------------------------------------------------+
+ +---------------+-----------------------------------------------+
  |   Priority    |
  +---------------+
 
