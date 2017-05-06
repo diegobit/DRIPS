@@ -77,17 +77,17 @@ sess = tf.InteractiveSession()
 tf.global_variables_initializer().run()
 
 _max = 30000
-step = 100
+step = 5
 for i in range(0, _max, step):
   batch_xs, batch_ys = train_data[i:i+step], train_labels[i:i+step]
   sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
-  
-  correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
-  accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-  accuracy_val = sess.run(accuracy, feed_dict={x: train_data[_max-len(train_data):], y_: train_labels[_max-len(train_data):]})
-  print(str(i+step) + " / " + str(_max) + "; accuracy: " + str(accuracy_val))
+
+correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
+accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+accuracy_val = sess.run(accuracy, feed_dict={x: train_data[_max-len(train_data):], y_: train_labels[_max-len(train_data):]})
+print(str(i+step) + " / " + str(_max) + "; accuracy: " + str(accuracy_val))
 
 # Save weights
-#W_val, b_val = sess.run([W, b])
-#np.savetxt("W.csv", W_val, delimiter=",")
-#np.savetxt("b.csv", b_val, delimiter=",")
+W_val, b_val = sess.run([W, b])
+np.savetxt("W.csv", W_val, delimiter=",")
+np.savetxt("b.csv", b_val, delimiter=",")

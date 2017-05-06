@@ -31,7 +31,7 @@ def getRandomSensorData(peaks):
             v[peak-1] = random.randint(maxnoise, minval)
         if peak < 63:
             v[peak+1] = random.randint(maxnoise, minval)
-    return [x/1024 for x in v] # Normalize data in [0, 1]
+    return [x/256 for x in v] # Normalize data from [0-256] to [0, 1]
 
 
 def getRandomData(peaksL, peaksF, peaksR):
