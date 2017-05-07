@@ -366,6 +366,8 @@ void interpretateSensorData(uint16_t *left, uint16_t *front, uint16_t *right) {
 
     const CrossroadStatus status = neuralInterpretate(left, front, right);
 
+    const uint16_t k = 0; // FIXME!!!
+
     if (status.left) {
         crossroad[0].validUntil = millis() + k;
         crossroad[0].orientation = 90;
