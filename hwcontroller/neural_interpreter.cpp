@@ -1,6 +1,6 @@
 #pragma GCC optimize ("O3")
 #include "neural_interpreter.h"
-#include <Arduino.h>
+#include "common.h"
 #include <avr/pgmspace.h>
 
 #define INPUT_SIZE  30
@@ -19,15 +19,85 @@ static const float W[OUTPUT_SIZE][INPUT_SIZE] PROGMEM = {
 
 static const float b[OUTPUT_SIZE] PROGMEM = { 2.179429054260253906e+00, 6.460731029510498047e-01, 8.804201483726501465e-01, -5.919578075408935547e-01, 4.379630982875823975e-01, -8.781525492668151855e-01, -5.976638793945312500e-01, -2.076110363006591797e+00 };
 
+/**
+ * Calculate ranks from the input vector and store them in the output vector.
+ * The computed values are actually the sorted indices, rather than usual ranks.
+ *
+ * Note that this function only works on arrays of size 5 for efficiency reasons.
+ *
+ * Example:
+ *     d: [ 44,   23,   71,    9,   88 ]
+ *   out: [0.75, 0.25, 0.00, 0.50, 1.00]
+ */
+static inline void ranks5(uint16_t *d, float *out) {
+    uint8_t i, j;
+    out[0] = 0.0;
+    out[1] = 0.25;
+    out[2] = 0.50;
+    out[3] = 0.75;
+    out[4] = 1.0;
+
+    for (i = 1; i < 5; i++) {
+        uint16_t tmp = d[i];
+        float tmpi = out[i];
+        for (j = i; j >= 1 && tmp < d[j-1]; j--) {
+                d[j] = d[j-1];
+                out[j] = out[j-1];
+        }
+        d[j] = tmp;
+        out[j] = tmpi;
+    }
+}
+
+static inline void preprocess(uint16_t *fhtLeft, uint16_t *fhtFront, uint16_t *fhtRight, float out[INPUT_SIZE]) {
+    // Integer vector
+    uint16_t val[15];
+
+    val[0] = max(fhtLeft[LED1_BIN], max(fhtLeft[LED1_BIN-1], fhtLeft[LED1_BIN+1]));
+    val[1] = max(fhtLeft[LED2_BIN], max(fhtLeft[LED2_BIN-1], fhtLeft[LED2_BIN+1]));
+    val[2] = max(fhtLeft[LED3_BIN], max(fhtLeft[LED3_BIN-1], fhtLeft[LED3_BIN+1]));
+    val[3] = max(fhtLeft[LED4_BIN], max(fhtLeft[LED4_BIN-1], fhtLeft[LED4_BIN+1]));
+    val[4] = max(fhtLeft[LED5_BIN], max(fhtLeft[LED5_BIN-1], fhtLeft[LED5_BIN+1]));
+    val[5] = max(fhtFront[LED1_BIN], max(fhtFront[LED1_BIN-1], fhtFront[LED1_BIN+1]));
+    val[6] = max(fhtFront[LED2_BIN], max(fhtFront[LED2_BIN-1], fhtFront[LED2_BIN+1]));
+    val[7] = max(fhtFront[LED3_BIN], max(fhtFront[LED3_BIN-1], fhtFront[LED3_BIN+1]));
+    val[8] = max(fhtFront[LED4_BIN], max(fhtFront[LED4_BIN-1], fhtFront[LED4_BIN+1]));
+    val[9] = max(fhtFront[LED5_BIN], max(fhtFront[LED5_BIN-1], fhtFront[LED5_BIN+1]));
+    val[10] = max(fhtRight[LED1_BIN], max(fhtRight[LED1_BIN-1], fhtRight[LED1_BIN+1]));
+    val[11] = max(fhtRight[LED2_BIN], max(fhtRight[LED2_BIN-1], fhtRight[LED2_BIN+1]));
+    val[12] = max(fhtRight[LED3_BIN], max(fhtRight[LED3_BIN-1], fhtRight[LED3_BIN+1]));
+    val[13] = max(fhtRight[LED4_BIN], max(fhtRight[LED4_BIN-1], fhtRight[LED4_BIN+1]));
+    val[14] = max(fhtRight[LED5_BIN], max(fhtRight[LED5_BIN-1], fhtRight[LED5_BIN+1]));
+
+    // Compute ranks
+    ranks5(&(val[0]), &(out[15]));
+    ranks5(&(val[5]), &(out[20]));
+    ranks5(&(val[10]), &(out[25]));
+
+    // Compute max
+    float maxIntensity = val[0];
+    for (uint8_t i = 0; i < 15; i++) {
+        if (val[i] > maxIntensity) {
+            maxIntensity = val[i];
+        }
+    }
+
+    // Normalize intensity
+    for (uint8_t i = 0; i < 15; i++) {
+        out[i] = val[i] / maxIntensity;
+    }
+}
+
 CrossroadStatus neuralInterpretate(uint16_t *fhtLeft, uint16_t *fhtFront, uint16_t *fhtRight) {
     // We make them static so that:
     //  1. we can be more efficient (no stack allocations)
     //  2. as they're big, we're always sure to have enough memory to hold them
-    static float x[INPUT_SIZE] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    static float x[INPUT_SIZE];
     static float y[OUTPUT_SIZE];
     static float Wrow[INPUT_SIZE];
 
-    // FIXME Preprocess fhtLeft, fhtFront, fhtRight to fill x
+    // Fill x with the preprocessed input data
+    preprocess(fhtLeft, fhtFront, fhtRight, x);
 
     // Initialize y = b so that we don't have to sum it later
     memcpy_P(y, &b, sizeof(float) * OUTPUT_SIZE);
@@ -50,9 +120,9 @@ CrossroadStatus neuralInterpretate(uint16_t *fhtLeft, uint16_t *fhtFront, uint16
     }
 
     CrossroadStatus result;
-    result.left = ((maxIndex >> 2) & 1) == 1; // maxIndex IN (4, 5, 6, 7)
-    result.front = ((maxIndex >> 1) & 1) == 1; // maxIndex IN (2, 3, 6, 7)
-    result.right = ((maxIndex >> 0) & 1) == 1; // maxIndex IN (1, 3, 5, 7)
+    result.left = ((maxIndex >> 2) & 1) == 1;  // maxIndex IN (4, 5, 6, 7) -> 1xx
+    result.front = ((maxIndex >> 1) & 1) == 1; // maxIndex IN (2, 3, 6, 7) -> x1x
+    result.right = ((maxIndex >> 0) & 1) == 1; // maxIndex IN (1, 3, 5, 7) -> xx1
 
     return result;
 }
