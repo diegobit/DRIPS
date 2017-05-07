@@ -3,8 +3,6 @@ import numpy as np
 import pickle
 import random
 
-#n_peaks = 5 # number of peaks for each sensor
-#input_size = 3 * n_peaks
 input_size = 30
 output_size = 8 # num of possible road configurations
 
@@ -25,11 +23,11 @@ x = tf.placeholder(tf.float32, [None, input_size])
 # === BEGIN DEEP NN ===
 
 # hidden layer
-num_nodes = 20
-weights_hidden = tf.Variable(tf.random_normal([input_size, num_nodes]))
-bias_hidden = tf.Variable(tf.random_normal([num_nodes]))
-preactivations_hidden = tf.add(tf.matmul(x, weights_hidden), bias_hidden)
-activations_hidden = tf.nn.relu(preactivations_hidden)
+#num_nodes = 20
+#weights_hidden = tf.Variable(tf.random_normal([input_size, num_nodes]))
+#bias_hidden = tf.Variable(tf.random_normal([num_nodes]))
+#preactivations_hidden = tf.add(tf.matmul(x, weights_hidden), bias_hidden)
+#activations_hidden = tf.nn.relu(preactivations_hidden)
 
 # hidden layer
 #num_nodes_2 = 50
@@ -39,11 +37,11 @@ activations_hidden = tf.nn.relu(preactivations_hidden)
 #activations_hidden_2 = tf.nn.sigmoid(preactivations_hidden_2)
 
 # output layer
-weights_output = tf.Variable(tf.random_normal([num_nodes, output_size]))
-bias_output = tf.Variable(tf.random_normal([output_size]))
-preactivations_output = tf.add(tf.matmul(activations_hidden, weights_output), bias_output)
+#weights_output = tf.Variable(tf.random_normal([num_nodes, output_size]))
+#bias_output = tf.Variable(tf.random_normal([output_size]))
+#preactivations_output = tf.add(tf.matmul(activations_hidden, weights_output), bias_output)
 
-y = tf.nn.relu(preactivations_output)
+#y = tf.nn.relu(preactivations_output)
 
 # === END DEEP NN ===
 
