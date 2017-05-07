@@ -370,7 +370,7 @@ void interpretateSensorData(uint16_t *left, uint16_t *front, uint16_t *right) {
 
     if (status.left) {
         crossroad[0].validUntil = millis() + k;
-        crossroad[0].orientation = 90;
+        crossroad[0].orientation = 270;
     }
 
     if (status.front) {
@@ -380,7 +380,7 @@ void interpretateSensorData(uint16_t *left, uint16_t *front, uint16_t *right) {
 
     if (status.right) {
         crossroad[2].validUntil = millis() + k;
-        crossroad[2].orientation = 270;
+        crossroad[2].orientation = 90;
     }
 
     for (uint8_t i = 0; i < 3; i++) {
