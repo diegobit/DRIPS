@@ -90,4 +90,5 @@ print(str(i+step) + " / " + str(_max) + "; accuracy: " + str(accuracy_val))
 # Save weights
 W_val, b_val = sess.run([W, b])
 np.savetxt("W.csv", W_val, delimiter=",")
+np.savetxt("W'.txt", np.array(W_val).transpose(), delimiter=",")
 np.savetxt("b.csv", b_val, delimiter=",")
