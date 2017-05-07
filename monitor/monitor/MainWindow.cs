@@ -229,7 +229,7 @@ public partial class MainWindow : Window
 	{
 		Tuple<int, int> pos = ComputeCarPosition(road.Id, car, Allocation);
 		int mod = road.Orientation % 90;
-		int rotation = road.Orientation + (90 - mod) * (mod > 45 ? 1 : -1); // round to nearest 90 degree step
+		int rotation = road.Orientation - mod + (mod > 45 ? 90 : 0); // round to nearest 90 degree step
 		car.Pixbuf = car.Pixbuf.RotateSimple((Gdk.PixbufRotation)road.Orientation); //TODO: allow more than 90 degrees steps
 
 		Application.Invoke(delegate
