@@ -17,7 +17,7 @@ def ranks(array):
 # 44 23 71 9  88
 # 3  1  0  2  4
 def ranksi(array):
-    return [x/len(array) for x in np.array(array).argsort().tolist()] # Normalize data in [0, 1]
+    return [x/(len(array)-1) for x in np.array(array).argsort().tolist()] # Normalize data in [0, 1]
 
 def getRandomSensorData(peaks):
     # background noise
