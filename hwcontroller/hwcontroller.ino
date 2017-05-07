@@ -362,13 +362,24 @@ uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, u
 }
 
 void interpretateSensorData(uint16_t *left, uint16_t *front, uint16_t *right) {
-    // TODO look for frequencies and build a representation of the crossroad
+    // Look for frequencies and build a representation of the crossroad
+
     const CrossroadStatus status = neuralInterpretate(left, front, right);
 
-    /*if ( c'è qualcosa a sx ) {
+    if (status.left) {
         crossroad[0].validUntil = millis() + k;
-        crossroad[0].orientation = 180;
-    }*/
+        crossroad[0].orientation = 90;
+    }
+
+    if (status.front) {
+        crossroad[1].validUntil = millis() + k;
+        crossroad[1].orientation = 180;
+    }
+
+    if (status.right) {
+        crossroad[2].validUntil = millis() + k;
+        crossroad[2].orientation = 270;
+    }
 
     for (uint8_t i = 0; i < 3; i++) {
         if (crossroad[i].validUntil < millis()) {
