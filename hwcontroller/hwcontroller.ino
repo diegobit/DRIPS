@@ -1,6 +1,7 @@
 #pragma GCC optimize ("O3")
 #include "common.h"
 #include "ccs.h"
+#include "neural_interpreter.h"
 
 /**
  * Includes
@@ -362,6 +363,7 @@ uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, u
 
 void interpretateSensorData(uint16_t *left, uint16_t *front, uint16_t *right) {
     // TODO look for frequencies and build a representation of the crossroad
+    const CrossroadStatus status = neuralInterpretate(left, front, right);
 
     /*if ( c'è qualcosa a sx ) {
         crossroad[0].validUntil = millis() + k;
