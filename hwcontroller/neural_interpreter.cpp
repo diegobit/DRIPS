@@ -50,9 +50,9 @@ CrossroadStatus neuralInterpretate(uint16_t *fhtLeft, uint16_t *fhtFront, uint16
     }
 
     CrossroadStatus result;
-    result.left = maxIndex == 4 || maxIndex == 5 || maxIndex == 6 || maxIndex == 7;
-    result.front = maxIndex == 2 || maxIndex == 3 || maxIndex == 6 || maxIndex == 7;
-    result.right = maxIndex == 1 || maxIndex == 3 || maxIndex == 5 || maxIndex == 7;
+    result.left = ((maxIndex >> 0) & 1) == 1; // maxIndex IN (4, 5, 6, 7)
+    result.front = ((maxIndex >> 1) & 1) == 1; // maxIndex IN (2, 3, 6, 7)
+    result.right = ((maxIndex >> 2) & 1) == 1; // maxIndex IN (1, 3, 5, 7)
 
     return result;
 }
