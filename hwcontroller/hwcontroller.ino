@@ -383,7 +383,7 @@ inline uint8_t carActionToLaneNumber(uint8_t carIndex) {
     const RequestedAction action = carIndex == 3 ? requestedAction : crossroad[carIndex].requestedAction;
 
     // Now 'add' 1 to get the lane to the right, 3 to the one ahead, 5 to the one to the left
-    switch(action) { //FIXME, crossroad[3] undefined
+    switch (action) { // FIXME crossroad[3] undefined
         case ERA_TURN_RIGHT:
             return carPos + 1;
         case ERA_STRAIGHT:

@@ -101,7 +101,7 @@ Vehicle vehicles[3] = {
  * Note that handlePeriodicActions() can updates the value too, in order to prepare
  * it for ST_BEGIN when resetting the procedure.
  */
-unsigned long timeMarker = 0; // TODO REDUCE ACCURACY TO SAVE SPACE
+unsigned long timeMarker = 0; // NOTE We can reduce accuracy to save space
 unsigned long keepAliveTimeMarker = 0;
 bool advertiseCCS = false;
 uint16_t backoff = 0; // 0 means no backoff (*not* a zero-length backoff)
@@ -203,7 +203,7 @@ State FUN_ST_WAIT_TO_BLINK() {
 
 State FUN_ST_BLINK() {
     static bool sampled = false;
-    const uint16_t expectedFhtTime = 1998 * _us; // TODO Big Comment
+    const uint16_t expectedFhtTime = 1998 * _us; // FIXME The time needed to compute a FHT (basically the duration of a call to readIrFrequencies(), without the sampling)
     const uint16_t expectedProcessingTime = 3 * ((uint16_t)SAMPLING_PERIOD * (uint16_t)FHT_N + expectedFhtTime) / 1000; // ms
 
     State r = handlePeriodicActions();
@@ -369,7 +369,7 @@ State handlePeriodicActions() {
                     const char sender = buf[2];
                     if (!(isForMe && sender == currentPeer.address)) {
                         // Send pardoned SCS
-                        uint8_t data[2]; // FIXME Must we send the string terminator too?
+                        uint8_t data[2];
                         data[0] = MSG_TYPE_SCS;
                         data[1] = currentPeer.address;
                         nrf24.send(data, sizeof(data));
@@ -378,7 +378,7 @@ State handlePeriodicActions() {
                 } else if (state == ST_INTERPRETATE) {
                     if (isForMe) {
                         // Send non-pardoned SCS
-                        uint8_t data[2]; // FIXME Must we send the string terminator too?
+                        uint8_t data[2];
                         data[0] = MSG_TYPE_SCS;
                         data[1] = '0'; // FIXME Can we send \0 as the pardoned address?
                         nrf24.send(data, sizeof(data));
@@ -408,7 +408,7 @@ State handlePeriodicActions() {
 
 void sendKeepAlive() {
     uint8_t data[21];
-    data[0] = MSG_TYPE_KEEPALIVE; // TODO e se invece tenessimo in ram direttamente l'array?
+    data[0] = MSG_TYPE_KEEPALIVE;
     data[1] = ADDRESS;
     data[2] = requestedAction;
     data[3] = currentAction;
