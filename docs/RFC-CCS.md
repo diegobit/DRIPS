@@ -1,16 +1,25 @@
 # RFC CCS
 
-Supponiamo che l'auto A abbia rilevato tramite sensori IR tutte le auto nell'incrocio.
-L'auto A ha anche ricevuto dei pacchetti su rete wireless in cui sono specificate delle
-caratteristiche di alcune auto.
+## Funzionalità
+Questo protocollo fornisce due funzionalità:
 
-I messaggi inviati sono:
+ - *ACQUISIZIONE:*  
+   conoscere le caratteristiche non rilevabili con il sottosistema visuale delle auto nelle
+   vicinanze, come il modello dell'auto e le sue intenzioni;
+ - *ASSOCIAZIONE:*  
+   associare un auto da cui si è ricevuto un messaggio sulla rete wireless con un'auto
+   rilevata con il sottosistema visivo.
 
- * CCS - Chi Cazzo Sei
- * SCS - Stop Chi Sei
+## Descrizione del protocollo
 
-L'auto A vuole mettere in relazione ogni auto rilevata con i dati acquisiti sulla rete
-wireless.
+I messaggi inviati sono di tre tipi:
+
+ * KeepAlive:           inviati periodicamente per lo scoperta e il mantenimento dei nodi nella rete
+ * CCS (Chi Cazzo Sei): per avviare la procedura 
+ * SCS (Stop Chi Sei):  per notificare altre auto che un'altra procedura è in corso nella rete
+
+Supponiamo che l'auto A abbia rilevato tramite il sottosistema visivo tutte le auto nell'incrocio.
+Il passo successivo è mettere in relazione ogni auto rilevata con i dati acquisiti sulla rete wireless.
 
 Per fare ciò, l'auto A deve iniziare la procedura di CCS.
 
