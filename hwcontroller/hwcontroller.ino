@@ -359,10 +359,9 @@ inline uint8_t positionToLaneNumber(uint8_t position) {
  * Takes a lane number and returns an index of `crossroads`, the car that is in that lane
  */
 inline uint8_t laneNumberToPosition(uint8_t lane) {
-    /* position = 0 (left car),  returns 7;
-     * position = 1 (front car), returns 5;
-     * position = 2 (right car), returns 3;
-     * position = 3 (this car), returns 1;
+    /* lane = 7, returns 0 (left car);
+     * lane = 5, returns 1 (front car);
+     * ...
      */
     return (7 - lane) / 2;
 }
