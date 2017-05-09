@@ -370,6 +370,10 @@ inline uint8_t laneNumberToPosition(uint8_t lane) {
 /**
  * Takes an index of `crossroads` (a car) and returns the number of the lane the car wants to get into
  * `3` is a valid argument, it's not an index of the array, but means 'this car'
+ *
+ * If the action of a car that might cross our right is unknown, we assume the worst and return 9 (a
+ * number bigger than any possible target lane, so who calls this method will always assume to be
+ * crossed until the real action is known and the real target lane is computed)
  */
 inline uint8_t carActionToLaneNumber(uint8_t carIndex) {
     /** 
@@ -392,7 +396,7 @@ inline uint8_t carActionToLaneNumber(uint8_t carIndex) {
         case ERA_TURN_LEFT:
             return carPos + 5;
         default:
-            return 0; // None and wrong values, FIXME find right number for all cases
+            return 9; // 9 is bigger than any possible target lane
     }
 }
 
