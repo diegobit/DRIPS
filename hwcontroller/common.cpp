@@ -13,7 +13,7 @@ void __assert(bool success, String msg) {
 #endif
 
 RequestedAction requestedAction = ERA_STRAIGHT;
-CurrentAction currentAction = ECA_STRAIGHT;
+CurrentAction currentAction = ECA_STILL;
 bool hasPriority = false;
 
 #define _8_SPACES { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' }
