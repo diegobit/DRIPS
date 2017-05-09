@@ -334,7 +334,8 @@ bool someoneCrossesMyRight() {
         // For every odd lane after me and before my target lane, check whether his action crosses my right
         const uint8_t carIndex = laneNumberToPosition(l);
         if (crossroad[carIndex].validUntil > millis()) {
-            if (l >= targetLane) {
+            const uint8_t otherTargetLane = carActionToLaneNumber(carIndex);
+            if (otherTargetLane >= targetLane) {
                 return true;
             }
         }
