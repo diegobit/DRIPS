@@ -1,6 +1,7 @@
 #pragma GCC optimize ("O3")
 #include "precedence.h"
 #include "common.h"
+#include <Arduino.h>
 
 /**
  * Takes an index of `crossroads` and returns the number of the lane the car is in

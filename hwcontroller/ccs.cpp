@@ -2,7 +2,6 @@
 #include "common.h"
 #include "ccs.h"
 
-#include <Arduino.h>
 #include <SPI.h>       // nRF24L01+
 #include <RH_NRF24.h>  // nRF24L01+
 #include <limits.h>
