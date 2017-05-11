@@ -197,7 +197,7 @@ State FUN_ST_BEGIN() {
         delay(backoff);
         backoff = 0;
     } else {
-        delay(random(0, TIMESPAN_RANDOM_DESYNC))
+        delayMicroseconds(random(0, TIMESPAN_RANDOM_DESYNC_US));
     }
 
 
