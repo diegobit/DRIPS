@@ -16,7 +16,7 @@
 const unsigned long TIMESPAN_KEEPALIVE = 0;
 
 /** Maximum backoff time for the KeepAlive */
-const uint16_t TIMESPAN_KEEPALIVE_BACKOFF = 0;
+const uint16_t TIMESPAN_KEEPALIVE_BACKOFF = 0; // FIXME maybe we are already desynchronized, we don't need another backoff
 
 /** Time after which vehicles in the vehicle cache expire */
 const uint16_t VEHICLE_CACHE_TTL = 0;
