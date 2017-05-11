@@ -36,6 +36,14 @@ const uint16_t TIMESPAN_Z = 10;
 
 /** CCS led frequency */
 const int CCS_K = 0;
+/**
+ * maximum additional delay between two consecutive CCS procedure, used in order to desync
+ * vehicles so that they messages collide with lower probability. This value considers the
+ * transmission time of our biggest packet, a KeepAlive messge. The maximum transmit time of
+ * a packet is 224us according to this source:
+ * https://devzone.nordicsemi.com/question/13166/nrf24l01-timing-diagram/
+ */
+const uint16_t TIMESPAN_RANDOM_DESYNC_US = 5000;
 
 
 // ==== TYPE DEFINITIONS ==== //
