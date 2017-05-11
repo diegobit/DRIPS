@@ -34,8 +34,6 @@ const uint16_t TIMESPAN_X = 0; // FIXME define it
 /** Value for the max length of the random backoff interval (ms). */
 const uint16_t TIMESPAN_Z = 10;
 
-/** CCS led frequency */
-const int CCS_K = 0;
 /**
  * maximum additional delay between two consecutive CCS procedure, used in order to desync
  * vehicles so that they messages collide with lower probability. This value considers the
