@@ -12,22 +12,31 @@
 #define MSG_TYPE_CCS 'C'
 #define MSG_TYPE_SCS 'S'
 
-/** Time to wait from keepAliveTimeMarker before sending another keepAlive */
+/**
+ * Time to wait from keepAliveTimeMarker before sending another keepAlive
+ * It must be   TIMESPAN_KEEPALIVE > T_maxloop   otherwise // FIXME write reason
+ * It is   TIMESPAN_KEEPALIVE = 2 * T_maxloop   because we decided to send one KeepAlive every two loops
+ */
 const unsigned long TIMESPAN_KEEPALIVE = 0;
 
 /** Maximum backoff time for the KeepAlive */
 const uint16_t TIMESPAN_KEEPALIVE_BACKOFF = 0; // FIXME maybe we are already desynchronized, we don't need another backoff
 
-/** Time after which vehicles in the vehicle cache expire */
-const uint16_t VEHICLE_CACHE_TTL = 0;
+/**
+ * Time after which vehicles in the vehicle cache expire. We decided
+ * VEHICLE_CACHE_TTL > 3 * TIMESPAN_KEEPALIVE  // FIXME write reason
+ */
+const uint16_t VEHICLE_CACHE_TTL = 0; // FIXME do it
 
 /**
  * Duration of the wait after sending a CCS, and duration of the blinking of the LEDs.
- * Assuming T_maxloop = T_loop_without_handleCCS + max{FUN_ST_BEGIN, FUN_ST_WAIT_TO_BLINK, FUN_ST_BLINK, FUN_ST_INTERPRETATE}:
- *  - Must be TIMESPAN_X > 3*T_maxloop because we need to sample inbetween the special blinking
- *    period of my peer. Who sends the CCS stores the samples 1 loop after the beginning of the blinking,
- *    who received the request 1 loop before the end of the period.
- *  - Must be TIMESPAN_X > 2*T_maxloop because it is the maximum possible time I can receive a SCS reply after sending our CCS
+ * Assuming   T_maxloop = T_loop_without_handleCCS
+ *                      + max{FUN_ST_BEGIN, FUN_ST_WAIT_TO_BLINK, FUN_ST_BLINK, FUN_ST_INTERPRETATE}:
+ *  - Must be   TIMESPAN_X > 3*T_maxloop   because we need to sample inbetween the special blinking
+ *    period of my peer. Who sends the CCS stores the samples 1 loop after the beginning of the
+ *    blinking, who received the request 1 loop before the end of the period.
+ *  - Must be   TIMESPAN_X > 2*T_maxloop   because it is the maximum possible time I can receive
+ *    a SCS reply after sending our CCS
  */
 const uint16_t TIMESPAN_X = 0; // FIXME define it
 
