@@ -12,13 +12,6 @@
 #define MSG_TYPE_CCS 'C'
 #define MSG_TYPE_SCS 'S'
 
-/**
- * Time to wait between consecutive attempts to send a CCS.
- * Must be ≫ 2*TIMESPAN_X, and in general should be greater
- * than the maximum time required to complete a CCS procedure.
- */
-const uint16_t TIMESPAN_NOOP = 0;
-
 /** Time to wait from keepAliveTimeMarker before sending another keepAlive */
 const unsigned long TIMESPAN_KEEPALIVE = 0;
 
@@ -165,12 +158,19 @@ State FUN_ST_BEGIN() {
         return r;
     }
 
-    const uint16_t timeToWait = backoff == 0 ? TIMESPAN_NOOP : 2*TIMESPAN_X + backoff;
-    if (millis() < timeMarker + timeToWait) {
-        return ST_BEGIN;
+    // We use a delay because we want to unsynchronize the vehicles' loop
+    if (backoff != 0) {
+        const uint16_t timeToWait = 2 * TIMESPAN_X;
+        if (millis() < timeMarker + timeToWait) {
+            return ST_BEGIN;
+        }
+
+        delay(backoff);
+        backoff = 0;
+    } else {
+        delay(random(0, TIMESPAN_RANDOM_DESYNC))
     }
 
-    backoff = 0;
 
     sendCCS();
 
