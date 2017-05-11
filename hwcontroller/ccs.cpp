@@ -30,10 +30,13 @@ const uint16_t VEHICLE_CACHE_TTL = 0;
 
 /**
  * Duration of the wait after sending a CCS, and duration of the blinking of the LEDs.
- * Must be at least twice the duration of a whole main loop iteration, so that we have
- * enough margin to sample the data in ST_BLINK while the peer is still blinking.
+ * Assuming T_maxloop = T_loop_without_handleCCS + max{FUN_ST_BEGIN, FUN_ST_WAIT_TO_BLINK, FUN_ST_BLINK, FUN_ST_INTERPRETATE}:
+ *  - Must be TIMESPAN_X > 3*T_maxloop because we need to sample inbetween the special blinking
+ *    period of my peer. Who sends the CCS stores the samples 1 loop after the beginning of the blinking,
+ *    who received the request 1 loop before the end of the period.
+ *  - Must be TIMESPAN_X > 2*T_maxloop because it is the maximum possible time I can receive a SCS reply after sending our CCS
  */
-const uint16_t TIMESPAN_X = 0;
+const uint16_t TIMESPAN_X = 0; // FIXME define it
 
 /** Value for the max length of the random backoff interval (ms). */
 const uint16_t TIMESPAN_Z = 0;
