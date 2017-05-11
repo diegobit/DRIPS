@@ -33,7 +33,7 @@ const uint16_t TIMESPAN_LOOP_MAX = TIMESPAN_LOOP_NOCCS + TIMESPAN_LOOP_CCSONLY;
  * It must be   TIMESPAN_KEEPALIVE > TIMESPAN_LOOP_MAX   otherwise // FIXME write reason
  * It is   TIMESPAN_KEEPALIVE = 2 * TIMESPAN_LOOP_MAX   because we decided to send one KeepAlive every two loops
  */
-const unsigned long TIMESPAN_KEEPALIVE = 0;
+const unsigned long TIMESPAN_KEEPALIVE = 2 * TIMESPAN_LOOP_MAX;
 
 /** Maximum backoff time for the KeepAlive */
 const uint16_t TIMESPAN_KEEPALIVE_BACKOFF = 0; // FIXME maybe we are already desynchronized, we don't need another backoff
