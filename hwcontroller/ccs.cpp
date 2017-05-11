@@ -13,9 +13,25 @@
 #define MSG_TYPE_SCS 'S'
 
 /**
+ * Maximum measured execution time of loop() without handleCCS()
+ */
+const uint16_t TIMESPAN_LOOP_NOCCS = 218;
+
+/**
+ * Maximum measured execution time of handleCCS()
+ * It is   max{FUN_ST_BEGIN, FUN_ST_WAIT_TO_BLINK, FUN_ST_BLINK, FUN_ST_INTERPRETATE}
+ */
+const uint16_t TIMESPAN_LOOP_CCSONLY = 0; // FIXME measure it
+/**
+ * Maximum execution time of a loop(). It is defined as:
+ *   TIMESPAN_LOOP_MAX = TIMESPAN_LOOP_NOCCS + TIMESPAN_LOOP_CCSONLY
+ */
+const uint16_t TIMESPAN_LOOP_MAX = TIMESPAN_LOOP_NOCCS + TIMESPAN_LOOP_CCSONLY;
+
+/**
  * Time to wait from keepAliveTimeMarker before sending another keepAlive
- * It must be   TIMESPAN_KEEPALIVE > T_maxloop   otherwise // FIXME write reason
- * It is   TIMESPAN_KEEPALIVE = 2 * T_maxloop   because we decided to send one KeepAlive every two loops
+ * It must be   TIMESPAN_KEEPALIVE > TIMESPAN_LOOP_MAX   otherwise // FIXME write reason
+ * It is   TIMESPAN_KEEPALIVE = 2 * TIMESPAN_LOOP_MAX   because we decided to send one KeepAlive every two loops
  */
 const unsigned long TIMESPAN_KEEPALIVE = 0;
 
@@ -26,19 +42,17 @@ const uint16_t TIMESPAN_KEEPALIVE_BACKOFF = 0; // FIXME maybe we are already des
  * Time after which vehicles in the vehicle cache expire. We decided
  * VEHICLE_CACHE_TTL > 3 * TIMESPAN_KEEPALIVE  // FIXME write reason
  */
-const uint16_t VEHICLE_CACHE_TTL = 0; // FIXME do it
+const uint16_t VEHICLE_CACHE_TTL = 3 * TIMESPAN_KEEPALIVE + 1;
 
 /**
  * Duration of the wait after sending a CCS, and duration of the blinking of the LEDs.
- * Assuming   T_maxloop = T_loop_without_handleCCS
- *                      + max{FUN_ST_BEGIN, FUN_ST_WAIT_TO_BLINK, FUN_ST_BLINK, FUN_ST_INTERPRETATE}:
- *  - Must be   TIMESPAN_X > 3*T_maxloop   because we need to sample inbetween the special blinking
+ *  - Must be   TIMESPAN_X > 3 * TIMESPAN_LOOP_MAX   because we need to sample inbetween the special blinking
  *    period of my peer. Who sends the CCS stores the samples 1 loop after the beginning of the
  *    blinking, who received the request 1 loop before the end of the period.
- *  - Must be   TIMESPAN_X > 2*T_maxloop   because it is the maximum possible time I can receive
+ *  - Must be   TIMESPAN_X > 2 * TIMESPAN_LOOP_MAX   because it is the maximum possible time I can receive
  *    a SCS reply after sending our CCS
  */
-const uint16_t TIMESPAN_X = 0; // FIXME define it
+const uint16_t TIMESPAN_X = 3 * TIMESPAN_LOOP_MAX + 1;
 
 /** Value for the max length of the random backoff interval (ms). */
 const uint16_t TIMESPAN_Z = 10;
