@@ -32,7 +32,7 @@ const uint16_t VEHICLE_CACHE_TTL = 0;
 const uint16_t TIMESPAN_X = 0; // FIXME define it
 
 /** Value for the max length of the random backoff interval (ms). */
-const uint16_t TIMESPAN_Z = 0;
+const uint16_t TIMESPAN_Z = 10;
 
 /** CCS led frequency */
 const int CCS_K = 0;
