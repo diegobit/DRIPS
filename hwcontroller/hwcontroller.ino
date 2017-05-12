@@ -414,8 +414,6 @@ void setup() {
 
     randomSeed(analogRead(RND_SEED));
 
-    setupCCS(fhtLeft, fhtFront, fhtRight);
-
     pinMode(SENSOR_L, INPUT);
     pinMode(SENSOR_F, INPUT);
     pinMode(SENSOR_R, INPUT);
@@ -430,6 +428,27 @@ void setup() {
 
     // Enable internal pull-up resistor
     digitalWrite(BUTTON, HIGH);
+
+    // Power on indicator
+    digitalWrite(TURN_L, HIGH);
+    digitalWrite(TURN_R, HIGH);
+
+    if (!setupCCS(fhtLeft, fhtFront, fhtRight)) {
+        // Display an error signal
+        while (true) {
+            digitalWrite(TURN_L, LOW);
+            digitalWrite(TURN_R, LOW);
+            delay(200);
+            digitalWrite(TURN_L, HIGH);
+            digitalWrite(TURN_R, HIGH);
+            delay(200);
+        }
+    }
+
+    // Reset power on indicator as now we're done bootstrapping
+    delay(1000);
+    digitalWrite(TURN_L, LOW);
+    digitalWrite(TURN_R, LOW);
 
     unsigned long semiperiod = TIMER_PERIOD / 2;
     FlexiTimer2::set(semiperiod / 100, 1.0/10000, timerHandler); // max resolution appears to be 100 µs. 10 µs is distorted, while 1 µs is broken.

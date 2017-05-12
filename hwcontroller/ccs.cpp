@@ -144,16 +144,18 @@ State state = ST_BEGIN;
 
 // ==== FUNCTION IMPLEMENTATIONS ==== //
 
-void setupCCS(uint16_t *_fhtLeft, uint16_t *_fhtFront, uint16_t *_fhtRight) {
+bool setupCCS(uint16_t *_fhtLeft, uint16_t *_fhtFront, uint16_t *_fhtRight) {
     fhtLeft = _fhtLeft;
     fhtFront = _fhtFront;
     fhtRight = _fhtRight;
 
     if (!nrf24.init()) {
         Serial.println(F("Radio init failed!"));
+        return false;
     }
 
     timeMarker = millis();
+    return true;
 }
 
 /**
