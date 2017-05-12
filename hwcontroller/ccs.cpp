@@ -48,8 +48,9 @@ const uint16_t TIMESPAN_X = max(3 * TIMESPAN_LOOP_MAX, DELTA) + 1;
 
 /**
  * Value for the max length of the random backoff interval (ms).
- * Used after receiving a FCT, so that for the next transmission we avoid
- * too much synchronization between the timings of the vehicles.
+ * Used after receiving a FCT or a CCS which is not for us,
+ * so that for the next transmission we avoid too much synchronization
+ * between the timings of the vehicles.
  */
 const uint16_t TIMESPAN_MAX_BACKOFF = 10;
 
