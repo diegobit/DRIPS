@@ -32,6 +32,14 @@
  */
 #define TURN_BUTTON_DELAY 30  // Delay of the turn button, in tenths of a second.
 
+/**
+ * Time after which vehicles in `crossroad` expire.
+ * It must be   CROSSROAD_TTL > TIMESPAN_X   otherwise during a CCS procedure the vehicle
+ * which is blinking would disappear from the crossroad
+ * We decided   CROSSROAD_TTL = TIMESPAN_X + ∂   for the quantization problem
+ */
+const uint16_t CROSSROAD_TTL = TIMESPAN_X + DELTA;
+
 // Define various ADC prescaler
 const unsigned char PS_16 = (1 << ADPS2);
 const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);
@@ -363,20 +371,18 @@ void interpretateSensorData(uint16_t *left, uint16_t *front, uint16_t *right) {
 
     const CrossroadStatus status = neuralInterpretate(left, front, right);
 
-    const uint16_t k = 0; // FIXME!!!
-
     if (status.left) {
-        crossroad[0].validUntil = millis() + k;
+        crossroad[0].validUntil = millis() + CROSSROAD_TTL;
         crossroad[0].orientation = 270;
     }
 
     if (status.front) {
-        crossroad[1].validUntil = millis() + k;
+        crossroad[1].validUntil = millis() + CROSSROAD_TTL;
         crossroad[1].orientation = 180;
     }
 
     if (status.right) {
-        crossroad[2].validUntil = millis() + k;
+        crossroad[2].validUntil = millis() + CROSSROAD_TTL;
         crossroad[2].orientation = 90;
     }
 

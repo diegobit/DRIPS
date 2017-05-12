@@ -13,46 +13,38 @@
 #define MSG_TYPE_SCS 'S'
 
 /**
- * Maximum measured execution time of loop() without handleCCS()
+ * The 'Quantization problem': In an ideal situation we would have messages sent as soon as their
+ * timers expire. However we are able to send messages only within an handleCCS() which is called
+ * only once every loop(), so we have to taking into consideration the maximum delay
+ * caused by this 'quantization', TIMESPAN_LOOP_MAX. The value is doubled to consider both the
+ * sender and the receiver.
  */
-const uint16_t TIMESPAN_LOOP_NOCCS = 218;
-
-/**
- * Maximum measured execution time of handleCCS()
- * Defined as:   max_time{FUN_ST_BEGIN, FUN_ST_WAIT_TO_BLINK, FUN_ST_BLINK, FUN_ST_INTERPRETATE}
- */
-const uint16_t TIMESPAN_LOOP_CCSONLY = 0; // FIXME measure it
-
-/**
- * Maximum execution time of a loop()
- */
-const uint16_t TIMESPAN_LOOP_MAX = TIMESPAN_LOOP_NOCCS + TIMESPAN_LOOP_CCSONLY;
+ const uint16_t DELTA = 2 * TIMESPAN_LOOP_MAX;
 
 /**
  * Time to wait from keepAliveTimeMarker before sending another keepAlive
- * It must be   TIMESPAN_KEEPALIVE > TIMESPAN_LOOP_MAX   otherwise it means we just sent it every
+ * It must be   TIMESPAN_KEEPALIVE > TIMESPAN_LOOP_MAX + ∂  otherwise it means we just sent it every
  * time. Instead we decided to send one KeepAlive every two loops, give or take.
  */
-const unsigned long TIMESPAN_KEEPALIVE = 2 * TIMESPAN_LOOP_MAX;
+const unsigned long TIMESPAN_KEEPALIVE = TIMESPAN_LOOP_MAX + DELTA;
 
 /**
  * Time after which vehicles in the vehicle cache expire.
  *  - It must be   VEHICLE_CACHE_TTL > TIMESPAN_KEEPALIVE   otherwise the cache would always expire
  *    before receiving another KeepAlive (even in perfect conditions).
- *  - We decided   VEHICLE_CACHE_TTL > 3 * TIMESPAN_KEEPALIVE   because we want to be able to keep
- *    the caches, thus be able to send CCS requests, even with some interferences and collisions
+ *  - We decided   VEHICLE_CACHE_TTL > TIMESPAN_KEEPALIVE + ∂   because of the 'quantization problem'
  */
-const uint16_t VEHICLE_CACHE_TTL = 3 * TIMESPAN_KEEPALIVE + 1;
+const uint16_t VEHICLE_CACHE_TTL = TIMESPAN_KEEPALIVE + DELTA;
 
 /**
  * Duration of the wait after sending a CCS, and duration of the blinking of the LEDs.
  *  - Must be   TIMESPAN_X > 3 * TIMESPAN_LOOP_MAX   because we need to sample inbetween the special blinking
  *    period of my peer. Who sends the CCS stores the samples 1 loop after the beginning of the
  *    blinking, who received the request 1 loop before the end of the period.
- *  - Must be   TIMESPAN_X > 2 * TIMESPAN_LOOP_MAX   because it is the maximum possible time I can receive
+ *  - Must be   TIMESPAN_X > DELTA   because it is the maximum possible time I can receive
  *    a SCS reply after sending our CCS
  */
-const uint16_t TIMESPAN_X = 3 * TIMESPAN_LOOP_MAX + 1;
+const uint16_t TIMESPAN_X = max(3 * TIMESPAN_LOOP_MAX, DELTA) + 1;
 
 /**
  * Value for the max length of the random backoff interval (ms).
