@@ -50,7 +50,7 @@ Per fare ciò, l'auto A deve iniziare la procedura di CCS.
     al nodo a cui è stata fatta la richiesta. Dopodiché torna nello stato di
     operatività standard.
 
-In ogni momento della procedura di CCS, l'auto A rimane in ascolto di messaggi SCFCTS. In
+In ogni momento della procedura di CCS, l'auto A rimane in ascolto di messaggi FCT. In
 caso di ricezione di tale messaggio, e in caso in cui il Pardoned Address del messaggio
 sia diverso da quello dell'auto A, la procedura viene interrotta e ripresa dopo un
 tempo di 2X sommato a un backoff casuale compreso tra 1 e Z millisecondi.
