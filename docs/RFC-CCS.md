@@ -50,7 +50,7 @@ Per fare ciò, l'auto A deve iniziare la procedura di CCS.
     al nodo a cui è stata fatta la richiesta. Dopodiché torna nello stato di
     operatività standard.
 
-In ogni momento della procedura di CCS, l'auto A rimane in ascolto di messaggi SCS. In
+In ogni momento della procedura di CCS, l'auto A rimane in ascolto di messaggi SCFCTS. In
 caso di ricezione di tale messaggio, e in caso in cui il Pardoned Address del messaggio
 sia diverso da quello dell'auto A, la procedura viene interrotta e ripresa dopo un
 tempo di 2X sommato a un backoff casuale compreso tra 1 e Z millisecondi.
@@ -60,7 +60,7 @@ Ogni altra auto nell'incrocio, alla ricezione del CCS di A:
 
  1. Determina se attualmente è impegnata in una procedura di CCS con un qualsiasi peer.
      a. Se sì e se quel peer non è A, oppure se sì e se il CCS non era per questa auto,
-        allora risponde in broadcast con un SCS con specificato l'indirizzo del peer con
+        allora risponde in broadcast con un FCT con specificato l'indirizzo del peer con
         cui è in corso la procedura già avviata.
      b. Se no, determina se il CCS era destinato a lei.
           i. Se no, termina
@@ -71,7 +71,7 @@ Ogni altra auto nell'incrocio, alla ricezione del CCS di A:
              lampeggiare i led con una frequenza di K Hz per una durata di X secondi.
 
 Durante tutto il tempo in cui si trova nello stato 1.b.ii., l'auto rimane in ascolto di
-messaggi SCS. In caso di ricezione di tale messaggio, e in caso in cui il Pardoned Address
+messaggi FCT. In caso di ricezione di tale messaggio, e in caso in cui il Pardoned Address
 del messaggio sia diverso da quello dell'auto corrente, la procedura viene interrotta.
 
 ## Formato dei pacchetti
@@ -94,13 +94,13 @@ del messaggio sia diverso da quello dell'auto corrente, la procedura viene inter
  |   Priority    |
  +---------------+
 
- Msg Type = 75 (carattere K)
- Sender Addr = l'indirizzo che identifica l'auto che ha emesso il CCS.
+ Msg Type      = 75 (carattere K)
+ Sender Addr   = l'indirizzo che identifica l'auto che ha emesso il CCS.
  Requested Act = l'azione che l'auto vorrebbe fare
- Current Act = l'azione che l'auto sta facendo a seguito della coordinazione con la rete
- Manufacturer = il produttore dell'auto
- Model = il modello dell'auto
- Priority = (boolean) se l'azione richiesta dall'auto ha priorità su quelle delle altre auto
+ Current Act   = l'azione che l'auto sta facendo a seguito della coordinazione con la rete
+ Manufacturer  = il produttore dell'auto
+ Model         = il modello dell'auto
+ Priority      = (boolean) se l'azione richiesta dall'auto ha priorità su quelle delle altre auto
 
 ### CCS
 
@@ -114,7 +114,7 @@ del messaggio sia diverso da quello dell'auto corrente, la procedura viene inter
  Receiver Addr = l'indirizzo che identifica l'auto è cui è rivolto il CCS.
  Sender Addr = l'indirizzo che identifica l'auto che ha emesso il CCS.
 
-### SCS
+### FCT
 
   0                   1
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
@@ -122,6 +122,6 @@ del messaggio sia diverso da quello dell'auto corrente, la procedura viene inter
  | Msg Type (S)  | Pardoned Addr |
  +---------------+---------------+
 
- Msg Type = 83 (carattere S)
+ Msg Type      = 83 (carattere S)
  Pardoned Addr = l'indirizzo che identifica l'auto che è attualmente impegnata nell'esecuzione
                  di una procedura CCS, e che quindi deve ignorare questo messaggio.
