@@ -95,7 +95,6 @@ State FUN_ST_INTERPRETATE();
 State handlePeriodicActions();
 void sendKeepAlive();
 void sendCCS();
-bool isChannelFree();
 inline bool isExpired(const Vehicle *vehicle);
 
 
@@ -199,11 +198,9 @@ State FUN_ST_BEGIN() {
 
     sendCCS();
 
-    // TODO What if, instead of trying to send and then hoping nothing collides, we first
+    // NOTE What if, instead of trying to send and then hoping nothing collides, we first
     // listen to the channel to see if someone's talking? Kind of what 802.11 does:
     // https://en.wikipedia.org/wiki/Received_signal_strength_indication
-    //      Serial.print("RSSI: ");
-    //      Serial.println((uint8_t)rf24.lastRssi(), DEC);
 
     timeMarker = millis();
 
@@ -474,12 +471,4 @@ void sendCCS() {
 
 bool isExpired(const Vehicle *vehicle) {
     return vehicle->receivedTime + VEHICLE_CACHE_TTL < millis();
-}
-
-/**
- * @return  true if no transmissions are heard on the channel
- */
-bool isChannelFree() {
-    // TODO implement
-    return true;
 }
