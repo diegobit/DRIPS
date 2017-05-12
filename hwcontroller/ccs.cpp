@@ -35,9 +35,6 @@ const uint16_t TIMESPAN_LOOP_MAX = TIMESPAN_LOOP_NOCCS + TIMESPAN_LOOP_CCSONLY;
  */
 const unsigned long TIMESPAN_KEEPALIVE = 2 * TIMESPAN_LOOP_MAX;
 
-/** Maximum backoff time for the KeepAlive */
-const uint16_t TIMESPAN_KEEPALIVE_BACKOFF = 0; // FIXME maybe we are already desynchronized, we don't need another backoff
-
 /**
  * Time after which vehicles in the vehicle cache expire.
  *  - It must be   VEHICLE_CACHE_TTL > TIMESPAN_KEEPALIVE   otherwise the cache would always expire
@@ -346,7 +343,7 @@ State FUN_ST_INTERPRETATE() {
 State handlePeriodicActions() {
     if (keepAliveTimeMarker + TIMESPAN_KEEPALIVE <= millis()) {
         sendKeepAlive();
-        keepAliveTimeMarker = millis() + random(0, TIMESPAN_KEEPALIVE_BACKOFF);
+        keepAliveTimeMarker = millis();
     }
 
     if (nrf24.available())
