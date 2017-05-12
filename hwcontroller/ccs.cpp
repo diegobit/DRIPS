@@ -19,7 +19,7 @@
  * caused by this 'quantization', TIMESPAN_LOOP_MAX. The value is doubled to consider both the
  * sender and the receiver.
  */
- const uint16_t DELTA = 2 * TIMESPAN_LOOP_MAX;
+const uint16_t DELTA = 2 * TIMESPAN_LOOP_MAX;
 
 /**
  * Time to wait from keepAliveTimeMarker before sending another keepAlive
