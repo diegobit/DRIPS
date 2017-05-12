@@ -45,7 +45,7 @@ Per fare ciò, l'auto A deve iniziare la procedura di CCS.
 In ogni momento della procedura di CCS, l'auto A rimane in ascolto di messaggi SCS. In
 caso di ricezione di tale messaggio, e in caso in cui il Pardoned Address del messaggio
 sia diverso da quello dell'auto A, la procedura viene interrotta e ripresa dopo un
-tempo di 2X sommato a un backoff casuale compreso tra Y e Z secondi.
+tempo di 2X sommato a un backoff casuale compreso tra 1 e Z millisecondi.
 
 
 Ogni altra auto nell'incrocio, alla ricezione del CCS di A:
