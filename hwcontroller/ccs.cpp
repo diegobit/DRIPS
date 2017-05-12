@@ -19,19 +19,19 @@ const uint16_t TIMESPAN_LOOP_NOCCS = 218;
 
 /**
  * Maximum measured execution time of handleCCS()
- * It is   max{FUN_ST_BEGIN, FUN_ST_WAIT_TO_BLINK, FUN_ST_BLINK, FUN_ST_INTERPRETATE}
+ * Defined as:   max_time{FUN_ST_BEGIN, FUN_ST_WAIT_TO_BLINK, FUN_ST_BLINK, FUN_ST_INTERPRETATE}
  */
 const uint16_t TIMESPAN_LOOP_CCSONLY = 0; // FIXME measure it
+
 /**
- * Maximum execution time of a loop(). It is defined as:
- *   TIMESPAN_LOOP_MAX = TIMESPAN_LOOP_NOCCS + TIMESPAN_LOOP_CCSONLY
+ * Maximum execution time of a loop()
  */
 const uint16_t TIMESPAN_LOOP_MAX = TIMESPAN_LOOP_NOCCS + TIMESPAN_LOOP_CCSONLY;
 
 /**
  * Time to wait from keepAliveTimeMarker before sending another keepAlive
- * It must be   TIMESPAN_KEEPALIVE > TIMESPAN_LOOP_MAX   otherwise // FIXME write reason
- * It is   TIMESPAN_KEEPALIVE = 2 * TIMESPAN_LOOP_MAX   because we decided to send one KeepAlive every two loops
+ * It must be   TIMESPAN_KEEPALIVE > TIMESPAN_LOOP_MAX   otherwise it means we just sent it every
+ * time. Instead we decided to send one KeepAlive every two loops, give or take.
  */
 const unsigned long TIMESPAN_KEEPALIVE = 2 * TIMESPAN_LOOP_MAX;
 
@@ -39,8 +39,11 @@ const unsigned long TIMESPAN_KEEPALIVE = 2 * TIMESPAN_LOOP_MAX;
 const uint16_t TIMESPAN_KEEPALIVE_BACKOFF = 0; // FIXME maybe we are already desynchronized, we don't need another backoff
 
 /**
- * Time after which vehicles in the vehicle cache expire. We decided
- * VEHICLE_CACHE_TTL > 3 * TIMESPAN_KEEPALIVE  // FIXME write reason
+ * Time after which vehicles in the vehicle cache expire.
+ *  - It must be   VEHICLE_CACHE_TTL > TIMESPAN_KEEPALIVE   otherwise the cache would always expire
+ *    before receiving another KeepAlive (even in perfect conditions).
+ *  - We decided   VEHICLE_CACHE_TTL > 3 * TIMESPAN_KEEPALIVE   because we want to be able to keep
+ *    the caches, thus be able to send CCS requests, even with some interferences and collisions
  */
 const uint16_t VEHICLE_CACHE_TTL = 3 * TIMESPAN_KEEPALIVE + 1;
 
