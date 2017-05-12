@@ -57,8 +57,12 @@ const uint16_t VEHICLE_CACHE_TTL = 3 * TIMESPAN_KEEPALIVE + 1;
  */
 const uint16_t TIMESPAN_X = 3 * TIMESPAN_LOOP_MAX + 1;
 
-/** Value for the max length of the random backoff interval (ms). */
-const uint16_t TIMESPAN_Z = 10;
+/**
+ * Value for the max length of the random backoff interval (ms).
+ * Used after receiving packets due to some network issues, such as too much synchronization
+ * between the timings of two vehicles
+ */
+const uint16_t TIMESPAN_MAX_BACKOFF = 10;
 
 /**
  * maximum additional delay between two consecutive CCS procedure, used in order to desync
@@ -395,7 +399,7 @@ State handlePeriodicActions() {
                         timeMarker = millis();
                         return ST_WAIT_TO_BLINK;
                     } else {
-                        backoff = random(1, TIMESPAN_Z);
+                        backoff = random(1, TIMESPAN_MAX_BACKOFF);
                         timeMarker = millis();
                         return ST_BEGIN;
                     }
@@ -427,7 +431,7 @@ State handlePeriodicActions() {
                     advertiseCCS = false;
 
                     // Choose backoff
-                    backoff = random(1, TIMESPAN_Z);
+                    backoff = random(1, TIMESPAN_MAX_BACKOFF);
                     timeMarker = millis();
 
                     // Instruct to go back to begin
