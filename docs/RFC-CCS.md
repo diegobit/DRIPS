@@ -1,4 +1,9 @@
-# RFC CCS - Car Communication System
+# RFC: CCS
+
+## CAR COMMUNICATION SYSTEM
+Specifiche del protocollo  
+Maggio 2017  
+Daniele Di Sarli, Diego Giorgini
 
 ## Funzionalità
 Questo protocollo fornisce due funzionalità:
@@ -14,9 +19,12 @@ Questo protocollo fornisce due funzionalità:
 
 I messaggi inviati sono di tre tipi:
 
- * KeepAlive:           inviati periodicamente per lo scoperta e il mantenimento dei nodi nella rete
- * CCS (Chi Cazzo Sei): per avviare la procedura 
- * SCS (Stop Chi Sei):  per notificare altre auto che un'altra procedura è in corso nella rete
+ * KeepAlive:
+     inviati periodicamente per lo scoperta e il mantenimento dei nodi nella rete
+ * CCS (Chi Cazzo Sei, o Car Communication System):
+     per avviare la procedura
+ * FCT (Fatti i Cazzi Tuoi, o Force Communication System):
+     per notificare altre auto che un'altra procedura è in corso nella rete
 
 Supponiamo che l'auto A abbia rilevato tramite il sottosistema visivo tutte le auto nell'incrocio.
 Il passo successivo è mettere in relazione ogni auto rilevata con i dati acquisiti sulla rete wireless.
