@@ -404,7 +404,7 @@ State handlePeriodicActions() {
                         // Send non-pardoned SCS
                         uint8_t data[2];
                         data[0] = MSG_TYPE_SCS;
-                        data[1] = '0'; // FIXME Can we send \0 as the pardoned address?
+                        data[1] = '\0';
                         nrf24.send(data, sizeof(data));
                         nrf24.waitPacketSent();
                     }
