@@ -30,7 +30,7 @@
 /**
  * Configuration parameters
  */
-#define TURN_BUTTON_DELAY 30  // Delay of the turn button, in tenths of a second.
+#define TURN_BUTTON_DELAY 3000  // Delay of the turn button, in milliseconds.
 
 /**
  * Time after which vehicles in `crossroad` expire.
@@ -163,7 +163,7 @@ __attribute__((optimize("O3"))) void timerHandler() {
  * Must be called periodically.
  */
 void handleTurnButton() {
-    static uint8_t buttonMillis = 0;
+    static unsigned long buttonMillis = 0;
 
     if (digitalRead(BUTTON) == LOW) {
         // Button is currently held down
@@ -171,7 +171,7 @@ void handleTurnButton() {
         // This variable is declared to optimize for speed.
         // You can safely replace each occurrence of curMillis
         // with its expression in order to save memory.
-        uint8_t curMillis = (millis() / 100) & 0xFF;
+        unsigned long curMillis = millis();
 
         if (!buttonPressed) {
             // Start counting. Subtract TURN_BUTTON_DELAY so that
@@ -180,11 +180,7 @@ void handleTurnButton() {
             buttonPressed = true;
         }
 
-        // The cast to uint8_t is the same as taking the positive modulo:
-        //                            (uint8_t)x
-        //                                ==
-        //                              x % 256
-        if ((uint8_t)(curMillis - buttonMillis) >= TURN_BUTTON_DELAY) {
+        if (curMillis - buttonMillis >= TURN_BUTTON_DELAY) {
             buttonMillis = curMillis;
             switch (visibleAction) {
                 case EVA_STRAIGHT:
