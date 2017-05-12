@@ -9,11 +9,19 @@ Daniele Di Sarli, Diego Giorgini
 Questo protocollo fornisce due funzionalità:
 
  - *ACQUISIZIONE:*  
-   conoscere le caratteristiche non rilevabili con il sottosistema visuale delle auto nelle
+   conoscere le caratteristiche non rilevabili con il sottosistema visivo delle auto nelle
    vicinanze, come il modello dell'auto e le sue intenzioni;
  - *ASSOCIAZIONE:*  
    associare un auto da cui si è ricevuto un messaggio sulla rete wireless con un'auto
    rilevata con il sottosistema visivo.
+
+## Notazione
+Di seguito utilizziamo nomi di parametri che, per brevità, non coincidono con i nomi utilizzati
+nell'implementazione di riferimento del protocollo. Si elencano qui le associazioni tra i nomi
+utilizzati in questo documento e il loro corrispettivo dell'implementazione.
+
+ * X: TIMESPAN_X
+ * Z: TIMESPAN_MAX_BACKOFF
 
 ## Descrizione del protocollo
 
