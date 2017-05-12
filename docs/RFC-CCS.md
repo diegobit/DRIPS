@@ -21,9 +21,9 @@ I messaggi inviati sono di tre tipi:
 
  * KeepAlive:
      inviati periodicamente per lo scoperta e il mantenimento dei nodi nella rete
- * CCS (Chi Cazzo Sei, o Car Communication System):
+ * CCS (Chi Cazzo Sei, o Car Communication Signal):
      per avviare la procedura
- * FCT (Fatti i Cazzi Tuoi, o Force Communication System):
+ * FCT (Fatti i Cazzi Tuoi, o Force Communication Termination):
      per notificare altre auto che un'altra procedura è in corso nella rete
 
 Supponiamo che l'auto A abbia rilevato tramite il sottosistema visivo tutte le auto nell'incrocio.
