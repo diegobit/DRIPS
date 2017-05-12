@@ -10,7 +10,7 @@
 
 #define MSG_TYPE_KEEPALIVE 'K'
 #define MSG_TYPE_CCS 'C'
-#define MSG_TYPE_SCS 'S'
+#define MSG_TYPE_FCT 'F'
 
 /**
  * The 'Quantization problem': In an ideal situation we would have messages sent as soon as their
@@ -42,7 +42,7 @@ const uint16_t VEHICLE_CACHE_TTL = TIMESPAN_KEEPALIVE + DELTA;
  *    period of my peer. Who sends the CCS stores the samples 1 loop after the beginning of the
  *    blinking, who received the request 1 loop before the end of the period.
  *  - Must be   TIMESPAN_X > DELTA   because it is the maximum possible time I can receive
- *    a SCS reply after sending our CCS
+ *    a FCT reply after sending our CCS
  */
 const uint16_t TIMESPAN_X = max(3 * TIMESPAN_LOOP_MAX, DELTA) + 1;
 
@@ -392,26 +392,26 @@ State handlePeriodicActions() {
                 } else if (state == ST_WAIT_TO_BLINK || state == ST_BLINK) {
                     const char sender = buf[2];
                     if (!(isForMe && sender == currentPeer.address)) {
-                        // Send pardoned SCS
+                        // Send pardoned FCT
                         uint8_t data[2];
-                        data[0] = MSG_TYPE_SCS;
+                        data[0] = MSG_TYPE_FCT;
                         data[1] = currentPeer.address;
                         nrf24.send(data, sizeof(data));
                         nrf24.waitPacketSent();
                     }
                 } else if (state == ST_INTERPRETATE) {
                     if (isForMe) {
-                        // Send non-pardoned SCS
+                        // Send non-pardoned FCT
                         uint8_t data[2];
-                        data[0] = MSG_TYPE_SCS;
+                        data[0] = MSG_TYPE_FCT;
                         data[1] = '\0';
                         nrf24.send(data, sizeof(data));
                         nrf24.waitPacketSent();
                     }
                 }
 
-            } else if (buf[0] == MSG_TYPE_SCS) {
-                // SCS
+            } else if (buf[0] == MSG_TYPE_FCT) {
+                // FCT
                 const bool pardoned = buf[1] == ADDRESS;
                 if (state == ST_BEGIN || (state == ST_WAIT_TO_BLINK && !pardoned) || (state == ST_BLINK && !pardoned)) {
                     advertiseCCS = false;
