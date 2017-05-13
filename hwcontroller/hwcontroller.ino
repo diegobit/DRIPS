@@ -274,18 +274,33 @@ void sendRawDataMessage(char type, uint16_t *data) {
 void sendInfoMessage(const char roadId, const unsigned long validUntil, const char *manufacturer, const char *model,
                      const uint16_t orientation, const bool priority, const RequestedAction requestedAction, const CurrentAction currentAction) {
 
-    Serial.print('I');
-    Serial.print(roadId);
-    Serial.print(validUntil < millis() ? '1' : '0');
-    Serial.write(manufacturer, 8);
-    Serial.write(model, 8);
-    if (orientation < 10) Serial.print(F("  "));
-    else if (orientation < 100) Serial.write(' ');
-    Serial.print(orientation);
-    Serial.print(priority);
-    Serial.print(requestedAction);
-    Serial.print(currentAction);
-    Serial.print('\n');
+    char buff[27];
+    char tmp[4];
+
+    buff[0] = 'I';
+    buff[1] = roadId;
+    buff[2] = validUntil < millis() ? '1' : '0';
+    buff[3] = '\0';
+
+    // We can't use strcat because manufacturer is not zero-terminated.
+    for (uint8_t i = 0; i < 8; i++) {
+      buff[3+i] = manufacturer[i];
+    }
+    for (uint8_t i = 0; i < 8; i++) {
+      buff[11+i] = model[i];
+    }
+    buff[19] = '\0';
+
+    sprintf(tmp, "%3d", orientation);
+    strcat(buff, tmp);
+
+    buff[22] = priority ? '1' : '0';
+    buff[23] = requestedAction;
+    buff[24] = currentAction;
+    buff[25] = '\n';
+    buff[26] = '\0';
+
+    Serial.print(buff);
 }
 
 void refreshMonitor() {
