@@ -1,4 +1,3 @@
-#pragma GCC optimize ("O3")
 #include "common.h"
 #include "ccs.h"
 #include "neural_interpreter.h"
@@ -340,7 +339,7 @@ void fht_denoise() {
  * @return       A reference to the output array, which can be `output` or `fht_lin_out` depending on
  *               the `output` parameter.
  */
-uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, uint16_t *output) {
+__attribute__((optimize("O3"))) uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, uint16_t *output) {
     // We flush the serial just before the sampling, so that we don't have unnecessary interrupts ruining our timing.
     Serial.flush();
 
