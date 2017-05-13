@@ -280,15 +280,9 @@ void sendInfoMessage(const char roadId, const unsigned long validUntil, const ch
     buff[0] = 'I';
     buff[1] = roadId;
     buff[2] = validUntil < millis() ? '1' : '0';
-    buff[3] = '\0';
 
-    // We can't use strcat because manufacturer is not zero-terminated.
-    for (uint8_t i = 0; i < 8; i++) {
-      buff[3+i] = manufacturer[i];
-    }
-    for (uint8_t i = 0; i < 8; i++) {
-      buff[11+i] = model[i];
-    }
+    memcpy(&buff[3], manufacturer, 8);
+    memcpy(&buff[11], model, 8);
     buff[19] = '\0';
 
     sprintf(tmp, "%3d", orientation);
