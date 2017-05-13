@@ -223,12 +223,13 @@ void handleTurnButton() {
 }
 
 /**
- * Send a "sample" message on the serial port.
+ * Send a "sample" message or a "frequency" message on the serial port.
  *
- * @param type  Type of the message ('l', 'f', or 'r')
- * @param data  Pointer to an array of samples, of length FHT_N
+ * @param type  Type of the message ('l', 'f', 'r', 'L', 'F', or 'R')
+ * @param data  Pointer to an array of samples, of length FHT_N, or to an
+ *              array of frequencies, of length FHT_N / 2.
  */
-void sendSamplesMessage(char type, int *data) {
+void sendRawDataMessage(char type, int *data) {
     /**
      * We want to avoid calling too many times Serial.print(), so
      * we keep a buffer where we prepare the string and then we
@@ -240,6 +241,8 @@ void sendSamplesMessage(char type, int *data) {
      * plus their separator (and a final string terminator).
      */
 
+    const uint8_t len = type == ('l' || type == 'f' || type == 'r') ? FHT_N : FHT_N / 2;
+
     // Header information
     char buff[101];
     sprintf(buff, "%c%d;", type, SAMPLING_PERIOD);
@@ -247,7 +250,7 @@ void sendSamplesMessage(char type, int *data) {
 
     // Data points
     buff[0] = '\0';
-    for (uint8_t i = 0; i < FHT_N - 1; i++) {
+    for (uint8_t i = 0; i < len - 1; i++) {
         char tmp[6];
         sprintf(tmp, "%d,", data[i]);
         strcat(buff, tmp);
@@ -260,49 +263,7 @@ void sendSamplesMessage(char type, int *data) {
 
     // Last data point
     buff[0] = '\0';
-    sprintf(buff, "%d\n", data[FHT_N - 1]);
-    Serial.print(buff);
-}
-
-/**
- * Send a "frequency" message on the serial port.
- *
- * @param type  Type of the message ('L', 'F', or 'R')
- * @param data  Pointer to an array of samples, of length FHT_N/2
- */
-void sendFrequencyMessage(char type, uint16_t *data) {
-    /**
-     * We want to avoid calling too many times Serial.print(), so
-     * we keep a buffer where we prepare the string and then we
-     * send it through the serial. Ideally, we would use a buffer
-     * which is large as the whole message we're sending, but
-     * we can't because we're short of ram.
-     * 
-     * So we allocate 101 bytes, which are enough for 20 data points
-     * plus their separator (and a final string terminator).
-     */
-
-    // Header information
-    char buff[101];
-    sprintf(buff, "%c%d;", type, SAMPLING_PERIOD);
-    Serial.print(buff);
-
-    // Data points
-    buff[0] = '\0';
-    for (uint8_t i = 0; i < FHT_N / 2 - 1; i++) {
-        char tmp[6];
-        sprintf(tmp, "%d,", data[i]);
-        strcat(buff, tmp);
-        if (i % 20 == 0) {
-            Serial.print(buff);
-            buff[0] = '\0';
-        }
-    }
-    Serial.print(buff);
-
-    // Last data point
-    buff[0] = '\0';
-    sprintf(buff, "%d\n", data[FHT_N / 2 - 1]);
+    sprintf(buff, "%d\n", data[len - 1]);
     Serial.print(buff);
 }
 
@@ -386,7 +347,7 @@ uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, u
 
 
     #if DEBUG
-        sendSamplesMessage(sampleMsgType, fht_input);
+        sendRawDataMessage(sampleMsgType, fht_input);
     #endif
 
     fht_constant_detrend();
@@ -398,7 +359,7 @@ uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, u
     fht_run(); // process the data in the fft
     fht_mag_lin(); // take the output of the fft
 
-    sendFrequencyMessage(freqMsgType, fht_lin_out);
+    sendRawDataMessage(freqMsgType, fht_lin_out);
 
     fht_denoise(); // remove noise from output
 
