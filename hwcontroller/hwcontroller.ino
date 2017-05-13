@@ -229,7 +229,7 @@ void handleTurnButton() {
  * @param data  Pointer to an array of samples, of length FHT_N, or to an
  *              array of frequencies, of length FHT_N / 2.
  */
-void sendRawDataMessage(char type, uint16_t *data) {
+void sendRawDataMessage(char type, int16_t *data) {
     /**
      * We want to avoid calling too many times Serial.print(), so
      * we keep a buffer where we prepare the string and then we
@@ -368,7 +368,7 @@ uint16_t *readIrFrequencies(uint8_t pin, char sampleMsgType, char freqMsgType, u
     fht_run(); // process the data in the fft
     fht_mag_lin(); // take the output of the fft
 
-    sendRawDataMessage(freqMsgType, fht_lin_out);
+    sendRawDataMessage(freqMsgType, (int16_t *)fht_lin_out);
 
     fht_denoise(); // remove noise from output
 
