@@ -168,12 +168,16 @@ void handleCCS() {
     switch (state) {
         case ST_BEGIN:
             state = FUN_ST_BEGIN();
+            break;
         case ST_WAIT_TO_BLINK:
             state = FUN_ST_WAIT_TO_BLINK();
+            break;
         case ST_BLINK:
             state = FUN_ST_BLINK();
+            break;
         case ST_INTERPRETATE:
             state = FUN_ST_INTERPRETATE();
+            break;
         default:
             Serial.println(F("INVALID STATE"));
     }
