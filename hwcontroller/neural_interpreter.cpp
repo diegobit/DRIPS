@@ -1,4 +1,3 @@
-#pragma GCC optimize ("O3")
 #include "neural_interpreter.h"
 #include "common.h"
 #include <avr/pgmspace.h>

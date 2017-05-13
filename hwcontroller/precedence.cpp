@@ -1,4 +1,3 @@
-#pragma GCC optimize ("O3")
 #include "precedence.h"
 #include "common.h"
 #include <Arduino.h>
