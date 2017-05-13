@@ -60,7 +60,7 @@ static uint16_t *fhtRight;            // Don't allocate space as we'll use this 
 
 // Action shown by the turn leds (can be different from requestedAction while the
 // user is switching through the actions with the button)
-VisibleAction visibleAction = EVA_STRAIGHT;
+volatile VisibleAction visibleAction = EVA_STRAIGHT;
 
 bool buttonPressed = false;
 
