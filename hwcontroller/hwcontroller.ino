@@ -229,15 +229,39 @@ void handleTurnButton() {
  * @param data  Pointer to an array of samples, of length FHT_N
  */
 void sendSamplesMessage(char type, int *data) {
-    Serial.print(type);
-    Serial.print(SAMPLING_PERIOD);
-    Serial.print(';');
+    /**
+     * We want to avoid calling too many times Serial.print(), so
+     * we keep a buffer where we prepare the string and then we
+     * send it through the serial. Ideally, we would use a buffer
+     * which is large as the whole message we're sending, but
+     * we can't because we're short of ram.
+     * 
+     * So we allocate 101 bytes, which are enough for 20 data points
+     * plus their separator (and a final string terminator).
+     */
+
+    // Header information
+    char buff[101];
+    sprintf(buff, "%c%d;", type, SAMPLING_PERIOD);
+    Serial.print(buff);
+
+    // Data points
+    buff[0] = '\0';
     for (uint8_t i = 0; i < FHT_N - 1; i++) {
-        Serial.print(data[i]);
-        Serial.print(',');
+        char tmp[6];
+        sprintf(tmp, "%d,", data[i]);
+        strcat(buff, tmp);
+        if (i % 20 == 0) {
+            Serial.print(buff);
+            buff[0] = '\0';
+        }
     }
-    Serial.print(data[FHT_N - 1]);
-    Serial.print('\n');
+    Serial.print(buff);
+
+    // Last data point
+    buff[0] = '\0';
+    sprintf(buff, "%d\n", data[FHT_N - 1]);
+    Serial.print(buff);
 }
 
 /**
@@ -247,15 +271,39 @@ void sendSamplesMessage(char type, int *data) {
  * @param data  Pointer to an array of samples, of length FHT_N/2
  */
 void sendFrequencyMessage(char type, uint16_t *data) {
-    Serial.print(type);
-    Serial.print(SAMPLING_PERIOD);
-    Serial.print(';');
+    /**
+     * We want to avoid calling too many times Serial.print(), so
+     * we keep a buffer where we prepare the string and then we
+     * send it through the serial. Ideally, we would use a buffer
+     * which is large as the whole message we're sending, but
+     * we can't because we're short of ram.
+     * 
+     * So we allocate 101 bytes, which are enough for 20 data points
+     * plus their separator (and a final string terminator).
+     */
+
+    // Header information
+    char buff[101];
+    sprintf(buff, "%c%d;", type, SAMPLING_PERIOD);
+    Serial.print(buff);
+
+    // Data points
+    buff[0] = '\0';
     for (uint8_t i = 0; i < FHT_N / 2 - 1; i++) {
-        Serial.print(data[i]);
-        Serial.print(',');
+        char tmp[6];
+        sprintf(tmp, "%d,", data[i]);
+        strcat(buff, tmp);
+        if (i % 20 == 0) {
+            Serial.print(buff);
+            buff[0] = '\0';
+        }
     }
-    Serial.print(data[FHT_N / 2 - 1]);
-    Serial.print('\n');
+    Serial.print(buff);
+
+    // Last data point
+    buff[0] = '\0';
+    sprintf(buff, "%d\n", data[FHT_N / 2 - 1]);
+    Serial.print(buff);
 }
 
 /*
