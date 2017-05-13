@@ -94,7 +94,7 @@ State FUN_ST_BLINK();
 State FUN_ST_INTERPRETATE();
 State handlePeriodicActions();
 void sendKeepAlive();
-void sendCCS();
+bool sendCCS();
 inline bool isExpired(const Vehicle *vehicle);
 
 
@@ -201,16 +201,17 @@ State FUN_ST_BEGIN() {
         delayMicroseconds(random(0, TIMESPAN_RANDOM_DESYNC_US));
     }
 
-
-    sendCCS();
-
     // NOTE What if, instead of trying to send and then hoping nothing collides, we first
     // listen to the channel to see if someone's talking? Kind of what 802.11 does:
     // https://en.wikipedia.org/wiki/Received_signal_strength_indication
 
-    timeMarker = millis();
-
-    return ST_WAIT_TO_BLINK;
+    if (sendCCS()) {
+        timeMarker = millis();
+        return ST_WAIT_TO_BLINK;
+    } else {
+        timeMarker = millis();
+        return ST_BEGIN;
+    }
 }
 
 State FUN_ST_WAIT_TO_BLINK() {
@@ -450,7 +451,7 @@ void sendKeepAlive() {
     nrf24.waitPacketSent();
 }
 
-void sendCCS() {
+bool sendCCS() {
     static uint8_t vehicleId = 0;
 
     // Find an unexpired vehicle to send the CCS using a Round-Robin policy
@@ -472,7 +473,11 @@ void sendCCS() {
 
         nrf24.send(data, sizeof(data));
         nrf24.waitPacketSent();
+
+        return true;
     }
+
+    return false;
 }
 
 bool isExpired(const Vehicle *vehicle) {
