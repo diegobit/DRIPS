@@ -241,7 +241,7 @@ void sendRawDataMessage(char type, uint16_t *data) {
      * plus their separator (and a final string terminator).
      */
 
-    const uint8_t len = type == ('l' || type == 'f' || type == 'r') ? FHT_N : FHT_N / 2;
+    const uint8_t len = (type == 'l' || type == 'f' || type == 'r') ? FHT_N : FHT_N / 2;
 
     // Header information
     char buff[101];
