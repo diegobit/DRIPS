@@ -229,7 +229,7 @@ void handleTurnButton() {
  * @param data  Pointer to an array of samples, of length FHT_N, or to an
  *              array of frequencies, of length FHT_N / 2.
  */
-void sendRawDataMessage(char type, int *data) {
+void sendRawDataMessage(char type, uint16_t *data) {
     /**
      * We want to avoid calling too many times Serial.print(), so
      * we keep a buffer where we prepare the string and then we
