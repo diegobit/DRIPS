@@ -65,20 +65,14 @@ const uint8_t LED5_BIN = (FHT_N * (uint16_t)SAMPLING_PERIOD) / (LED5_PERIOD * TI
 const uint8_t LED_CCS_BIN = (FHT_N * (uint16_t)SAMPLING_PERIOD) / (LED_CCS_PERIOD * TIMER_PERIOD);
 
 /**
- * Maximum measured execution time of loop() without handleCCS()
+ * Maximum execution time of a loop().
+ *
+ * Equivalent to:
+ *           Maximum measured execution time of loop() without handleCCS()
+ *                                       +
+ *     max_time{FUN_ST_BEGIN, FUN_ST_WAIT_TO_BLINK, FUN_ST_BLINK, FUN_ST_INTERPRETATE}
  */
-const uint16_t TIMESPAN_LOOP_NOCCS = 218;
-
-/**
- * Maximum measured execution time of handleCCS()
- * Defined as:   max_time{FUN_ST_BEGIN, FUN_ST_WAIT_TO_BLINK, FUN_ST_BLINK, FUN_ST_INTERPRETATE}
- */
-const uint16_t TIMESPAN_LOOP_CCSONLY = 0; // FIXME measure it
-
-/**
- * Maximum execution time of a loop()
- */
-const uint16_t TIMESPAN_LOOP_MAX = TIMESPAN_LOOP_NOCCS + TIMESPAN_LOOP_CCSONLY;
+const uint16_t TIMESPAN_LOOP_MAX = 280 + 0;
 
 typedef enum RequestedAction : char {
     ERA_NONE = '0',

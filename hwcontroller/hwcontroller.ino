@@ -468,7 +468,14 @@ void setup() {
     FlexiTimer2::start();
 }
 
+#define MEASURE_LOOP 0
+
 void loop() {
+#if MEASURE_LOOP
+    unsigned long _t = millis();
+    static unsigned long _m = 0;
+#endif
+
     readIrFrequencies(SENSOR_L, 'l', 'L', fhtLeft);
 
     handleTurnButton();
@@ -493,4 +500,11 @@ void loop() {
     refreshMonitor();
 
     handleTurnButton();
+
+#if MEASURE_LOOP
+    _t = millis() - _t;
+    _m = _t > _m ? _t : _m;
+    Serial.println(_m);
+    Serial.println("***");
+#endif
 }
