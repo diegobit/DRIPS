@@ -71,7 +71,8 @@ namespace monitor
 		public void UpdateRoad(RoadID roadID, bool isEmpty, int orientation, string manufacturer, string model,
 							   Priority priority, RequestedAction requestedAction, CurrentAction currentAction)
 		{
-            if (!crossroad.TryGetValue(roadID, out Road r))
+            Road r;
+            if (!crossroad.TryGetValue(roadID, out r))
             {
                 r = new Road(roadID);
                 crossroad.Add(roadID, r);

@@ -83,7 +83,8 @@ public partial class MainWindow : Window
 
 	public void UpdateRoad(Road road)
 	{
-        roads.TryGetValue(road.Id, out Tuple<Image, Label, Image, Image> car);
+        Tuple<Image, Label, Image, Image> car;
+        roads.TryGetValue(road.Id, out car);
         string expectedImagePath = "monitor.resources.car" + resDiv + road.Manufacturer + resDiv + road.Model + imageExtension;
 
 		if (road.IsEmpty)
