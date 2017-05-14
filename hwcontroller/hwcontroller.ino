@@ -20,9 +20,9 @@
 #define IR_LED_5 6
 #define TURN_L   7
 #define TURN_R   8
-#define SENSOR_L A1
+#define SENSOR_L A3
 #define SENSOR_F A2
-#define SENSOR_R A3
+#define SENSOR_R A1
 #define BUTTON   A0
 #define RND_SEED A4 // Unconnected pin used as a seed for the RNG
 
