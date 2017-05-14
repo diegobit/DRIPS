@@ -24,9 +24,8 @@ namespace monitor
 
 	public enum Priority
 	{
-		None = '0',
-		Normal = 'N',
-		High = 'Y'
+		Normal = '0',
+		High = '1'
 	}
 
 	public enum RequestedAction

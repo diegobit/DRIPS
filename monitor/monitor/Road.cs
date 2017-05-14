@@ -8,7 +8,7 @@
 		public string Manufacturer { get; set; } = "";
 		public string Model { get; set; } = "";
 		public int Orientation { get; set; } = -1;
-		public Priority Priority { get; set; } = Priority.None;
+		public Priority Priority { get; set; } = Priority.Normal;
 		public RequestedAction RequestedAction { get; set; } = RequestedAction.None;
 		public CurrentAction CurrentAction { get; set; } = CurrentAction.None;
 
@@ -27,7 +27,7 @@
 		public bool IsComplete()
 		{
 			return !IsEmpty && Manufacturer != "" && Model != "" && Orientation != -1 &&
-                Priority != Priority.None && CurrentAction != CurrentAction.None && RequestedAction != RequestedAction.None;
+                CurrentAction != CurrentAction.None && RequestedAction != RequestedAction.None;
 		}
 
 
@@ -38,7 +38,7 @@
 			Manufacturer = null;
 			Model = null;
 			Orientation = -1;
-			Priority = Priority.None;
+			Priority = Priority.Normal;
 			RequestedAction = RequestedAction.None;
 			CurrentAction = CurrentAction.None;
 		}
