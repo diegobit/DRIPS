@@ -234,8 +234,11 @@ State FUN_ST_WAIT_TO_BLINK() {
 
 State FUN_ST_BLINK() {
     static bool sampled = false;
-    const uint16_t expectedFhtTime = 1998 * _us; // FIXME The time needed to compute a FHT (basically the duration of a call to readIrFrequencies(), without the sampling)
-    const uint16_t expectedProcessingTime = 3 * ((uint16_t)SAMPLING_PERIOD * (uint16_t)FHT_N + expectedFhtTime) / 1000; // ms
+    //const uint16_t expectedFhtTime = 1998 * _us; // The time needed to compute a FHT (basically the duration of a call to readIrFrequencies(), without the sampling)
+    //const uint16_t expectedProcessingTime = 3 * ((uint16_t)SAMPLING_PERIOD * (uint16_t)FHT_N + expectedFhtTime) / 1000; // ms
+
+    /* Time needed to complete the three readIrFrequencies in the main loop */
+    const uint16_t expectedProcessingTime = 261; // ms
 
     State r = handlePeriodicActions();
     if (r != ST_CURRENT) {
