@@ -7,8 +7,8 @@
 
 #define DEBUG 1
 const char ADDRESS = '1';
-const char MANUFACTURER[8] = { 'A', 'L', 'F', 'A', 'R', 'M', 'E', 'O' };
-const char MODEL[8] = { 'G', 'I', 'U', 'L', 'I', 'A', ' ', ' ' };
+const char MANUFACTURER[8] = { 'T', 'e', 's', 'l', 'a', ' ', ' ', ' ' };
+const char MODEL[8] = { 'M', 'o', 'd', 'e', 'l', ' ', 'S', ' ' };
 
 /**
  * FFT Parameters
