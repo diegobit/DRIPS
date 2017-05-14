@@ -14,8 +14,8 @@ public partial class MainWindow : Window
 	int cRadH;
 
 	// Label parameters
-	const int labelFullW = 280;
-	const int labelFullH = 120;
+	const int labelFullW = 300;
+	const int labelFullH = 140;
 	int labelW;
 	int labelH;
 	const string fontFamily = "Arial";
