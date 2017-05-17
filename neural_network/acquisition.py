@@ -7,10 +7,11 @@ baud = 230400
 
 datalen = 0
 buffer = []
+crossroad_config = ''
 
 def writeBuffer():
     global buffer
-    with open("dataset.csv", "a") as myfile:
+    with open("dataset_" + crossroad_config + ".csv", "a") as myfile:
         myfile.write(','.join(buffer[0]) + "\n")
         myfile.write(','.join(buffer[1]) + "\n")
         myfile.write(','.join(buffer[2]) + "\n")
@@ -38,7 +39,8 @@ def incomingLine(line):
     else:
         buffer = []
 
-
+crossroad_config = input("Configurazione incrocio (000, 001, 010, ..., 111): ")
+print("dataset_" + crossroad_config + ".csv")
 
 print("Connecting to " + serialPort + "...")
 ser = serial.Serial(serialPort, baud)
