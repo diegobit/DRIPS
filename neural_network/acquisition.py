@@ -39,7 +39,7 @@ def incomingLine(line):
     else:
         buffer = []
 
-crossroad_config = input("Configurazione incrocio (000, 001, 010, ..., 111): ")
+crossroad_config = input("Crossroad configuration (one of 000, 001, 010, ..., 111): ")
 print("dataset_" + crossroad_config + ".csv")
 
 print("Connecting to " + serialPort + "...")

@@ -9,7 +9,6 @@ ffront = 30
 frightfront = 40
 fright = 50
 
-inputFile = './dataset.csv'
 outputFile = './data.pickle'
 
 
