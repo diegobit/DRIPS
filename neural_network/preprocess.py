@@ -1,13 +1,25 @@
 import pickle
 import numpy as np
 
+def periodToBin(t):
+    FHT_N = 128
+    SAMPLING_PERIOD = 470
+    TIMER_PERIOD = 100
+    return int((FHT_N * SAMPLING_PERIOD) / (t * TIMER_PERIOD))
+
 # Frequencies associated to each position of the car
 # (it's actually a bin number, not a Hz frequency, so they go from 0 to 63. But don't use 0 and 63)
-fleft = 10
-fleftfront = 20
-ffront = 30
-frightfront = 40
-fright = 50
+fleft = periodToBin(160) # FIXME Is this actually the left led?
+fleftfront = periodToBin(40)
+ffront = periodToBin(24)
+frightfront = periodToBin(16)
+fright = periodToBin(12)
+print(fleft)
+print(fleftfront)
+print(ffront)
+print(frightfront)
+print(fright)
+
 
 outputFile = './data.pickle'
 
