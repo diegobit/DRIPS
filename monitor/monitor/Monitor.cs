@@ -57,13 +57,13 @@ namespace monitor
 		Dictionary <RoadID, Road> crossroad;
 		public string logPath { get; } = "/tmp/drips-data-monitor";
 
-		public Monitor(MainWindow window)
+		public Monitor(MainWindow window, string serialPort)
 		{
 			this.window = window;
 
 			crossroad = new Dictionary<RoadID, Road>();
 
-			s = new Serial(this, "/dev/tty.usbmodem1D121", 230400); //TODO: better port choice
+			s = new Serial(this, serialPort, 230400); //TODO: better port choice
 		}
 
 		public void StartSerialPortReading()
@@ -106,14 +106,24 @@ namespace monitor
 
 
 
-		public static void Main()
+		public static void Main(string[] args)
 		{
+			if (args.Length == 0)
+			{
+				Console.Write("ERROR: need serial port as argument");
+			}
+
+			string serialPort = args[0];
+
 			Application.Init();
+
 			MainWindow w = new MainWindow();
-			Monitor m = new Monitor(w);
+			Monitor m = new Monitor(w, serialPort);
 			w.Monitor = m;
+
 			w.ShowAll();
 			m.StartSerialPortReading();
+
 			Application.Run();
 		}
 	}
