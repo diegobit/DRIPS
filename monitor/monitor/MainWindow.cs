@@ -36,6 +36,8 @@ public partial class MainWindow : Window
      */
     Dictionary<RoadID, Tuple<Image, Label, Image, Image>> roads;
 
+	public Monitor Monitor { get; set; }
+
 
 
 	public MainWindow() : base(WindowType.Toplevel)
@@ -466,6 +468,11 @@ public partial class MainWindow : Window
 
 	protected void OnDeleteEvent(object sender, DeleteEventArgs a)
 	{
+		if (Monitor != null)
+		{
+			Monitor.Clean();
+		}
+
 		Application.Quit();
 		a.RetVal = true;
 	}

@@ -55,6 +55,7 @@ namespace monitor
 		MainWindow window;
 		Serial s;
 		Dictionary <RoadID, Road> crossroad;
+		public string logPath { get; } = "/tmp/drips-data-monitor";
 
 		public Monitor(MainWindow window)
 		{
@@ -98,17 +99,19 @@ namespace monitor
 			window.UpdateRoad(r);
 		}
 
+		public void Clean()
+		{
+			s.Clean();
+		}
+
 
 
 		public static void Main()
 		{
-
-			const string path = "/tmp/drips-data-monitor";
-			File.Delete(path);
-
 			Application.Init();
 			MainWindow w = new MainWindow();
 			Monitor m = new Monitor(w);
+			w.Monitor = m;
 			w.ShowAll();
 			m.StartSerialPortReading();
 			Application.Run();

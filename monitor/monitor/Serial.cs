@@ -11,6 +11,7 @@ namespace monitor
 		SerialPort port;
 		Thread reader;
 		volatile bool shouldTerminate; // false
+		StreamWriter sw;
 
 
 
@@ -91,18 +92,20 @@ namespace monitor
 		{
 			port.ReadTimeout = 1000;
 
+			// Delete old log file
+			File.Delete(monitor.logPath);
+			sw = new StreamWriter(monitor.logPath, true);
+
+			// Read
 			while (!shouldTerminate)
 			{
 				try
 				{
 					string msg = port.ReadLine();
 
-					const string path = "/tmp/drips-data-monitor";
-
-					StreamWriter SW = new StreamWriter(path, true);
-					SW.WriteLine(msg);
-					//SW.Flush();
-					SW.Close();
+					// Write log for the spectrum viewer
+					sw.WriteLine(msg);
+					sw.Flush();
 
 					//var appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 					//Console.WriteLine(appDataDir);
@@ -140,6 +143,10 @@ namespace monitor
 					TryOpenPortUntilDone();
 				}
 			}
+
+			// Stop reading
+			sw.Close();
+			File.Delete(monitor.logPath);
 		}
 
         bool OpenPort()
@@ -160,6 +167,14 @@ namespace monitor
 			port.Close();
 		}
 
+		public void Clean()
+		{
+			if (sw != null)
+			{
+				sw.Close();
+				File.Delete(monitor.logPath);
+			}
+		}
 
 
 		/*
