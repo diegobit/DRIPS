@@ -76,14 +76,14 @@ const uint16_t TIMESPAN_LOOP_MAX = 280 + 0;
 
 typedef enum RequestedAction : char {
     ERA_NONE = '0',
-    ERA_STRAIGHT = 'A',
+    ERA_STRAIGHT = 'F',
     ERA_TURN_LEFT = 'L',
     ERA_TURN_RIGHT = 'R'
 } RequestedAction;
 
 typedef enum CurrentAction : char {
     ECA_NONE = '0',
-    ECA_STRAIGHT = 'A',
+    ECA_STRAIGHT = 'F',
     ECA_TURN_LEFT = 'L',
     ECA_TURN_RIGHT = 'R',
     ECA_STILL = 'S',

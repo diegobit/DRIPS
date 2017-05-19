@@ -21,7 +21,7 @@ namespace monitor
 		None = '0',
 		Bottom = 'M',
 		Left = 'L',
-		Top = 'A',
+		Top = 'F',
 		Right = 'R'
 	}
 
@@ -34,7 +34,7 @@ namespace monitor
 	public enum RequestedAction
 	{
 		None = '0',
-		Straight = 'A',
+		Straight = 'F',
 		Left = 'L',
 		Right = 'R'
 	}
@@ -42,7 +42,7 @@ namespace monitor
 	public enum CurrentAction
 	{
 		None = '0',
-		Straight = 'A',
+		Straight = 'F',
 		Left = 'L',
 		Right = 'R',
 		Still = 'S',
