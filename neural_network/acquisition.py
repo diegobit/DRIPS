@@ -4,6 +4,8 @@ import json
 serialPort = '/dev/tty.usbmodem1441'
 baud = 230400
 
+filename = '/tmp/drips-data-monitor'
+
 
 datalen = 0
 buffer = []
@@ -45,9 +47,13 @@ print("dataset_" + crossroad_config + ".csv")
 print("Connecting to " + serialPort + "...")
 ser = serial.Serial(serialPort, baud)
 
+f = open(filename, 'w', encoding='utf8')
+
 ser.readline() # Discard the first (possibly partial) line
 while True:
     line = b''
     while len(line) == 0 or chr(line[0]) not in ['L', 'F', 'R']:
         line = ser.readline()
+        f.write(line.decode('utf8'))
+        f.flush()
     incomingLine(line)
