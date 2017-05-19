@@ -10,7 +10,10 @@ namespace monitor
 		Info = 'I',
 		FrequencyLeft = 'L',
 		FrequencyFront = 'F',
-		FrequencyRight = 'R'
+		FrequencyRight = 'R',
+		RawLeft = 'l',
+		RawFront = 'f',
+		RawRight = 'r'
 	}
 
 	public enum RoadID
@@ -99,6 +102,10 @@ namespace monitor
 
 		public static void Main()
 		{
+
+			const string path = "/tmp/drips-data-monitor";
+			File.Delete(path);
+
 			Application.Init();
 			MainWindow w = new MainWindow();
 			Monitor m = new Monitor(w);

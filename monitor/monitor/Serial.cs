@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO.Ports;
 using System.Threading;
+using System.IO;
 
 namespace monitor
 {
@@ -95,6 +96,21 @@ namespace monitor
 				try
 				{
 					string msg = port.ReadLine();
+
+					const string path = "/tmp/drips-data-monitor";
+
+					StreamWriter SW = new StreamWriter(path, true);
+					SW.WriteLine(msg);
+					//SW.Flush();
+					SW.Close();
+
+					//var appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+					//Console.WriteLine(appDataDir);
+
+					// Write to file
+					//string path = @"/tmp";
+					//File.Exists(path);
+
 					Type ret = HandleMessage(msg);
 
 					switch (ret)
@@ -106,6 +122,11 @@ namespace monitor
 						case Type.FrequencyFront:
 						case Type.FrequencyRight:
 							Console.WriteLine("IGNORED FREQUENCY-MESSAGE");
+							break;
+						case Type.RawLeft:
+						case Type.RawFront:
+						case Type.RawRight:
+							Console.WriteLine("IGNORED RAW-MESSAGE");
 							break;
 						case Type.None:
 							Console.WriteLine("RECEIVED UNKNOWN OR CORRUPT MESSAGE (" + msg.Length + " Bytes)\n" + msg);
@@ -157,6 +178,10 @@ namespace monitor
 					case Type.FrequencyFront:
 					case Type.FrequencyRight:
 						return HandleFrequencyMessage(msg);
+					case Type.RawLeft:
+					case Type.RawFront:
+					case Type.RawRight:
+						return HandleFrequencyMessage(msg); //TODO RAW add
 				}
 			}
 
