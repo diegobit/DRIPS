@@ -9,7 +9,7 @@ def periodToBin(t):
 
 # Frequencies associated to each position of the car
 # (it's actually a bin number, not a Hz frequency, so they go from 0 to 63. But don't use 0 and 63)
-fleft = periodToBin(160) # FIXME Is this actually the left led?
+fleft = periodToBin(160)
 fleftfront = periodToBin(40)
 ffront = periodToBin(24)
 frightfront = periodToBin(16)

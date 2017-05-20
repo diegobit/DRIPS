@@ -74,7 +74,8 @@ sess = tf.InteractiveSession()
 
 tf.global_variables_initializer().run()
 
-_max = 30000
+train_data_ratio = 0.666 # Percentage of train data over total data
+_max = int(len(train_data) * train_data_ratio)
 step = 5
 for i in range(0, _max, step):
   batch_xs, batch_ys = train_data[i:i+step], train_labels[i:i+step]
