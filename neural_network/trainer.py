@@ -88,5 +88,20 @@ print(str(i+step) + " / " + str(_max) + "; accuracy: " + str(accuracy_val))
 # Save weights
 W_val, b_val = sess.run([W, b])
 np.savetxt("W.csv", W_val, delimiter=",")
-np.savetxt("W'.txt", np.array(W_val).transpose(), delimiter=",")
-np.savetxt("b.csv", b_val, delimiter=",")
+np.savetxt("W'.csv", np.array(W_val).transpose(), delimiter=",")
+np.savetxt("b.csv", np.array(b_val).transpose(), delimiter=",")
+
+# Save C snippet
+out_file = open("snippet.c", "w")
+out_file.write("static const float W[OUTPUT_SIZE][INPUT_SIZE] PROGMEM = {\n")
+for val in np.array(W_val).transpose():
+  out_file.write('    {')
+  out_file.write(','.join(['{:.18e}'.format(x) for x in val]))
+  out_file.write("},\n")
+out_file.write("};\n\n")
+out_file.write('static const float b[OUTPUT_SIZE] PROGMEM = { ')
+out_file.write(','.join(['{:.18e}'.format(x) for x in b_val]))
+out_file.write(" };\n")
+
+#out_file.write("This Text is going to out file\nLook at it and see\n")
+out_file.close()
