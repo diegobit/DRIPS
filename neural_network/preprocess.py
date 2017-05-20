@@ -92,9 +92,10 @@ for crossroad_config in ['000', '001', '010', '011', '100', '101', '110', '111']
 
         # Normalize in [0, 1]
         maxval = max(max(fftL), max(fftF), max(fftR))
-        fftL = [x / maxval for x in fftL]
-        fftF = [x / maxval for x in fftF]
-        fftR = [x / maxval for x in fftR]
+        if maxval > 0:
+            fftL = [x / maxval for x in fftL]
+            fftF = [x / maxval for x in fftF]
+            fftR = [x / maxval for x in fftR]
 
         out.append([
             fftL + fftF + fftR + ranksi(fftL) + ranksi(fftF) + ranksi(fftR),
