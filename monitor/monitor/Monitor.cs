@@ -55,7 +55,9 @@ namespace monitor
 		MainWindow window;
 		Serial s;
 		Dictionary <RoadID, Road> crossroad;
-		public string logPath { get; } = "/tmp/drips-data-monitor";
+		public string dumpPath { get; } = "/tmp/drips-data-monitor";
+
+
 
 		public Monitor(MainWindow window, string serialPort)
 		{
@@ -66,10 +68,19 @@ namespace monitor
 			s = new Serial(this, serialPort, 230400); //TODO: better port choice
 		}
 
+
+
 		public void StartSerialPortReading()
 		{
 			s.StartReading();
 		}
+
+		public void StopSerialPortReading()
+		{
+			s.StopReading();
+		}
+
+
 
 		public void UpdateRoad(RoadID roadID, bool isEmpty, int orientation, string manufacturer, string model,
 							   Priority priority, RequestedAction requestedAction, CurrentAction currentAction)
@@ -99,18 +110,14 @@ namespace monitor
 			window.UpdateRoad(r);
 		}
 
-		public void Clean()
-		{
-			s.Clean();
-		}
-
 
 
 		public static void Main(string[] args)
 		{
 			if (args.Length == 0)
 			{
-				Console.Write("ERROR: need serial port as argument");
+				Console.Error.Write("ERROR: Need serial port as argument");
+				return;
 			}
 
 			string serialPort = args[0];

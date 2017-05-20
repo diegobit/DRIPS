@@ -470,7 +470,7 @@ public partial class MainWindow : Window
 	{
 		if (Monitor != null)
 		{
-			Monitor.Clean();
+			Monitor.StopSerialPortReading();
 		}
 
 		Application.Quit();

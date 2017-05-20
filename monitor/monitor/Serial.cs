@@ -24,7 +24,7 @@ namespace monitor
 
 
 
-		/*
+		/**
 		 * Start the thread reading the data from the serial port,
 		 * then it triggers and update of the UI
 		 */
@@ -46,7 +46,7 @@ namespace monitor
             reader.Start();
 		}
 
-		/*
+		/**
 		 * Terminate the thread reading data from the serial port (and close the port).
 		 * Should NOT be called from withing the reader thread.
 		 */
@@ -88,13 +88,16 @@ namespace monitor
 			}
 		}
 
+		/**
+		 * main code executed by reader thread
+		 */
         void ReadMessages()
 		{
 			port.ReadTimeout = 1000;
 
-			// Delete old log file
-			File.Delete(monitor.logPath);
-			sw = new StreamWriter(monitor.logPath, true);
+			// Delete old log file. Create stream to file to send data to spectrum-viewer
+			File.Delete(monitor.dumpPath);
+			sw = new StreamWriter(monitor.dumpPath, true);
 
 			// Read
 			while (!shouldTerminate)
@@ -103,50 +106,40 @@ namespace monitor
 				{
 					string msg = port.ReadLine();
 
-					// Write log for the spectrum viewer
-					sw.WriteLine(msg);
-					sw.Flush();
-
-					//var appDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-					//Console.WriteLine(appDataDir);
-
-					// Write to file
-					//string path = @"/tmp";
-					//File.Exists(path);
-
 					Type ret = HandleMessage(msg);
 
+					// Write something in the log according to the type handled
 					switch (ret)
 					{
 						case Type.Info:
-							Console.WriteLine("RECEIVED INFO-MESSAGE (" + msg.Length + " Bytes)\n" + msg);
+							Console.WriteLine("RECEIVED INFO-MESSAGE (" + msg.Length + " Bytes): " + msg);
 							break;
 						case Type.FrequencyLeft:
 						case Type.FrequencyFront:
 						case Type.FrequencyRight:
-							Console.WriteLine("IGNORED FREQUENCY-MESSAGE");
+							//Console.WriteLine("IGNORED FREQUENCY-MESSAGE");
 							break;
 						case Type.RawLeft:
 						case Type.RawFront:
 						case Type.RawRight:
-							Console.WriteLine("IGNORED RAW-MESSAGE");
+							//Console.WriteLine("IGNORED RAW-MESSAGE");
 							break;
 						case Type.None:
-							Console.WriteLine("RECEIVED UNKNOWN OR CORRUPT MESSAGE (" + msg.Length + " Bytes)\n" + msg);
+							Console.WriteLine("RECEIVED UNKNOWN OR CORRUPT MESSAGE (" + msg.Length + " Bytes): " + msg);
 							break;
 					}
 				}
 				catch (TimeoutException) { }
-				catch (System.IO.IOException)
+				catch (IOException)
 				{
 					ClosePort();
 					TryOpenPortUntilDone();
 				}
 			}
 
-			// Stop reading
-			sw.Close();
-			File.Delete(monitor.logPath);
+			// StopReading() have been called
+			ClosePort();
+			CleanMsgsDump();
 		}
 
         bool OpenPort()
@@ -167,14 +160,18 @@ namespace monitor
 			port.Close();
 		}
 
-		public void Clean()
+		/**
+		 * Delete file where we dump the messages in order for other processes to read them
+		 */
+		void CleanMsgsDump()
 		{
 			if (sw != null)
 			{
 				sw.Close();
-				File.Delete(monitor.logPath);
+				File.Delete(monitor.dumpPath);
 			}
 		}
+
 
 
 		/*
@@ -192,11 +189,10 @@ namespace monitor
 					case Type.FrequencyLeft:
 					case Type.FrequencyFront:
 					case Type.FrequencyRight:
-						return HandleFrequencyMessage(msg);
 					case Type.RawLeft:
 					case Type.RawFront:
 					case Type.RawRight:
-						return HandleFrequencyMessage(msg); //TODO RAW add
+						return HandleDifferentMessage(msg);
 				}
 			}
 
@@ -237,18 +233,15 @@ namespace monitor
 		}
 
 		/**
-		 * To handle a frequency message is not this software's duty, so it
-		 * simply returns the type of the message. If this method returns
-		 * Type.FrequencyLeft it's not a guarantee of a well-formed message
+		 * Frequency messages and sampled data messages are handled by another process
+		 * Write the messages to file, the serial can only be read by the monitor
 		 */
-        Type HandleFrequencyMessage(string msg)
+		Type HandleDifferentMessage(string msg)
 		{
-			if (msg.Length >= 130 && msg.Length <= 395)
-			{
-				return Type.FrequencyLeft;
-			}
+			sw.WriteLine(msg);
+			sw.Flush();
 
-			return Type.None;
+			return (Type)msg[0];
 		}
 	}
 }
