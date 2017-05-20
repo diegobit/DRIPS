@@ -28,13 +28,16 @@ static const float b[OUTPUT_SIZE] PROGMEM = { 2.179429054260253906e+00, 6.460731
  *     d: [ 44,   23,   71,    9,   88 ]
  *   out: [0.75, 0.25, 0.00, 0.50, 1.00]
  */
-static inline void ranks5(uint16_t *d, float *out) {
+static inline void ranks5(uint16_t *d_orig, float *out) {
     uint8_t i, j;
     out[0] = 0.0;
     out[1] = 0.25;
     out[2] = 0.50;
     out[3] = 0.75;
     out[4] = 1.0;
+
+    uint16_t d[5];
+    memcpy(&d, d_orig, sizeof(uint16_t) * 5);
 
     for (i = 1; i < 5; i++) {
         uint16_t tmp = d[i];
