@@ -62,7 +62,7 @@ for crossroad_config in ['000', '001', '010', '011', '100', '101', '110', '111']
     # Convert file
     data = []
     lines = content.split('\n')
-    for i in range(0, len(lines)-1, 3):
+    for i in range(0, len(lines)-2, 3):
         lineL = lines[i]
         lineF = lines[i+1]
         lineR = lines[i+2]
