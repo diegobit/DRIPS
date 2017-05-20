@@ -45,13 +45,15 @@ def retrievePlotData():
     while True:
         try:
             f = open(filename, encoding='utf8')
-
+            f.seek(0, os.SEEK_END)
             f.readline() # Discard the first (possibly partial) line
             while True:
-                line = b''
+                line = f.readline()
                 while len(line) == 0 or line[0] not in ['L', 'F', 'R']:
-                    print("Syncing...")
+                    if not line:
+                        time.sleep(0.1)
                     line = f.readline()
+
                 update_xyvals(line)
         except OSError:
             print("Error reading file " + filename)
