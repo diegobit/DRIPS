@@ -106,6 +106,9 @@ namespace monitor
                 {
                     string msg = port.ReadLine();
 
+					sw.WriteLine(msg);
+					sw.Flush();
+
                     Type ret = HandleMessage(msg);
 
                     // Write something in the log according to the type handled
@@ -234,13 +237,9 @@ namespace monitor
 
         /**
          * Frequency messages and sampled data messages are handled by another process
-         * Write the messages to file, the serial can only be read by the monitor
          */
         Type HandleDifferentMessage(string msg)
         {
-            sw.WriteLine(msg);
-            sw.Flush();
-
             return (Type)msg[0];
         }
     }
