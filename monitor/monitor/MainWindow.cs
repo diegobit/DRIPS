@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using Gtk;
 using monitor;
@@ -44,6 +44,9 @@ public partial class MainWindow : Window
     {
         Build();
 
+        SetSizeRequest(1024,576);
+        Title = Mono.Unix.Catalog.GetString("Drips Monitor");
+
         cRadW = cFullRadW;
         cRadH = cFullRadH;
         labelW = labelFullW;
@@ -74,7 +77,7 @@ public partial class MainWindow : Window
 
                 PlaceLabel(label, road);
                 Application.Invoke(delegate /* FIXME: workaround: by executing it this way 
-                the method is delayed long enough for the Hide() on the signals to be effective */
+                                                      the method is delayed long enough for the Hide() on the signals to be effective */
                 {
                     PlaceSignals(s.Item1, s.Item2, road);
                 });

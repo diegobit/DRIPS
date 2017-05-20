@@ -109,25 +109,25 @@ namespace monitor
                     Type ret = HandleMessage(msg);
 
                     // Write something in the log according to the type handled
-                    switch (ret)
-                    {
-                        case Type.Info:
-                            Console.WriteLine("RECEIVED INFO-MESSAGE (" + msg.Length + " Bytes): " + msg);
-                            break;
-                        case Type.FrequencyLeft:
-                        case Type.FrequencyFront:
-                        case Type.FrequencyRight:
-                            //Console.WriteLine("IGNORED FREQUENCY-MESSAGE");
-                            break;
-                        case Type.RawLeft:
-                        case Type.RawFront:
-                        case Type.RawRight:
-                            //Console.WriteLine("IGNORED RAW-MESSAGE");
-                            break;
-                        case Type.None:
-                            Console.WriteLine("RECEIVED UNKNOWN OR CORRUPT MESSAGE (" + msg.Length + " Bytes): " + msg);
-                            break;
-                    }
+                    //switch (ret)
+                    //{
+                    //    case Type.Info:
+                    //        Console.WriteLine("RECEIVED INFO-MESSAGE (" + msg.Length + " Bytes): " + msg);
+                    //        break;
+                    //    case Type.FrequencyLeft:
+                    //    case Type.FrequencyFront:
+                    //    case Type.FrequencyRight:
+                    //        Console.WriteLine("IGNORED FREQUENCY-MESSAGE");
+                    //        break;
+                    //    case Type.RawLeft:
+                    //    case Type.RawFront:
+                    //    case Type.RawRight:
+                    //        Console.WriteLine("IGNORED RAW-MESSAGE");
+                    //        break;
+                    //    case Type.None:
+                    //        Console.WriteLine("RECEIVED UNKNOWN OR CORRUPT MESSAGE (" + msg.Length + " Bytes): " + msg);
+                    //        break;
+                    //}
                 }
                 catch (TimeoutException) { }
                 catch (IOException)
