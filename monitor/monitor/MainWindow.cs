@@ -115,7 +115,7 @@ public partial class MainWindow : Window
             {
                 // There was a car image before, I check whether I have to update it
                 string prevPath = car.Item1.Name;
-                if (prevPath != (road.Id + expectedImagePath))
+                if (prevPath != (road.Id + expectedImagePath) && prevPath != (road.Id + unknownImagePath))
                 {
                     // The car has changed. Remove the old image from the view, load the new image and place it;
                     Application.Invoke(delegate
