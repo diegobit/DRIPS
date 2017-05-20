@@ -56,7 +56,7 @@ for crossroad_config in ['000', '001', '010', '011', '100', '101', '110', '111']
 
     # Load file
     content = ''
-    with open("dataset_" + crossroad_config + ".csv", 'r') as content_file:
+    with open("dataset/dataset_" + crossroad_config + ".csv", 'r') as content_file:
         content = content_file.read()
 
     # Convert file

@@ -13,7 +13,7 @@ crossroad_config = ''
 
 def writeBuffer():
     global buffer
-    with open("dataset_" + crossroad_config + ".csv", "a") as myfile:
+    with open("dataset/dataset_" + crossroad_config + ".csv", "a") as myfile:
         myfile.write(','.join(buffer[0]) + "\n")
         myfile.write(','.join(buffer[1]) + "\n")
         myfile.write(','.join(buffer[2]) + "\n")
