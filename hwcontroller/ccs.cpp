@@ -471,8 +471,8 @@ bool sendCCS() {
 
         uint8_t data[3];
         data[0] = MSG_TYPE_CCS;
-        data[1] = ADDRESS;
-        data[2] = vehicles[vehicleId].address;
+        data[1] = vehicles[vehicleId].address;
+        data[2] = ADDRESS;
 
         nrf24.send(data, sizeof(data));
         nrf24.waitPacketSent();
@@ -484,5 +484,6 @@ bool sendCCS() {
 }
 
 bool isExpired(const Vehicle *vehicle) {
-    return vehicle->receivedTime + VEHICLE_CACHE_TTL < millis();
+    const unsigned long currTime = millis();
+    return (vehicle->receivedTime + VEHICLE_CACHE_TTL < currTime) || (currTime < VEHICLE_CACHE_TTL);
 }
