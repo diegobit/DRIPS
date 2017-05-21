@@ -90,7 +90,9 @@ public partial class MainWindow : Window
     {
         Tuple<Image, Label, Image, Image> car;
         roads.TryGetValue(road.Id, out car);
-        string expectedImagePath = "monitor.resources.car" + resDiv + road.Manufacturer + resDiv + road.Model + imageExtension;
+        string expectedManufacturer = road.Manufacturer == "" ? "Unknown" : road.Manufacturer;
+        string expectedModel = road.Model == "" ? "Unknown" : road.Model;
+        string expectedImagePath = "monitor.resources.car" + resDiv + expectedManufacturer + resDiv + expectedModel + imageExtension;
 
         if (road.IsEmpty)
         {
@@ -115,7 +117,7 @@ public partial class MainWindow : Window
             {
                 // There was a car image before, I check whether I have to update it
                 string prevPath = car.Item1.Name;
-                if (prevPath != (road.Id + expectedImagePath) && prevPath != (road.Id + unknownImagePath))
+                if (prevPath != (road.Id + expectedImagePath))
                 {
                     // The car has changed. Remove the old image from the view, load the new image and place it;
                     Application.Invoke(delegate
