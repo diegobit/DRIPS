@@ -217,6 +217,7 @@ void handleTurnButton() {
                     break;
             }
             buttonPressed = false;
+            sendKeepAlive();
         }
     }
 }
