@@ -302,13 +302,13 @@ State FUN_ST_BLINK() {
             rightCCSIntensity = fhtRight[LED_CCS_BIN];
             if (LED_CCS_BIN > 0) {
                 leftCCSIntensity = max(leftCCSIntensity, fhtLeft[LED_CCS_BIN-1]);
-                frontCCSIntensity = max(leftCCSIntensity, fhtLeft[LED_CCS_BIN-1]);
-                rightCCSIntensity = max(leftCCSIntensity, fhtLeft[LED_CCS_BIN-1]);
+                frontCCSIntensity = max(frontCCSIntensity, fhtFront[LED_CCS_BIN-1]);
+                rightCCSIntensity = max(rightCCSIntensity, fhtRight[LED_CCS_BIN-1]);
             }
             if (LED_CCS_BIN < (FHT_N / 2)-1) {
                 leftCCSIntensity = max(leftCCSIntensity, fhtLeft[LED_CCS_BIN+1]);
-                frontCCSIntensity = max(leftCCSIntensity, fhtLeft[LED_CCS_BIN+1]);
-                rightCCSIntensity = max(leftCCSIntensity, fhtLeft[LED_CCS_BIN+1]);
+                frontCCSIntensity = max(frontCCSIntensity, fhtFront[LED_CCS_BIN+1]);
+                rightCCSIntensity = max(rightCCSIntensity, fhtRight[LED_CCS_BIN+1]);
             }
 
             sampled = true;
