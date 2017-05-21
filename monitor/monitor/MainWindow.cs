@@ -145,12 +145,15 @@ public partial class MainWindow : Window
                 // 3. Update signals
                 Image leftSignal = car.Item3;
                 Image rightSignal = car.Item4;
-                //leftSignal.Hide(); // Done to synchronize the GIF playback of the two signals
-                //rightSignal.Hide();
                 if (road.Priority == Priority.High)
                 {
-                    leftSignal.Hide(); // Done to synchronize the GIF playback of the two signals
-                    rightSignal.Hide();
+                    if (!leftSignal.Visible || !rightSignal.Visible)
+                    {
+						// One of the two was hidden, so it just passed into Priority.High
+						leftSignal.Hide(); // Done to synchronize the GIF playback of the two signals
+						rightSignal.Hide();
+                    }
+
                     leftSignal.Show();
                     rightSignal.Show();
                 }
