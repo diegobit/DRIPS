@@ -90,6 +90,7 @@ typedef enum CurrentAction : char {
 } CurrentAction;
 
 typedef struct RoadInfo {
+    char address;
     unsigned long validUntil;
     char manufacturer[8];
     char model[8];

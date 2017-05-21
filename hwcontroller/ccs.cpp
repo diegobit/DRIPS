@@ -422,6 +422,16 @@ State handlePeriodicActions() {
                 memcpy(&(vehicles[index].model), &buf[12], 8);
                 vehicles[index].priority = buf[20] != 0;
                 vehicles[index].receivedTime = millis();
+
+                // If it is present in crossroad, update its information
+                for (uint8_t i = 0; i < 3; i++) {
+                    if (crossroad[i].address == vehicles[index].address) {
+                        crossroad[i].priority = vehicles[index].priority;
+                        crossroad[i].requestedAction = vehicles[index].requestedAction;
+                        crossroad[i].currentAction = vehicles[index].currentAction;
+                        break;
+                    }
+                }
             }
 
         } else if (buf[0] == MSG_TYPE_CCS) {

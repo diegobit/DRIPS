@@ -404,6 +404,7 @@ void interpretateSensorData(uint16_t *left, uint16_t *front, uint16_t *right) {
 
     for (uint8_t i = 0; i < 3; i++) {
         if (crossroad[i].validUntil < millis()) {
+            crossroad[i].address = 0;
             memset(crossroad[i].manufacturer, ' ', 8);
             memset(crossroad[i].model, ' ', 8);
             crossroad[i].priority = false;
