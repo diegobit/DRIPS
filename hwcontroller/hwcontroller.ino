@@ -325,7 +325,9 @@ void fht_denoise() {
     }
 
     for (uint8_t i = 0; i < FHT_N / 2; i++) {
-        fht_lin_out[i] -= noise;
+        if (fht_lin_out[i] <= noise) {
+            fht_lin_out[i] = 0;
+        }
     }
 }
 
@@ -369,7 +371,7 @@ __attribute__((optimize("O3"))) uint16_t *readIrFrequencies(uint8_t pin, char sa
 
     sendRawDataMessage(freqMsgType, (int16_t *)fht_lin_out);
 
-    fht_denoise(); // remove noise from output
+    // fht_denoise(); // remove noise from output
 
     if (output != NULL) {
         memcpy(output, fht_lin_out, sizeof(fht_lin_out));
