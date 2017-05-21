@@ -10,5 +10,6 @@ extern bool advertiseCCS;
 
 bool setupCCS(uint16_t *fhtLeft, uint16_t *fhtFront, uint16_t *fhtRight);
 void handleCCS();
+void readCCSMessages();
 
 #endif // H_CCS

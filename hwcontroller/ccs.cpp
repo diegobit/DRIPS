@@ -141,6 +141,15 @@ uint16_t frontCCSIntensity = 0;
 uint16_t rightCCSIntensity = 0;
 State state = ST_BEGIN;
 
+typedef struct NetworkMessage {
+    uint8_t size;
+    uint8_t data[RH_NRF24_MAX_MESSAGE_LEN];
+} NetworkMessage;
+
+const uint8_t messages_len = 5;
+NetworkMessage messages[messages_len];
+uint8_t topMessageId = 0; // Index of the newest message
+
 
 // ==== FUNCTION IMPLEMENTATIONS ==== //
 
@@ -152,6 +161,10 @@ bool setupCCS(uint16_t *_fhtLeft, uint16_t *_fhtFront, uint16_t *_fhtRight) {
     if (!nrf24.init()) {
         Serial.println(F("Radio init failed!"));
         return false;
+    }
+
+    for (uint8_t i = 0; i < messages_len; i++) {
+        messages[i].size = 0;
     }
 
     timeMarker = millis();
@@ -179,6 +192,23 @@ void handleCCS() {
             break;
         default:
             Serial.println(F("INVALID STATE"));
+    }
+}
+
+inline int positive_modulo(int i, int n) {
+    return (i % n + n) % n;
+}
+
+void readCCSMessages() {
+    while (nrf24.available())
+    {
+        uint8_t id = positive_modulo(topMessageId + 1, messages_len);
+        uint8_t len = sizeof(messages[id].data);
+        if (nrf24.recv(messages[id].data, &len))
+        {
+            messages[id].size = len;
+            topMessageId = id;
+        }
     }
 }
 
@@ -340,99 +370,105 @@ State FUN_ST_INTERPRETATE() {
  *          should immediately return.
  */
 State handlePeriodicActions() {
+    readCCSMessages();
+
     if (keepAliveTimeMarker + TIMESPAN_KEEPALIVE <= millis()) {
         sendKeepAlive();
         keepAliveTimeMarker = millis();
     }
 
-    if (nrf24.available())
+    for (uint8_t i = 0; i < messages_len; i++)
     {
-        // Should be a message for us now
-        uint8_t buf[RH_NRF24_MAX_MESSAGE_LEN];
-        uint8_t len = sizeof(buf);
-        if (nrf24.recv(buf, &len))
-        {
-            if (buf[0] == MSG_TYPE_KEEPALIVE) {
-                // KeepAlive
+        // Start from the oldest message
+        uint8_t index = positive_modulo(topMessageId - (messages_len - i - 1), messages_len);
+        if (messages[index].size == 0) {
+            continue;
+        }
 
-                // find vehicle in the cache
-                uint8_t index = 255; // 255 = not found
+        uint8_t *buf = messages[index].data;
+        // Remove the message from the buffer
+        messages[index].size = 0;
+
+        if (buf[0] == MSG_TYPE_KEEPALIVE) {
+            // KeepAlive
+
+            // find vehicle in the cache
+            uint8_t index = 255; // 255 = not found
+            for (uint8_t i = 0; i < 3; i++) {
+                if (vehicles[i].address == buf[1]) {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index == 255) {
+                // vehicle wasn't in the cache,
+                // pick oldest entry in vehicles
+                unsigned long min = ULONG_MAX;
                 for (uint8_t i = 0; i < 3; i++) {
-                    if (vehicles[i].address == buf[1]) {
+                    if (vehicles[i].receivedTime < min) {
+                        min = vehicles[i].receivedTime;
                         index = i;
-                        break;
                     }
                 }
+            }
 
-                if (index == 255) {
-                    // vehicle wasn't in the cache,
-                    // pick oldest entry in vehicles
-                    unsigned long min = ULONG_MAX;
-                    for (uint8_t i = 0; i < 3; i++) {
-                        if (vehicles[i].receivedTime < min) {
-                            min = vehicles[i].receivedTime;
-                            index = i;
-                        }
-                    }
-                }
+            // replace the oldest entry with the new info
+            if (isValidRequestedAction(buf[2]) && isValidCurrentAction(buf[3])) {
+                vehicles[index].address = buf[1];
+                vehicles[index].requestedAction = static_cast<RequestedAction>(buf[2]);
+                vehicles[index].currentAction = static_cast<CurrentAction>(buf[3]);
+                memcpy(&(vehicles[index].manufacturer), &buf[4], 8);
+                memcpy(&(vehicles[index].model), &buf[12], 8);
+                vehicles[index].priority = buf[20] != 0;
+                vehicles[index].receivedTime = millis();
+            }
 
-                // replace the oldest entry with the new info
-                if (isValidRequestedAction(buf[2]) && isValidCurrentAction(buf[3])) {
-                    vehicles[index].address = buf[1];
-                    vehicles[index].requestedAction = static_cast<RequestedAction>(buf[2]);
-                    vehicles[index].currentAction = static_cast<CurrentAction>(buf[3]);
-                    memcpy(&(vehicles[index].manufacturer), &buf[4], 8);
-                    memcpy(&(vehicles[index].model), &buf[12], 8);
-                    vehicles[index].priority = buf[20] != 0;
-                    vehicles[index].receivedTime = millis();
-                }
-
-            } else if (buf[0] == MSG_TYPE_CCS) {
-                // CCS
-                const bool isForMe = buf[1] == ADDRESS;
-                if (state == ST_BEGIN) {
-                    if (isForMe) {
-                        timeMarker = millis();
-                        return ST_WAIT_TO_BLINK;
-                    } else {
-                        backoff = random(1, TIMESPAN_MAX_BACKOFF);
-                        timeMarker = millis();
-                        return ST_BEGIN;
-                    }
-                } else if (state == ST_WAIT_TO_BLINK || state == ST_BLINK) {
-                    const char sender = buf[2];
-                    if (!(isForMe && sender == currentPeer.address)) {
-                        // Send pardoned FCT
-                        uint8_t data[2];
-                        data[0] = MSG_TYPE_FCT;
-                        data[1] = currentPeer.address;
-                        nrf24.send(data, sizeof(data));
-                        nrf24.waitPacketSent();
-                    }
-                } else if (state == ST_INTERPRETATE) {
-                    if (isForMe) {
-                        // Send non-pardoned FCT
-                        uint8_t data[2];
-                        data[0] = MSG_TYPE_FCT;
-                        data[1] = '\0';
-                        nrf24.send(data, sizeof(data));
-                        nrf24.waitPacketSent();
-                    }
-                }
-
-            } else if (buf[0] == MSG_TYPE_FCT) {
-                // FCT
-                const bool pardoned = buf[1] == ADDRESS;
-                if (state == ST_BEGIN || (state == ST_WAIT_TO_BLINK && !pardoned) || (state == ST_BLINK && !pardoned)) {
-                    advertiseCCS = false;
-
-                    // Choose backoff
+        } else if (buf[0] == MSG_TYPE_CCS) {
+            // CCS
+            const bool isForMe = buf[1] == ADDRESS;
+            if (state == ST_BEGIN) {
+                if (isForMe) {
+                    timeMarker = millis();
+                    return ST_WAIT_TO_BLINK;
+                } else {
                     backoff = random(1, TIMESPAN_MAX_BACKOFF);
                     timeMarker = millis();
-
-                    // Instruct to go back to begin
                     return ST_BEGIN;
                 }
+            } else if (state == ST_WAIT_TO_BLINK || state == ST_BLINK) {
+                const char sender = buf[2];
+                if (!(isForMe && sender == currentPeer.address)) {
+                    // Send pardoned FCT
+                    uint8_t data[2];
+                    data[0] = MSG_TYPE_FCT;
+                    data[1] = currentPeer.address;
+                    nrf24.send(data, sizeof(data));
+                    nrf24.waitPacketSent();
+                }
+            } else if (state == ST_INTERPRETATE) {
+                if (isForMe) {
+                    // Send non-pardoned FCT
+                    uint8_t data[2];
+                    data[0] = MSG_TYPE_FCT;
+                    data[1] = '\0';
+                    nrf24.send(data, sizeof(data));
+                    nrf24.waitPacketSent();
+                }
+            }
+
+        } else if (buf[0] == MSG_TYPE_FCT) {
+            // FCT
+            const bool pardoned = buf[1] == ADDRESS;
+            if (state == ST_BEGIN || (state == ST_WAIT_TO_BLINK && !pardoned) || (state == ST_BLINK && !pardoned)) {
+                advertiseCCS = false;
+
+                // Choose backoff
+                backoff = random(1, TIMESPAN_MAX_BACKOFF);
+                timeMarker = millis();
+
+                // Instruct to go back to begin
+                return ST_BEGIN;
             }
         }
     }

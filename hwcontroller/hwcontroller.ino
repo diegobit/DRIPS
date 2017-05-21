@@ -489,17 +489,24 @@ void loop() {
     handleTurnButton();
 
     // Run right after the FHTs, for better timing
+    readCCSMessages();
     handleCCS();
 
     handleTurnButton();
 
+    readCCSMessages();
+
     interpretateSensorData(fhtLeft, fhtFront, fhtRight);
+
+    readCCSMessages();
 
     computeCurrentAction();
 
     refreshMonitor();
 
     handleTurnButton();
+
+    readCCSMessages();
 
 #if MEASURE_LOOP
     _t = millis() - _t;
