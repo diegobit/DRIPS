@@ -446,7 +446,7 @@ void setup() {
     digitalWrite(TURN_L, HIGH);
     digitalWrite(TURN_R, HIGH);
 
-    if (!setupCCS(fhtLeft, fhtFront, fhtRight)) {
+    if (!setupCCS(fhtLeft, fhtFront, fht_lin_out)) {
         // Display an error signal
         while (true) {
             digitalWrite(TURN_L, LOW);
