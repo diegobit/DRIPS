@@ -19,6 +19,20 @@ static const float W[OUTPUT_SIZE][INPUT_SIZE] PROGMEM = {
 static const float b[OUTPUT_SIZE] PROGMEM = { -1.017596721649169922e-01,5.504381656646728516e-01,6.566089391708374023e-01,-4.639548957347869873e-01,5.891178250312805176e-01,-4.020145535469055176e-01,-4.132084548473358154e-01,-4.152252972126007080e-01 };
 
 /**
+ * Last returned value from neuralInterpretate.
+ */
+CrossroadStatus lastReturned = {0, 0, 0};
+
+/**
+ * Previous results calculated by the neural network.
+ * Notice that they may differ from the actual returned value.
+ */
+CrossroadStatus prevResult[2] = {
+    {0, 0, 0},
+    {0, 0, 0}
+};
+
+/**
  * Calculate ranks from the input vector and store them in the output vector.
  * The computed values are actually the sorted indices, rather than usual ranks.
  *
@@ -49,6 +63,10 @@ static inline void ranks5(uint16_t *d_orig, float *out) {
         d[j] = tmp;
         out[j] = tmpi;
     }
+}
+
+static inline bool crossroadEquals(CrossroadStatus *c1, CrossroadStatus *c2) {
+    return c1->left == c2 -> left && c1->front == c2->front && c1->right == c2->right;
 }
 
 static inline void preprocess(uint16_t *fhtLeft, uint16_t *fhtFront, uint16_t *fhtRight, float out[INPUT_SIZE]) {
@@ -126,5 +144,22 @@ CrossroadStatus neuralInterpretate(uint16_t *fhtLeft, uint16_t *fhtFront, uint16
     result.front = ((maxIndex >> 1) & 1) == 1; // maxIndex IN (2, 3, 6, 7) -> x1x
     result.right = ((maxIndex >> 0) & 1) == 1; // maxIndex IN (1, 3, 5, 7) -> xx1
 
-    return result;
+    CrossroadStatus retval;
+
+    // Checks for error tolerance.
+    if (crossroadEquals(&result, &(prevResult[0]))) {
+        retval = result;
+    } else if (crossroadEquals(&result, &(prevResult[1]))) {
+        retval = result;
+    } else if (crossroadEquals(&(prevResult[0]), &(prevResult[1]))) {
+        retval = prevResult[0];
+    } else {
+        retval = lastReturned;
+    }
+
+    lastReturned = retval;
+    prevResult[1] = prevResult[0];
+    prevResult[0] = result;
+
+    return retval;
 }
