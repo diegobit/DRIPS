@@ -334,17 +334,20 @@ State FUN_ST_INTERPRETATE() {
     int8_t destIndex = -1;
 
     // Do something with leftCCSIntensity, frontCCSIntensity, rightCCSIntensity
-    if (leftCCSIntensity * (100-diffThresholdPercentage) / 100 > frontCCSIntensity &&
+    if (leftCCSIntensity >= 10 &&
+        leftCCSIntensity * (100-diffThresholdPercentage) / 100 > frontCCSIntensity &&
         leftCCSIntensity * (100-diffThresholdPercentage) / 100 > rightCCSIntensity) {
 
             destIndex = 0;
 
-    } else if (frontCCSIntensity * (100-diffThresholdPercentage) / 100 > leftCCSIntensity &&
+    } else if (frontCCSIntensity >= 10 &&
+               frontCCSIntensity * (100-diffThresholdPercentage) / 100 > leftCCSIntensity &&
                frontCCSIntensity * (100-diffThresholdPercentage) / 100 > rightCCSIntensity) {
 
             destIndex = 1;
 
-    } else if (rightCCSIntensity * (100-diffThresholdPercentage) / 100 > leftCCSIntensity &&
+    } else if (rightCCSIntensity >= 10 &&
+               rightCCSIntensity * (100-diffThresholdPercentage) / 100 > leftCCSIntensity &&
                rightCCSIntensity * (100-diffThresholdPercentage) / 100 > frontCCSIntensity) {
 
             destIndex = 2;
