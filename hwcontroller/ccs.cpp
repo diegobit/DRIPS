@@ -95,6 +95,7 @@ State FUN_ST_INTERPRETATE();
 State handlePeriodicActions();
 void sendKeepAlive();
 bool sendCCS();
+int8_t vehicleIndex(char address);
 inline bool isExpired(const Vehicle *vehicle);
 
 
@@ -356,16 +357,32 @@ State FUN_ST_INTERPRETATE() {
     if (destIndex >= 0) {
         if (crossroad[destIndex].validUntil > millis()) {
             // The "orientation" field is set by interpretateSensorData in the main file.
-            memcpy(&crossroad[destIndex].manufacturer, currentPeer.manufacturer, 8);
-            memcpy(&crossroad[destIndex].model, currentPeer.model, 8);
-            crossroad[destIndex].priority = currentPeer.priority;
-            crossroad[destIndex].requestedAction = currentPeer.requestedAction;
-            crossroad[destIndex].currentAction = currentPeer.currentAction;
+            if (currentPeer.address != 0) {
+                memcpy(&crossroad[destIndex].manufacturer, currentPeer.manufacturer, 8);
+                memcpy(&crossroad[destIndex].model, currentPeer.model, 8);
+                crossroad[destIndex].priority = currentPeer.priority;
+                crossroad[destIndex].requestedAction = currentPeer.requestedAction;
+                crossroad[destIndex].currentAction = currentPeer.currentAction;
+            }
         }
     }
 
     timeMarker = millis();
     return ST_BEGIN;
+}
+
+/**
+ * Given the address of a vehicle, returns its index in the vehicles array.
+ * If no vehicle is found, returns -1.
+ */
+int8_t vehicleIndex(char address) {
+    for (uint8_t i = 0; i < 3; i++) {
+        if (address == vehicles[i].address) {
+            return i;
+        }
+    }
+
+    return -1;
 }
 
 /**
@@ -442,8 +459,18 @@ State handlePeriodicActions() {
             const bool isForMe = buf[1] == ADDRESS;
             if (state == ST_BEGIN) {
                 if (isForMe) {
-                    timeMarker = millis();
-                    return ST_WAIT_TO_BLINK;
+                    // Find the peer in vehicles
+                    int8_t vehicleId = vehicleIndex(buf[2]);
+                    if (vehicleId != -1) {
+                        currentPeer = vehicles[vehicleId];
+                        timeMarker = millis();
+                        return ST_WAIT_TO_BLINK;
+                    } else {
+                        // We received a CCS request from someone which is not in our cache
+                        currentPeer.address = 0;
+                        timeMarker = millis();
+                        return ST_WAIT_TO_BLINK;
+                    }
                 } else {
                     backoff = random(1, TIMESPAN_MAX_BACKOFF);
                     timeMarker = millis();
