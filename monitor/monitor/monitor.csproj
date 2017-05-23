@@ -61,6 +61,7 @@
     <EmbeddedResource Include="resources\signal_right.gif" />
     <EmbeddedResource Include="resources\signal_down.gif" />
     <EmbeddedResource Include="resources\signal_up.gif" />
+    <EmbeddedResource Include="resources\alivemarker.gif" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
