@@ -277,7 +277,7 @@ public partial class MainWindow : Window
 
 	void PlaceAliveMarker(Image aliveMarker, RoadID road, Label label)
 	{
-		Tuple<int, int> pos = ComputeAliveMarkerPosition(road, aliveMarker, label);
+        Tuple<int, int> pos = ComputeAliveMarkerPosition(road, aliveMarker, Allocation);
 		int x = pos.Item1;
 		int y = pos.Item2;
 
@@ -398,7 +398,7 @@ public partial class MainWindow : Window
         return Tuple.Create(xl, yl, xr, yr);
     }
 
-	Tuple<int, int> ComputeAliveMarkerPosition(RoadID road, Image aliveMarker, Label label)
+	Tuple<int, int> ComputeAliveMarkerPosition(RoadID road, Image aliveMarker, Gdk.Rectangle allocation)
 	{
         int w = aliveMarker.PixbufAnimation.Width;
         int h = aliveMarker.PixbufAnimation.Height;
@@ -409,20 +409,20 @@ public partial class MainWindow : Window
         switch (road)
 		{
 			case (RoadID.Bottom):
-                x = label.Allocation.X + 4;
-                y = label.Allocation.Y + 4;
+                x = allocation.Width / 2 + cRadW + 4;
+                y = allocation.Height / 2 + cRadH + 4;
 				break;
 			case (RoadID.Left):
-                x = label.Allocation.X + label.Allocation.Width - aliveMarker.PixbufAnimation.Width - 4;
-                y = label.Allocation.Y + 4;
+                x = allocation.Width / 2 - cRadW - aliveMarker.PixbufAnimation.Width - 4;
+                y = allocation.Height / 2 + cRadH + 4;
 				break;
 			case (RoadID.Top):
-                x = label.Allocation.X + label.Allocation.Width - aliveMarker.PixbufAnimation.Width - 4;
-                y = label.Allocation.Y;
+                x = allocation.Width / 2 - cRadW - aliveMarker.PixbufAnimation.Width - 4;
+                y = allocation.Height / 2 - cRadH - aliveMarker.PixbufAnimation.Height - 4;
 				break;
 			case (RoadID.Right):
-                x = label.Allocation.X + 4;
-                y = label.Allocation.Y;
+                x = allocation.Width / 2 + cRadW + 4;
+                y = allocation.Height / 2 - cRadH - aliveMarker.PixbufAnimation.Height - 4;
 				break;
 		}
 
@@ -510,7 +510,7 @@ public partial class MainWindow : Window
 
                     if (aliveMarker != null)
                     {
-                        Tuple<int, int> pos = ComputeAliveMarkerPosition(road, aliveMarker, label);
+                        Tuple<int, int> pos = ComputeAliveMarkerPosition(road, aliveMarker, allocation);
                         container.Move(aliveMarker, pos.Item1, pos.Item2);
                     }
                 }
