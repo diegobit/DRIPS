@@ -62,9 +62,6 @@
     <EmbeddedResource Include="resources\signal_down.gif" />
     <EmbeddedResource Include="resources\signal_up.gif" />
     <EmbeddedResource Include="resources\alivemarker.gif" />
-    <EmbeddedResource Include="resources\car_Police_Police_prec.png" />
-    <EmbeddedResource Include="resources\car_Tesla_Model S_prec.png" />
-    <EmbeddedResource Include="resources\car_Vlkswagn_Beetle_prec.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
