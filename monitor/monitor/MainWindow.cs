@@ -44,9 +44,6 @@ public partial class MainWindow : Window
     {
         Build();
 
-        SetSizeRequest(1024,576);
-        Title = Mono.Unix.Catalog.GetString("Drips Monitor");
-
         cRadW = cFullRadW;
         cRadH = cFullRadH;
         labelW = labelFullW;
