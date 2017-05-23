@@ -94,7 +94,8 @@ public partial class MainWindow : Window
         roads.TryGetValue(road.Id, out car);
         string expectedManufacturer = road.Manufacturer == "" ? "Unknown" : road.Manufacturer;
         string expectedModel = road.Model == "" ? "Unknown" : road.Model;
-        string expectedImagePath = "monitor.resources.car" + resDiv + expectedManufacturer + resDiv + expectedModel + imageExtension;
+        string hasPrecedenceString = road.CurrentAction == CurrentAction.Still ? "" : resDiv + "prec";
+        string expectedImagePath = "monitor.resources.car" + resDiv + expectedManufacturer + resDiv + expectedModel + hasPrecedenceString + imageExtension;
 
         if (road.IsEmpty)
         {
