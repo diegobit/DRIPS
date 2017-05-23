@@ -9,10 +9,8 @@
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="400 300">
     <property name="MemberName" />
-    <property name="Title" translatable="yes">Drips Monitor</property>
+    <property name="Title" translatable="yes">MainWindow</property>
     <property name="WindowPosition">CenterOnParent</property>
-    <property name="DefaultWidth">1024</property>
-    <property name="DefaultHeight">576</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
       <placeholder />
