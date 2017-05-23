@@ -409,20 +409,20 @@ public partial class MainWindow : Window
         switch (road)
 		{
 			case (RoadID.Bottom):
-                x = label.Allocation.X + 4;
-                y = label.Allocation.Y + 4;
+                x = label.Allocation.Right;
+                y = label.Allocation.Top;
 				break;
 			case (RoadID.Left):
-                x = label.Allocation.X + label.Allocation.Width - aliveMarker.PixbufAnimation.Width - 4;
-                y = label.Allocation.Y + 4;
+                x = label.Allocation.Left - aliveMarker.PixbufAnimation.Width;
+                y = label.Allocation.Top;
 				break;
 			case (RoadID.Top):
-                x = label.Allocation.X + label.Allocation.Width - aliveMarker.PixbufAnimation.Width - 4;
-                y = label.Allocation.Y;
+                x = label.Allocation.Left - aliveMarker.PixbufAnimation.Width;
+                y = label.Allocation.Bottom - aliveMarker.PixbufAnimation.Height;
 				break;
 			case (RoadID.Right):
-                x = label.Allocation.X + 4;
-                y = label.Allocation.Y;
+                x = label.Allocation.Right;
+                y = label.Allocation.Bottom - aliveMarker.PixbufAnimation.Height;
 				break;
 		}
 
