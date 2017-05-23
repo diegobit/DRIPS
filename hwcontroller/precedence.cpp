@@ -110,7 +110,9 @@ bool someoneHasPriority() {
 }
 
 void computeCurrentAction() {
-    if (someoneCrossesMyRight() || someoneHasPriority()) {
+    if (hasPriority) {
+        currentAction = static_cast<CurrentAction>(requestedAction); // FIXME not safe, but we know the underlying type and values match when assigning a requestedAction to a currentAction
+    } else if (someoneCrossesMyRight() || someoneHasPriority()) {
         currentAction = ECA_STILL;
     } else {
         currentAction = static_cast<CurrentAction>(requestedAction); // FIXME not safe, but we know the underlying type and values match when assigning a requestedAction to a currentAction
