@@ -125,15 +125,7 @@ unsigned long timeMarker = 0; // NOTE We can reduce accuracy to save space
 unsigned long keepAliveTimeMarker = 0;
 bool advertiseCCS = false;
 uint16_t backoff = 0; // 0 means no backoff (*not* a zero-length backoff)
-Vehicle currentPeer = {
-    .address = '\0',
-    .manufacturer = _8_SPACES,
-    .model = _8_SPACES,
-    .priority = false,
-    .receivedTime = 0,
-    .requestedAction = ERA_STRAIGHT,
-    .currentAction = ECA_STILL
-};
+char currentPeer = 0;
 uint16_t *fhtLeft;
 uint16_t *fhtFront;
 uint16_t *fhtRight;
@@ -357,13 +349,15 @@ State FUN_ST_INTERPRETATE() {
 
     if (destIndex >= 0) {
         if (crossroad[destIndex].validUntil > millis()) {
-            // The "orientation" field is set by interpretateSensorData in the main file.
-            if (currentPeer.address != 0) {
-                memcpy(&crossroad[destIndex].manufacturer, currentPeer.manufacturer, 8);
-                memcpy(&crossroad[destIndex].model, currentPeer.model, 8);
-                crossroad[destIndex].priority = currentPeer.priority;
-                crossroad[destIndex].requestedAction = currentPeer.requestedAction;
-                crossroad[destIndex].currentAction = currentPeer.currentAction;
+            int8_t vehicleId = vehicleIndex(currentPeer);
+            if (vehicleId != -1) {
+                // The "orientation" field is set by interpretateSensorData in the main file.
+                crossroad[destIndex].address = vehicles[vehicleId].address;
+                memcpy(&crossroad[destIndex].manufacturer, vehicles[vehicleId].manufacturer, 8);
+                memcpy(&crossroad[destIndex].model, vehicles[vehicleId].model, 8);
+                crossroad[destIndex].priority = vehicles[vehicleId].priority;
+                crossroad[destIndex].requestedAction = vehicles[vehicleId].requestedAction;
+                crossroad[destIndex].currentAction = vehicles[vehicleId].currentAction;
             }
         }
     }
@@ -463,12 +457,12 @@ State handlePeriodicActions() {
                     // Find the peer in vehicles
                     int8_t vehicleId = vehicleIndex(buf[2]);
                     if (vehicleId != -1) {
-                        currentPeer = vehicles[vehicleId];
+                        currentPeer = vehicles[vehicleId].address;
                         timeMarker = millis();
                         return ST_WAIT_TO_BLINK;
                     } else {
                         // We received a CCS request from someone which is not in our cache
-                        currentPeer.address = 0;
+                        currentPeer = buf[2];
                         timeMarker = millis();
                         return ST_WAIT_TO_BLINK;
                     }
@@ -479,11 +473,11 @@ State handlePeriodicActions() {
                 }
             } else if (state == ST_WAIT_TO_BLINK || state == ST_BLINK) {
                 const char sender = buf[2];
-                if (!(isForMe && sender == currentPeer.address)) {
+                if (!(isForMe && sender == currentPeer)) {
                     // Send pardoned FCT
                     uint8_t data[2];
                     data[0] = MSG_TYPE_FCT;
-                    data[1] = currentPeer.address;
+                    data[1] = currentPeer;
                     nrf24.send(data, sizeof(data));
                     nrf24.waitPacketSent();
                 }
@@ -544,7 +538,7 @@ bool sendCCS() {
 
     if (!isExpired(&vehicles[vehicleId])) {
         // The cache is not expired, which means an actual vehicle has been found
-        currentPeer = vehicles[vehicleId];
+        currentPeer = vehicles[vehicleId].address;
 
         uint8_t data[3];
         data[0] = MSG_TYPE_CCS;
