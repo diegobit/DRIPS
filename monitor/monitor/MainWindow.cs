@@ -34,7 +34,7 @@ public partial class MainWindow : Window
      * For each road I keep 4 things:
      * car image, label, left signal, right signal
      */
-    Dictionary<RoadID, Tuple<Image, Label, Image, Image>> roads;
+    Dictionary<RoadID, Tuple<Image, Label, Image, Image, Image>> roads;
 
     public Monitor Monitor { get; set; }
 
@@ -55,7 +55,7 @@ public partial class MainWindow : Window
 
         unknownImagePath = "monitor.resources.car" + resDiv + "Unknown" + resDiv + "Unknown" + imageExtension;
 
-        roads = new Dictionary<RoadID, Tuple<Image, Label, Image, Image>>();
+        roads = new Dictionary<RoadID, Tuple<Image, Label, Image, Image, Image>>();
 
         container = new RLayout(this, null, null);
         Add(container);
@@ -72,13 +72,15 @@ public partial class MainWindow : Window
             {
                 Label label = LoadLabel(road);
                 Tuple<Image, Image> s = LoadSignalImages(road);
+                Image aliveMarker = LoadAliveMarker(road);
 
-                roads.Add(road, Tuple.Create((Image)null, label, s.Item1, s.Item2));
+                roads.Add(road, Tuple.Create((Image)null, label, s.Item1, s.Item2, aliveMarker));
 
                 PlaceLabel(label, road);
                 Application.Invoke(delegate /* FIXME: workaround: by executing it this way 
                                                       the method is delayed long enough for the Hide() on the signals to be effective */
                 {
+					PlaceAliveMarker(aliveMarker, road, label);
                     PlaceSignals(s.Item1, s.Item2, road);
                 });
 
@@ -88,7 +90,7 @@ public partial class MainWindow : Window
 
     public void UpdateRoad(Road road)
     {
-        Tuple<Image, Label, Image, Image> car;
+        Tuple<Image, Label, Image, Image, Image> car;
         roads.TryGetValue(road.Id, out car);
         string expectedManufacturer = road.Manufacturer == "" ? "Unknown" : road.Manufacturer;
         string expectedModel = road.Model == "" ? "Unknown" : road.Model;
@@ -106,8 +108,9 @@ public partial class MainWindow : Window
                 car.Item2.Text = MakeCarLabelText();
                 car.Item3.Hide();
                 car.Item4.Hide();
+                car.Item5.Hide();
             });
-            roads[road.Id] = Tuple.Create((Image)null, car.Item2, car.Item3, car.Item4);
+            roads[road.Id] = Tuple.Create((Image)null, car.Item2, car.Item3, car.Item4, car.Item5);
         }
         else
         {
@@ -125,7 +128,7 @@ public partial class MainWindow : Window
                         container.Remove(car.Item1);
                     });
                     Image carImg = LoadCarImage(expectedImagePath, road.Id);
-                    roads[road.Id] = Tuple.Create(carImg, car.Item2, car.Item3, car.Item4);
+                    roads[road.Id] = Tuple.Create(carImg, car.Item2, car.Item3, car.Item4, car.Item5);
                     PlaceCar(carImg, road);
                 }
             }
@@ -133,7 +136,7 @@ public partial class MainWindow : Window
             {
                 // Image not present, I place it
                 Image carImg = LoadCarImage(expectedImagePath, road.Id);
-                roads[road.Id] = Tuple.Create(carImg, car.Item2, car.Item3, car.Item4);
+                roads[road.Id] = Tuple.Create(carImg, car.Item2, car.Item3, car.Item4, car.Item5);
                 PlaceCar(carImg, road);
             }
 
@@ -174,7 +177,10 @@ public partial class MainWindow : Window
                 }
             });
 
-
+            // 4. refresh aliveMarker
+            Image aliveMarker = car.Item5;
+            car.Item5.Hide();
+            car.Item5.Show();
         }
     }
 
@@ -224,6 +230,13 @@ public partial class MainWindow : Window
         return Tuple.Create(l, r);
     }
 
+    Image LoadAliveMarker(RoadID road)
+    {
+        Image s = new Image();
+        s.PixbufAnimation = new Gdk.PixbufAnimation(null, "monitor.resources.alivemarker.gif");
+        return s;
+    }
+
     Label LoadLabel(RoadID road)
     {
         Label label = new Label();
@@ -263,6 +276,16 @@ public partial class MainWindow : Window
         leftSignal.Hide();
         rightSignal.Hide();
     }
+
+	void PlaceAliveMarker(Image aliveMarker, RoadID road, Label label)
+	{
+		Tuple<int, int> pos = ComputeAliveMarkerPosition(road, aliveMarker, label);
+		int x = pos.Item1;
+		int y = pos.Item2;
+
+		container.Put(aliveMarker, x, y);
+        aliveMarker.Hide();
+	}
 
     void PlaceLabel(Label label, RoadID road)
     {
@@ -377,6 +400,37 @@ public partial class MainWindow : Window
         return Tuple.Create(xl, yl, xr, yr);
     }
 
+	Tuple<int, int> ComputeAliveMarkerPosition(RoadID road, Image aliveMarker, Label label)
+	{
+        int w = aliveMarker.PixbufAnimation.Width;
+        int h = aliveMarker.PixbufAnimation.Height;
+
+		int x = 0;
+		int y = 0;
+
+        switch (road)
+		{
+			case (RoadID.Bottom):
+                x = label.Allocation.Right;
+                y = label.Allocation.Top;
+				break;
+			case (RoadID.Left):
+                x = label.Allocation.Left - aliveMarker.PixbufAnimation.Width;
+                y = label.Allocation.Top;
+				break;
+			case (RoadID.Top):
+                x = label.Allocation.Left - aliveMarker.PixbufAnimation.Width;
+                y = label.Allocation.Bottom - aliveMarker.PixbufAnimation.Height;
+				break;
+			case (RoadID.Right):
+                x = label.Allocation.Right;
+                y = label.Allocation.Bottom - aliveMarker.PixbufAnimation.Height;
+				break;
+		}
+
+		return Tuple.Create(x, y);
+	}
+
     string MakeCarLabelText(Road road)
     {
         if (road.IsEmpty)
@@ -432,6 +486,7 @@ public partial class MainWindow : Window
                     Label label = r.Item2;
                     Image leftSignal = r.Item3;
                     Image rightSignal = r.Item4;
+                    Image aliveMarker = r.Item5;
 
                     if (car != null)
                     {
@@ -453,6 +508,12 @@ public partial class MainWindow : Window
                         Tuple<int, int, int, int> pos = ComputeSignalPositions(road, leftSignal, allocation);
                         container.Move(leftSignal, pos.Item1, pos.Item2);
                         container.Move(rightSignal, pos.Item3, pos.Item4);
+                    }
+
+                    if (aliveMarker != null)
+                    {
+                        Tuple<int, int> pos = ComputeAliveMarkerPosition(road, aliveMarker, label);
+                        container.Move(aliveMarker, pos.Item1, pos.Item2);
                     }
                 }
             }
