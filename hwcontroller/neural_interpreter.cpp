@@ -18,19 +18,9 @@ static const float W[OUTPUT_SIZE][INPUT_SIZE] PROGMEM = {
 
 static const float b[OUTPUT_SIZE] PROGMEM = { -2.333042770624160767e-01,6.632186174392700195e-01,4.364839494228363037e-01,-6.262275576591491699e-01,5.243270993232727051e-01,-2.948955297470092773e-01,1.413777768611907959e-01,-6.109816431999206543e-01 };
 
-/**
- * Last returned value from neuralInterpretate.
- */
-CrossroadStatus lastReturned = {0, 0, 0};
-
-/**
- * Previous results calculated by the neural network.
- * Notice that they may differ from the actual returned value.
- */
-CrossroadStatus prevResult[2] = {
-    {0, 0, 0},
-    {0, 0, 0}
-};
+int8_t counterL = 0;
+int8_t counterF = 0;
+int8_t counterR = 0;
 
 /**
  * Calculate ranks from the input vector and store them in the output vector.
@@ -144,22 +134,50 @@ CrossroadStatus neuralInterpretate(uint16_t *fhtLeft, uint16_t *fhtFront, uint16
     result.front = ((maxIndex >> 1) & 1) == 1; // maxIndex IN (2, 3, 6, 7) -> x1x
     result.right = ((maxIndex >> 0) & 1) == 1; // maxIndex IN (1, 3, 5, 7) -> xx1
 
-    CrossroadStatus retval;
+    Serial.print("_LFR: ");
+    Serial.print(result.left ? "1 " : "0 ");
+    Serial.print(result.front ? "1 " : "0 ");
+    Serial.print(result.right ? "1\n" : "0\n");
+
+    CrossroadStatus retval = result;
+
 
     // Checks for error tolerance.
-    if (crossroadEquals(&result, &(prevResult[0]))) {
-        retval = result;
-    } else if (crossroadEquals(&result, &(prevResult[1]))) {
-        retval = result;
-    } else if (crossroadEquals(&(prevResult[0]), &(prevResult[1]))) {
-        retval = prevResult[0];
-    } else {
-        retval = lastReturned;
-    }
 
-    lastReturned = retval;
-    prevResult[1] = prevResult[0];
-    prevResult[0] = result;
+    const int8_t TOLERANCE = 4;
+
+    if (result.left) {
+        if (counterL < TOLERANCE) {
+            counterL++;
+        }
+    } else {
+        if (counterL > -TOLERANCE) {
+            counterL--;
+        }
+    }
+    retval.left = counterL >= 0;
+
+    if (result.front) {
+        if (counterF < TOLERANCE) {
+            counterF++;
+        }
+    } else {
+        if (counterF > -TOLERANCE) {
+            counterF--;
+        }
+    }
+    retval.front = counterF >= 0;
+
+    if (result.right) {
+        if (counterR < TOLERANCE) {
+            counterR++;
+        }
+    } else {
+        if (counterR > -TOLERANCE) {
+            counterR--;
+        }
+    }
+    retval.right = counterR >= 0;
 
     return retval;
 }
