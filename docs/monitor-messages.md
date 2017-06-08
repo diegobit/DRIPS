@@ -2,91 +2,129 @@
 
 ## COMMON MESSAGE FORMAT
 
-Size: >= 1 Byte
-TP...P\n
+Size: >= 1 Byte  
+`TP...P\n`
 
-|   |  FIELD NAME       | DIM |
-|---|-------------------|-----|
-| T |  MessageType      | 1B  |
-| P |  Payload          | any |
-
- FIELD              VALUE       DESCRIPTION
- MessageType:       I           info message
-                    l           sampled data from leftmost receiver (for debug)
-                    f           sampled data from front receiver (for debug)
-                    r           sampled data from rightmost receiver (for debug)
-                    L           frequency spectrum message from leftmost receiver
-                    F           frequency spectrum message from front receiver
-                    R           frequency spectrum message from rightmost receiver
-
- Payload:           custom      Data specific to the current message type (see detailed specs below)
+|   | FIELD NAME       | DIM |
+|---|------------------|-----|
+| T | MessageType      | 1B  |
+| P | Payload          | any |
 
 This is the format which is used by all the messages.
+
+### MessageType
+
+| Value | Description                                        |
+|-------|----------------------------------------------------|
+| I     | info message                                       |
+| l     | sampled data from leftmost receiver                |
+| f     | sampled data from front receiver                   |
+| r     | sampled data from rightmost receiver               |
+| L     | frequency spectrum message from leftmost receiver  |
+| F     | frequency spectrum message from front receiver     |
+| R     | frequency spectrum message from rightmost receiver |
+
+### Payload
+
+| Value | Description                                                          |
+|-------|----------------------------------------------------------------------|
+| any   | Data specific to the current message type (see detailed specs below) |
 
 
 ## INFO-MESSAGE
 
-Size: 26 Bytes
-TABCCCCCCCCDDDDDDDDEEEFGH\n
+Size: 26 Bytes  
+`TABCCCCCCCCDDDDDDDDEEEFGH\n`
 
-|   |  FIELD NAME       | DIM |
-|---|-------------------|-----|
-| T |  MessageType      | 1B  |
-| A |  RoadID           | 1B  |
-| B |  IsEmpty          | 1B  | // Whether the RoadID side of the road is empty
-| C |  Manufacturer     | 8B  |
-| D |  Model            | 8B  |
-| E |  Orientation      | 3B  |
-| F |  Priority         | 1B  |
-| G |  RequestedAction  | 1B  | // The action the car wants to do
-| H |  CurrentAction    | 1B  | // The action the car is doing to cooperate with the network
+|   | FIELD NAME       | DIM | COMMENT                                                   |
+|---|------------------|-----|-----------------------------------------------------------|
+| T | MessageType      | 1B  |                                                           |
+| A | RoadID           | 1B  |                                                           |
+| B | IsEmpty          | 1B  | Whether the RoadID side of the road is empty              |
+| C | Manufacturer     | 8B  |                                                           |
+| D | Model            | 8B  |                                                           |
+| E | Orientation      | 3B  |                                                           |
+| F | Priority         | 1B  |                                                           |
+| G | RequestedAction  | 1B  | The action the car wants to do                            |
+| H | CurrentAction    | 1B  | The action the car is doing to cooperate with the network |
 
- FIELD              VALUE       DESCRIPTION
- MessageType:       I           info message
+### MessageType
 
- RoadID:            M           my road
-                    L           road to my left
-                    A           road ahead
-                    R           road to my right
+| Value | Description  |
+|-------|--------------|
+| I     | info message |
 
- IsEmpty            1           true
-                    0           false
+### RoadID
 
- Manufacturer:      Vlkswagn
-                    Police⎵⎵
-                    Tesla⎵⎵⎵
-                    ⎵⎵⎵⎵⎵⎵⎵⎵     (sent when unknown)
+| Value | Description      |
+|-------|------------------|
+| M     | my road          |
+| L     | road to my left  |
+| A     | road ahead       |
+| R     | road to my right |
 
- Model:             Beetle⎵⎵
-                    Police⎵⎵
-                    Model S⎵
-                    ⎵⎵⎵⎵⎵⎵⎵⎵     (sent when unknown)
+### IsEmpty
 
- Orientation:       [0..360]    degrees counterclockwise
+| Value | Description |
+|-------|-------------|
+| 0     | false       |
+| 1     | true        |
 
- Priority:          0           None
-                    N           regular car
-                    Y           priority car (ambulance, police)
+### Manufacturer
 
- RequestedAction,
-                    0           None
-                    L           turn left
-                    A           go straight ahead
-                    R           turn right
+| Value          | Description                                                      | Example    |
+|----------------|------------------------------------------------------------------|------------|
+| 8 chars string | 8 bytes string without terminator, with space padding at the end | `Tesla⎵⎵⎵` |
+| 8 spaces       | Sent when manufacturer is unknown                                | `⎵⎵⎵⎵⎵⎵⎵` |
 
- CurrentAction:     0           None
-                    S           Stay still
-                    L           turn left
-                    A           go straight ahead
-                    R           turn right
+### Model
+
+| Value          | Description                                                      | Example    |
+|----------------|------------------------------------------------------------------|------------|
+| 8 chars string | 8 bytes string without terminator, with space padding at the end | `Model S⎵` |
+| 8 spaces       | Sent when model is unknown                                       | `⎵⎵⎵⎵⎵⎵⎵` |
+
+### Orientation
+
+| Value    | Description                                               |
+|----------|-----------------------------------------------------------|
+| [0..360] | Counterclockwise degrees. The number is sent as a string. |
+
+### Priority
+
+| Value | Description |
+|-------|-------------|
+| 0     | Unspecified |
+| N     | No priority |
+| Y     | Priority    |
+
+### RequestedAction
+
+| Value | Description       |
+|-------|-------------------|
+| 0     | None              |
+| L     | Turn left         |
+| A     | Go straight ahead |
+| R     | Turn right        |
+
+### CurrentAction
+
+| Value | Description       |
+|-------|-------------------|
+| 0     | None              |
+| S     | Stay still        |
+| L     | Turn left         |
+| A     | Go straight ahead |
+| R     | Turn right        |
 
 
 ## SAMPLED-DATA-MESSAGE
 
 Size: 259-652 Bytes (Assuming FFT_N = 128 = number of samples)
-TM;A,A,...,A,A\n
-   |_________|
-       128
+
+    TM;A,A,...,A,A\n
+       |_________|
+           128
 
 A,A,...,A,A     is the sensor data relative to the IR receiver
 
