@@ -1,41 +1,52 @@
 # RFC: CCS
 
 ## CAR COMMUNICATION SYSTEM
-Specifiche del protocollo  
-Maggio 2017  
+Protocol specifications  
+May 2017  
 Daniele Di Sarli, Diego Giorgini
 
-## Funzionalità
-Questo protocollo fornisce due funzionalità:
+## Overview
 
- - *ACQUISIZIONE:*  
-   conoscere le caratteristiche non rilevabili con il sottosistema visivo delle auto nelle
-   vicinanze, come il modello dell'auto e le sue intenzioni;
- - *ASSOCIAZIONE:*  
-   associare un auto da cui si è ricevuto un messaggio sulla rete wireless con un'auto
-   rilevata con il sottosistema visivo.
+### Features
+This protocol provides two features:
 
-## Notazione
-Di seguito utilizziamo nomi di parametri che, per brevità, non coincidono con i nomi utilizzati
-nell'implementazione di riferimento del protocollo. Si elencano qui le associazioni tra i nomi
-utilizzati in questo documento e il loro corrispettivo dell'implementazione.
+ - *ACQUISITION:*
+   to know the non-detectable information from the visual subsystem of
+   the cars in the vicinity, such as their model and their turn intention;
+ - *ASSOCIATION:*
+   to associate a node from which a message from the network has been received
+   with a car detected with the visual subsystem.
+
+### Notation
+To make this document easier to understand, not every detail will be explained
+the protocol. For the same reason, some parameters have different names from the
+actual implementation. The correspondence between names from this document
+and the implementation can be found in the following list: 
 
  * X: TIMESPAN_X
  * Z: TIMESPAN_MAX_BACKOFF
 
-## Descrizione del protocollo
+ ### Messages
+ Three types of messages are defined:
+  
+  * KeepAlive:
+      sent periodically to allow nodes discoverability; it broadcasts all
+      the information of the sender, including the turn intention of the car;
+  * CCS (Car Communication Signal):
+      sent to start the association procedure with a node of the network;
+  * FCT (Force Communication Termination):
+      sent to notify everyone that another procedure is ongoing in order to
+      ensure only one procedure is active at any time.
 
-I messaggi inviati sono di tre tipi:
+## Protocol description
+Let's suppose: (1) the car A has detected with the visual subsystem all the other
+cars in the crossroad; (2) A knows all the nodes on the network (i.e. it has
+received a KeepAlive message from them). A needs to associate detected cars
+with the information received from the wireless network.
 
- * KeepAlive:
-     inviati periodicamente per lo scoperta e il mantenimento dei nodi nella rete
- * CCS (Chi Cazzo Sei, o Car Communication Signal):
-     per avviare la procedura
- * FCT (Fatti i Cazzi Tuoi, o Force Communication Termination):
-     per notificare altre auto che un'altra procedura è in corso nella rete
 
-Supponiamo che l'auto A abbia rilevato tramite il sottosistema visivo tutte le auto nell'incrocio.
-Il passo successivo è mettere in relazione ogni auto rilevata con i dati acquisiti sulla rete wireless.
+
+
 
 Per fare ciò, l'auto A deve iniziare la procedura di CCS.
 
