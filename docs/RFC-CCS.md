@@ -47,6 +47,24 @@ cars in the crossroad; (2) A knows all the nodes on the network (i.e. it has
 received a KeepAlive message from them). A needs to associate detected cars
 with the information received from the wireless network.
 
+### State 1) Begin
+
+A is in the state `Begin`. A waits some time: in regular conditions it waits a
+small desynchronization time useful to avoid cars to transmit at the same time;
+if instead it has recently received a FCT telling it to wait the end of another
+CCS procedure, it sets the waiting timer to the duration of a procedure plus a
+random backoff. At this point A choses a node of the network with a round robin
+policy and sends a CCS message with its address and goes to `Wait_to_blink`.
+
+While waiting, A may receive CCS and FCT messages:
+
+ - If A receives a CCS message with its own address it starts the procedure with
+   the sender and transitions to `Wait_to_blink`.
+ - If A receives a FCT it sets the waiting timer to the length of a procedure plus
+   a random backoff.
+
+### State 2) Wait_to_blink
+
 
 
 
