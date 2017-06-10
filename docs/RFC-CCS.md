@@ -18,6 +18,7 @@ This protocol provides two features:
    with a car detected with the visual subsystem.
 
 ### Notation
+
 To make this document easier to understand, not every detail will be explained
 the protocol. For the same reason, some parameters have different names from the
 actual implementation. The correspondence between names from this document
@@ -27,6 +28,7 @@ and the implementation can be found in the following list:
  * Z: TIMESPAN_MAX_BACKOFF
 
  ### Messages
+
  Three types of messages are defined:
   
   * KeepAlive:
@@ -39,6 +41,7 @@ and the implementation can be found in the following list:
       ensure only one procedure is active at any time.
 
 ## Protocol description
+
 Let's suppose: (1) the car A has detected with the visual subsystem all the other
 cars in the crossroad; (2) A knows all the nodes on the network (i.e. it has
 received a KeepAlive message from them). A needs to associate detected cars
@@ -89,6 +92,7 @@ del messaggio sia diverso da quello dell'auto corrente, la procedura viene inter
 
 ### KeepAlive
 
+```
   0                   1                   2                   3
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
  +---------------+---------------+-------------------------------+
@@ -104,35 +108,40 @@ del messaggio sia diverso da quello dell'auto corrente, la procedura viene inter
  +---------------+-----------------------------------------------+
  |   Priority    |
  +---------------+
+```
 
- Msg Type      = 75 (carattere K)
- Sender Addr   = l'indirizzo che identifica l'auto che ha emesso il CCS.
- Requested Act = l'azione che l'auto vorrebbe fare
- Current Act   = l'azione che l'auto sta facendo a seguito della coordinazione con la rete
- Manufacturer  = il produttore dell'auto
- Model         = il modello dell'auto
- Priority      = (boolean) se l'azione richiesta dall'auto ha priorità su quelle delle altre auto
+ Msg Type      = 75 (carattere K)  
+ Sender Addr   = l'indirizzo che identifica l'auto che ha emesso il CCS.  
+ Requested Act = l'azione che l'auto vorrebbe fare  
+ Current Act   = l'azione che l'auto sta facendo a seguito della coordinazione con la rete  
+ Manufacturer  = il produttore dell'auto  
+ Model         = il modello dell'auto  
+ Priority      = (boolean) se l'azione richiesta dall'auto ha priorità su quelle delle altre auto  
 
 ### CCS
 
+```
   0                   1                   2
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3
  +---------------+---------------+---------------+
  | Msg Type (C)  | Receiver Addr | Sender Addr   |
  +---------------+---------------+---------------+
- 
- Msg Type = 67 (carattere C)
- Receiver Addr = l'indirizzo che identifica l'auto è cui è rivolto il CCS.
+ ```
+
+ Msg Type = 67 (carattere C)  
+ Receiver Addr = l'indirizzo che identifica l'auto è cui è rivolto il CCS.  
  Sender Addr = l'indirizzo che identifica l'auto che ha emesso il CCS.
 
 ### FCT
 
+```
   0                   1
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
  +---------------+---------------+
  | Msg Type (S)  | Pardoned Addr |
  +---------------+---------------+
+```
 
- Msg Type      = 83 (carattere S)
+ Msg Type      = 83 (carattere S)  
  Pardoned Addr = l'indirizzo che identifica l'auto che è attualmente impegnata nell'esecuzione
                  di una procedura CCS, e che quindi deve ignorare questo messaggio.
