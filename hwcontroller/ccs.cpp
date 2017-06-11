@@ -22,7 +22,7 @@ const uint16_t DELTA = 2 * TIMESPAN_LOOP_MAX;
 
 /**
  * Time to wait from keepAliveTimeMarker before sending another keepAlive
- * It must be   TIMESPAN_KEEPALIVE > TIMESPAN_LOOP_MAX + ∂  otherwise it means we just sent it every
+ * It must be   TIMESPAN_KEEPALIVE > TIMESPAN_LOOP_MAX + ∂  otherwise it means we just send it every
  * time. Instead we decided to send one KeepAlive every two loops, give or take.
  */
 const unsigned long TIMESPAN_KEEPALIVE = TIMESPAN_LOOP_MAX + DELTA;
