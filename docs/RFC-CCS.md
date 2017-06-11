@@ -2,7 +2,7 @@
 
 ## CAR COMMUNICATION SYSTEM
 Protocol specification  
-May 2017  
+June 2017  
 Daniele Di Sarli, Diego Giorgini
 
 ## Overview
