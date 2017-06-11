@@ -116,7 +116,16 @@ to the `Interpretate` state.
 
 ### State: Interpretate
 
-TODO
+The vehicle can now use the data acquired in the `Blink` state to determine the position
+of the peer and combine the information obtained through the vision subsystem.
+
+While in this state, the vehicle may receive messages from the network:
+
+ - If a CCS is received such that the request is for us, then a broadcast FCT message
+   must be sent. The pardoned address of the FCT message must be "none" (e.g. a special
+   address `0`).
+
+After the state has finished its computations, the vehicle goes to the `Begin` state.
 
 
 Per fare ciò, l'auto A deve iniziare la procedura di CCS.
