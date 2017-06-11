@@ -1,6 +1,7 @@
 # RFC: CCS
 
 ## CAR COMMUNICATION SYSTEM
+
 Protocol specification  
 June 2017  
 Daniele Di Sarli, Diego Giorgini
@@ -8,6 +9,7 @@ Daniele Di Sarli, Diego Giorgini
 ## Overview
 
 ### Features
+
 This protocol provides two features:
 
  - _ACQUISITION:_
