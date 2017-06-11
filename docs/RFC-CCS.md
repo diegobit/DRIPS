@@ -68,8 +68,11 @@ While waiting, _A_ may receive CCS and FCT messages:
 
 ### State: Wait_to_blink
 
-The vehicle remains in this state for a time of *X*. During this time, the vehicle
-listens to non-pardoned FCT messages which will abort the CCS procedure.
+The vehicle remains in this state for a time of *X*. During this time, the
+vehicle listens to non-pardoned FCT messages which will abort the CCS procedure.
+By "non-pardoned" we mean a FCT message that doesn't include the address of the
+receiver in the "Pardoned Addr" field (so the same message can be pardoned for some
+and non-pardoned for others).
 
 If a non-pardoned FCT is received, it means that another CCS procedure was already
 active between some other vehicles. A random backoff time _B_ (between 1 and _Z_ milliseconds)
