@@ -12,10 +12,10 @@ This protocol provides two features:
 
  - *ACQUISITION:*
    to acquire information which is not detectable by the visual subsystem,
-   such as the model and the turn intention of the cars in the proximity;
+   such as the model and the turn intention of the vehicles in the proximity;
  - *ASSOCIATION:*
    to associate a node from which a message from the network has been received
-   with a car detected by the visual subsystem.
+   with a vehicle detected by the visual subsystem.
 
 ### Notation
 
@@ -33,7 +33,7 @@ and the implementation can be found in the following list:
   
   * KeepAlive:
       sent periodically to allow nodes discoverability; it broadcasts all
-      the information of the sender, including the turn intention of the car;
+      the information of the sender, including the turn intention of the vehicle;
   * CCS (Car Communication Signal):
       sent to start the association procedure with a node of the network;
   * FCT (Force Communication Termination):
