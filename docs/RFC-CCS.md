@@ -50,13 +50,20 @@ KeepAlive messages are sent.
 The cache expiration time and the interval at which KeepAlive messages are sent are
 left as implementation choices.
 
-Let's suppose the following:
+To detect the physical position of a node of the network, the protocol goes
+through the following steps:
 
-  1. the vehicle _A_ has detected with the visual subsystem all the other
-     vehicles in the crossroad
-  2. _A_ knows all the nodes on the network (i.e. it has received a
-     KeepAlive message from them). _A_ needs to associate the detected
-     vehicles with the information received from the wireless network.
+ 1. The vehicle picks another vehicle _P_ from the list of detected nodes in the
+    network and sends a broadcast CCS message with the address of _P_ in it. In
+    alternative, the vehicle reacts to an incoming CCS request.
+ 2. The protocol is now symmetric. Both vehicles wait _X_ milliseconds to ensure
+    that nobody else is already engaged in a CCS.
+ 3. Both vehicles advertise their position using the IR sensors for _X_
+    milliseconds, and read the signal on the IR receivers to get the information
+    advertised by the peer.
+ 4. Both vehicles interpretate the data sampled from the IR receivers so that they
+    can deduce the physical position of each other. Then the protocol restart from
+    the beginning.
 
 ### State: Begin
 
@@ -143,20 +150,6 @@ While in this state, the vehicle may receive messages from the network:
    address `0`).
 
 After the state has finished its computations, the vehicle goes to the `Begin` state.
-
-
-Per fare ciò, l'auto A deve iniziare la procedura di CCS.
-
- 1. L'auto invia in broadcast un pacchetto CCS con specificato l'indirizzo dell'auto
-    che A vuole associare.
- 2. L'auto attende X secondi.
- 3. L'auto entra nella fase di rilevamento della frequenza tramite sensori IR.
-    L'auto si aspetta di osservare per una durata di altri X secondi una frequenza
-    di K Hz su uno o più sensori. Contemporaneamente, inizia anch'essa a far
-    lampeggiare i led con una frequenza di K Hz per una durata di X secondi.
- 4. Dopo lo scadere degli X secondi, l'auto interpreta i dati rilevati e li associa
-    al nodo a cui è stata fatta la richiesta. Dopodiché torna nello stato di
-    operatività standard.
 
 
 -----------------------------------------------------------------------------------------
