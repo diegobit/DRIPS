@@ -44,26 +44,26 @@ and the implementation can be found in the following list:
 
 Let's suppose the following:
 
-  1. the vehicle *A* has detected with the visual subsystem all the other
+  1. the vehicle _A_ has detected with the visual subsystem all the other
      vehicles in the crossroad
-  2. *A* knows all the nodes on the network (i.e. it has received a
-     KeepAlive message from them). *A* needs to associate the detected
+  2. _A_ knows all the nodes on the network (i.e. it has received a
+     KeepAlive message from them). _A_ needs to associate the detected
      vehicles with the information received from the wireless network.
 
 ### State: Begin
 
-*A* is in the `Begin` state. *A* waits some time: in regular conditions it waits a
+_A_ is in the `Begin` state. _A_ waits some time: in regular conditions it waits a
 small desynchronization time useful to avoid that different vehicles transmit at the same time;
 if instead it has recently received a FCT telling it to wait the end of another
 CCS procedure, it sets the waiting timer to the duration of a procedure plus a
-random backoff. At this point *A* chooses a node of the network with a round robin
+random backoff. At this point _A_ chooses a node of the network with a round robin
 policy and sends a CCS message with its address and goes to the `Wait_to_blink` state.
 
-While waiting, *A* may receive CCS and FCT messages:
+While waiting, _A_ may receive CCS and FCT messages:
 
- - If *A* receives a CCS message with its own address it starts the procedure with
+ - If _A_ receives a CCS message with its own address it starts the procedure with
    the sender and transitions to `Wait_to_blink`.
- - If *A* receives a FCT it sets the waiting timer to the length of a procedure plus
+ - If _A_ receives a FCT it sets the waiting timer to the length of a procedure plus
    a random backoff.
 
 ### State: Wait_to_blink
@@ -72,9 +72,9 @@ The vehicle remains in this state for a time of *X*. During this time, the vehic
 listens to non-pardoned FCT messages which will abort the CCS procedure.
 
 If a non-pardoned FCT is received, it means that another CCS procedure was already
-active between some other vehicles. A random backoff time *B* (between 1 and *Z* milliseconds)
+active between some other vehicles. A random backoff time _B_ (between 1 and _Z_ milliseconds)
 must be set. The procedure is aborted and the vehicle can send a new CCS request only after
-*2X + B* milliseconds.
+_2X + B_ milliseconds.
 
 If a CCS is received such that the request is not for me or the sender is different than
 the peer I'm currently interacting with, then a broadcast FCT message must be sent. The
