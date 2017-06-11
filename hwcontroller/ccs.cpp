@@ -14,7 +14,7 @@
 /**
  * The 'Quantization problem': In an ideal situation we would have messages sent as soon as their
  * timers expire. However we are able to send messages only within an handleCCS() which is called
- * only once every loop(), so we have to taking into consideration the maximum delay
+ * only once every loop(), so we have to take into consideration the maximum delay
  * caused by this 'quantization', TIMESPAN_LOOP_MAX. The value is doubled to consider both the
  * sender and the receiver.
  */
