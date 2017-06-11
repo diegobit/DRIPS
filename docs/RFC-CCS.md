@@ -26,6 +26,9 @@ document and the implementation can be found in the following list:
  - _X_: TIMESPAN_X **TODO: Define constraints in another paragraph**
  - _Z_: TIMESPAN_MAX_BACKOFF **TODO: Define constraints in another paragraph**
 
+A UML description of the protocol with state machine and activity diagrams can
+be found at [docs/diagrams.pdf](docs/diagrams.pdf).
+
 ### Messages
 
 Three types of messages are defined:
