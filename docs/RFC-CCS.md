@@ -62,7 +62,7 @@ through the following steps:
     advertised by the peer.
  4. Both vehicles interpretate the data sampled from the IR receivers so that
     they can deduce the physical position of each other. Then the protocol
-    restart from the beginning.
+    restarts from the beginning.
 
 ### State: Begin
 
