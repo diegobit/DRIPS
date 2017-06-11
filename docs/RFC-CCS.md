@@ -92,11 +92,14 @@ to the `Blink` state.
 ### State: Blink
 
 The vehicle remains in this state for a time of _X_ milliseconds. During this time, the
-vehicle must blink its IR emitters at a frequency of 1 KHz.
+vehicle will advertise its own position and look for the position of the current peer.
 
-In addition, after _X/2_ milliseconds have passed, the vehicle must sample the signal
-on the IR receivers. The values must be save in order to make them available to the
-`Interpretate` state.
+To advertise its own position, the vehicle must blink its IR emitters at a frequency of
+1 KHz during the whole and only duration of this state.
+
+To detect the position of the peer, after _X/2_ milliseconds have passed the vehicle must
+sample the signal on the IR receivers. The values might need to be saved in order to make
+them available to the `Interpretate` state.
 
 While in this state, the vehicle may receive CCS and FCT messages:
 
