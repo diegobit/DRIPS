@@ -24,8 +24,8 @@ the protocol. For the same reason, some parameters have different names from the
 actual implementation. The correspondence between names from this document
 and the implementation can be found in the following list: 
 
- * X: TIMESPAN_X
- * Z: TIMESPAN_MAX_BACKOFF
+ * _X_: TIMESPAN_X **TODO: Define constraints in another paragraph**
+ * _Z_: TIMESPAN_MAX_BACKOFF **TODO: Define constraints in another paragraph**
 
 ### Messages
 
