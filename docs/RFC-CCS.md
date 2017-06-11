@@ -42,28 +42,48 @@ and the implementation can be found in the following list:
 
 ## Protocol description
 
-Let's suppose: (1) the car A has detected with the visual subsystem all the other
-cars in the crossroad; (2) A knows all the nodes on the network (i.e. it has
-received a KeepAlive message from them). A needs to associate detected cars
-with the information received from the wireless network.
+Let's suppose the following:
+
+  1. the vehicle *A* has detected with the visual subsystem all the other
+     vehicles in the crossroad
+  2. *A* knows all the nodes on the network (i.e. it has received a
+     KeepAlive message from them). *A* needs to associate the detected
+     vehicles with the information received from the wireless network.
 
 ### State 1) Begin
 
-A is in the state `Begin`. A waits some time: in regular conditions it waits a
-small desynchronization time useful to avoid cars to transmit at the same time;
+*A* is in the `Begin` state. *A* waits some time: in regular conditions it waits a
+small desynchronization time useful to avoid that different vehicles transmit at the same time;
 if instead it has recently received a FCT telling it to wait the end of another
 CCS procedure, it sets the waiting timer to the duration of a procedure plus a
-random backoff. At this point A choses a node of the network with a round robin
-policy and sends a CCS message with its address and goes to `Wait_to_blink`.
+random backoff. At this point *A* chooses a node of the network with a round robin
+policy and sends a CCS message with its address and goes to the `Wait_to_blink` state.
 
-While waiting, A may receive CCS and FCT messages:
+While waiting, *A* may receive CCS and FCT messages:
 
- - If A receives a CCS message with its own address it starts the procedure with
+ - If *A* receives a CCS message with its own address it starts the procedure with
    the sender and transitions to `Wait_to_blink`.
- - If A receives a FCT it sets the waiting timer to the length of a procedure plus
+ - If *A* receives a FCT it sets the waiting timer to the length of a procedure plus
    a random backoff.
 
 ### State 2) Wait_to_blink
+
+The vehicle remains in this state for a time of *X*. During this time, the vehicle
+listens to non-pardoned FCT messages which will abort the CCS procedure.
+
+If a non-pardoned FCT is received, it means that another CCS procedure was already
+active between some other vehicles. A random backoff time *B* (between 1 and *Z* milliseconds)
+must be set. The procedure is aborted and the vehicle can send a new CCS request only after
+*2X + B* milliseconds.
+
+If a CCS is received such that the request is not for me or the sender is different than
+the peer I'm currently interacting with, then a broadcast FCT message must be sent. The
+pardoned address of the FCT message must be the one of the peer we're interacting with.
+
+If no FCT is received during this time, the vehicle goes to the `Blink` state.
+
+### State 3) Blink
+
 
 
 
