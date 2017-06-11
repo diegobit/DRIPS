@@ -79,8 +79,8 @@ active between some other vehicles. A random backoff time _B_ (between 1 and _Z_
 must be set. The procedure is aborted and the vehicle can send a new CCS request only after
 _2X + B_ milliseconds.
 
-If a CCS is received such that the request is not for me or the sender is different than
-the peer I'm currently interacting with, then a broadcast FCT message must be sent. The
+If a CCS is received such that the request is not for us or the sender is different than
+the peer we're currently interacting with, then a broadcast FCT message must be sent. The
 pardoned address of the FCT message must be the one of the peer we're interacting with.
 
 If no FCT is received during this time, the vehicle goes to the `Blink` state.
