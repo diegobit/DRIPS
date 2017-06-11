@@ -60,19 +60,28 @@ Let's suppose the following:
 
 ### State: Begin
 
-_A_ is in the `Begin` state. _A_ waits some time: in regular conditions it waits a
-small desynchronization time useful to avoid that different vehicles transmit at the same time;
-if instead it has recently received a FCT telling it to wait the end of another
-CCS procedure, it sets the waiting timer to the duration of a procedure plus a
-random backoff. At this point _A_ chooses a node of the network with a round robin
-policy and sends a CCS message with its address and goes to the `Wait_to_blink` state.
+In this state, the vehicle may send a CCS request to some node in the network, or
+respond to a CCS request.
 
-While waiting, _A_ may receive CCS and FCT messages:
+The state begins by waiting some time: in regular conditions the vehicle waits a
+small desynchronization time useful to avoid that different vehicles transmit at
+the same time, thus helping to avoid collisions.
 
- - If _A_ receives a CCS message with its own address it starts the procedure with
-   the sender and transitions to `Wait_to_blink`.
- - If _A_ receives a FCT it sets the waiting timer to the length of a procedure plus
-   a random backoff.
+If instead there is a backoff _B_ set, then the vehicle waits _2X + B_ milliseconds.
+After the waiting time the vehicle chooses a node of the network and sends a
+CCS message to it. It then goes to the `Wait_to_blink` state.
+
+While in this state, the vehicle may receive CCS and FCT messages:
+
+ - If a FCT is received, it means that another CCS procedure was already active
+   between some other vehicles. A random backoff time _B_ (between 1 and _Z_
+   milliseconds) must be set. The procedure is restarted and the vehicle can
+   send a new CCS request only after _2X + B_ milliseconds.
+ - If a CCS is received such that the request is for us, the vehicle goes to
+   the `Wait_to_blink` state. If the request was not for us, then a random
+   backoff time _B_ (between 1 and _Z_ milliseconds) must be set. The procedure
+   is restarted and the vehicle can send a new CCS request only after _2X + B_
+   milliseconds.
 
 ### State: Wait_to_blink
 
