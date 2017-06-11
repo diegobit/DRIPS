@@ -25,8 +25,8 @@ To make this document easier to understand, some parameters have different names
 from the actual implementation. The correspondence between names from this
 document and the implementation can be found in the following list:
 
- - _X_: TIMESPAN_X **TODO: Define constraints in another paragraph**
- - _Z_: TIMESPAN_MAX_BACKOFF **TODO: Define constraints in another paragraph**
+ - _X_: TIMESPAN_X
+ - _Z_: TIMESPAN_MAX_BACKOFF
 
 A UML description of the protocol with state machine and activity diagrams can
 be found at [CCS_state.pdf](CCS_state.pdf) and
