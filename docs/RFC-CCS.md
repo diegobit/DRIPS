@@ -1,7 +1,7 @@
 # RFC: CCS
 
 ## CAR COMMUNICATION SYSTEM
-Protocol specifications  
+Protocol specification  
 May 2017  
 Daniele Di Sarli, Diego Giorgini
 
@@ -11,8 +11,8 @@ Daniele Di Sarli, Diego Giorgini
 This protocol provides two features:
 
  - *ACQUISITION:*
-   to know the non-detectable information from the visual subsystem of
-   the cars in the vicinity, such as their model and their turn intention;
+   to acquire the information which is not detectable by the visual subsystem of
+   the cars in the proximity, such as their model and their turn intention;
  - *ASSOCIATION:*
    to associate a node from which a message from the network has been received
    with a car detected with the visual subsystem.
