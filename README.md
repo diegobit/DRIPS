@@ -24,3 +24,5 @@ The following is a video showing the results of the project:
 
 You can find the protocol specification in [docs/RFC-CCS.md](docs/RFC-CCS.md), or you can
 read the source code at [hwcontroller/](hwcontroller/).
+
+This project has been realized in collaboration with [Daniele Di Sarli](https://github.com/danieleds).
