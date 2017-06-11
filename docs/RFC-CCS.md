@@ -50,7 +50,7 @@ Let's suppose the following:
      KeepAlive message from them). *A* needs to associate the detected
      vehicles with the information received from the wireless network.
 
-### State 1) Begin
+### State: Begin
 
 *A* is in the `Begin` state. *A* waits some time: in regular conditions it waits a
 small desynchronization time useful to avoid that different vehicles transmit at the same time;
@@ -66,7 +66,7 @@ While waiting, *A* may receive CCS and FCT messages:
  - If *A* receives a FCT it sets the waiting timer to the length of a procedure plus
    a random backoff.
 
-### State 2) Wait_to_blink
+### State: Wait_to_blink
 
 The vehicle remains in this state for a time of *X*. During this time, the vehicle
 listens to non-pardoned FCT messages which will abort the CCS procedure.
@@ -82,11 +82,13 @@ pardoned address of the FCT message must be the one of the peer we're interactin
 
 If no FCT is received during this time, the vehicle goes to the `Blink` state.
 
-### State 3) Blink
+### State: Blink
 
+TODO
 
+### State: Interpretate
 
-
+TODO
 
 
 Per fare ciò, l'auto A deve iniziare la procedura di CCS.
@@ -125,6 +127,8 @@ Ogni altra auto nell'incrocio, alla ricezione del CCS di A:
 Durante tutto il tempo in cui si trova nello stato 1.b.ii., l'auto rimane in ascolto di
 messaggi FCT. In caso di ricezione di tale messaggio, e in caso in cui il Pardoned Address
 del messaggio sia diverso da quello dell'auto corrente, la procedura viene interrotta.
+
+-----------------------------------------------------------------------------------------
 
 ## Packet Format
 
