@@ -15,7 +15,7 @@ This protocol provides two features:
    such as the model and the turn intention of the cars in the proximity;
  - *ASSOCIATION:*
    to associate a node from which a message from the network has been received
-   with a car detected with the visual subsystem.
+   with a car detected by the visual subsystem.
 
 ### Notation
 
