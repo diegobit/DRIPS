@@ -106,60 +106,55 @@ Durante tutto il tempo in cui si trova nello stato 1.b.ii., l'auto rimane in asc
 messaggi FCT. In caso di ricezione di tale messaggio, e in caso in cui il Pardoned Address
 del messaggio sia diverso da quello dell'auto corrente, la procedura viene interrotta.
 
-## Formato dei pacchetti
+## Packet Format
 
 ### KeepAlive
 
-```
-  0                   1                   2                   3
-  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
- +---------------+---------------+-------------------------------+
- | Msg Type (K)  |  Sender Addr  | Requested Act |  Current Act  |
- +---------------+---------------+-------------------------------+
- |                                                               |
- +                         Manufacturer                          +
- |                                                               |
- +---------------------------------------------------------------+
- |                                                               |
- +                             Model                             +
- |                                                               |
- +---------------+-----------------------------------------------+
- |   Priority    |
- +---------------+
-```
+     0                   1                   2                   3
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+    +---------------+---------------+-------------------------------+
+    | Msg Type (K)  |  Sender Addr  | Requested Act |  Current Act  |
+    +---------------+---------------+-------------------------------+
+    |                                                               |
+    +                         Manufacturer                          +
+    |                                                               |
+    +---------------------------------------------------------------+
+    |                                                               |
+    +                             Model                             +
+    |                                                               |
+    +---------------+-----------------------------------------------+
+    |   Priority    |
+    +---------------+
 
- Msg Type      = 75 (carattere K)  
- Sender Addr   = l'indirizzo che identifica l'auto che ha emesso il CCS.  
- Requested Act = l'azione che l'auto vorrebbe fare  
- Current Act   = l'azione che l'auto sta facendo a seguito della coordinazione con la rete  
- Manufacturer  = il produttore dell'auto  
- Model         = il modello dell'auto  
- Priority      = (boolean) se l'azione richiesta dall'auto ha priorità su quelle delle altre auto  
+**Msg Type:**      constant value 75 (ASCII code for character `K`).  
+**Sender Addr:**   the address that identifies the vehicle that emitted the KeepAlive.  
+**Requested Act:** the action that the vehicle would like to perform.  
+**Current Act:**   the action that the vehicle is performing, after coordination over the network.  
+**Manufacturer:**  the manufacturer of the vehicle.  
+**Model:**         the model of the vehicle.  
+**Priority:**      (boolean) whether the action requested by the vehicle has priority over those of the
+                   other vehicles.  
 
 ### CCS
 
-```
-  0                   1                   2
-  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3
- +---------------+---------------+---------------+
- | Msg Type (C)  | Receiver Addr | Sender Addr   |
- +---------------+---------------+---------------+
- ```
+     0                   1                   2
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3
+    +---------------+---------------+---------------+
+    | Msg Type (C)  | Receiver Addr | Sender Addr   |
+    +---------------+---------------+---------------+
 
- Msg Type = 67 (carattere C)  
- Receiver Addr = l'indirizzo che identifica l'auto è cui è rivolto il CCS.  
- Sender Addr = l'indirizzo che identifica l'auto che ha emesso il CCS.
+**Msg Type:**      constant value 67 (ASCII code for character `C`).  
+**Receiver Addr:** the address that identifies the vehichle to which the CCS is addressed.  
+**Sender Addr:**   the address that identifies the vehicle that emitted the CCS.
 
 ### FCT
 
-```
-  0                   1
-  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
- +---------------+---------------+
- | Msg Type (S)  | Pardoned Addr |
- +---------------+---------------+
-```
+     0                   1
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
+    +---------------+---------------+
+    | Msg Type (S)  | Pardoned Addr |
+    +---------------+---------------+
 
- Msg Type      = 83 (carattere S)  
- Pardoned Addr = l'indirizzo che identifica l'auto che è attualmente impegnata nell'esecuzione
-                 di una procedura CCS, e che quindi deve ignorare questo messaggio.
+**Msg Type:**      constant value 83 (ASCII code for character `S`).  
+**Pardoned Addr:** the address that identifies the other vehicle that is currently engaged in 
+                   the execution of a CCS procedure, which therefore must ignore this message.
