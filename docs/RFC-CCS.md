@@ -10,10 +10,10 @@ Daniele Di Sarli, Diego Giorgini
 ### Features
 This protocol provides two features:
 
- - *ACQUISITION:*
+ - _ACQUISITION:_
    to acquire information which is not detectable by the visual subsystem, such
    as the model and the turn intention of the vehicles in the proximity;
- - *ASSOCIATION:*
+ - _ASSOCIATION:_
    to associate a node from which a message from the network has been received
    with a vehicle detected by the visual subsystem.
 
@@ -23,19 +23,19 @@ To make this document easier to understand, some parameters have different names
 from the actual implementation. The correspondence between names from this
 document and the implementation can be found in the following list:
 
- * _X_: TIMESPAN_X **TODO: Define constraints in another paragraph**
- * _Z_: TIMESPAN_MAX_BACKOFF **TODO: Define constraints in another paragraph**
+ - _X_: TIMESPAN_X **TODO: Define constraints in another paragraph**
+ - _Z_: TIMESPAN_MAX_BACKOFF **TODO: Define constraints in another paragraph**
 
 ### Messages
 
 Three types of messages are defined:
   
- * **KeepAlive:**  
+ - **KeepAlive:**  
      Sent periodically to allow nodes discoverability; it broadcasts all the
      information of the sender, including the turn intention of the vehicle.
- * **CCS (Car Communication Signal):**  
+ - **CCS (Car Communication Signal):**  
      Sent to start the association procedure with a node of the network.
- * **FCT (Force Communication Termination):**  
+ - **FCT (Force Communication Termination):**  
      Sent to notify everyone that another procedure is ongoing in order to
      ensure only one procedure is active at any time.
 
