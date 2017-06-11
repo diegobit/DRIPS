@@ -11,8 +11,8 @@ Daniele Di Sarli, Diego Giorgini
 This protocol provides two features:
 
  - *ACQUISITION:*
-   to acquire the information which is not detectable by the visual subsystem of
-   the cars in the proximity, such as their model and their turn intention;
+   to acquire information which is not detectable by the visual subsystem,
+   such as the model and the turn intention of the cars in the proximity;
  - *ASSOCIATION:*
    to associate a node from which a message from the network has been received
    with a car detected with the visual subsystem.
