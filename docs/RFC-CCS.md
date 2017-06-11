@@ -158,31 +158,9 @@ Per fare ciò, l'auto A deve iniziare la procedura di CCS.
     al nodo a cui è stata fatta la richiesta. Dopodiché torna nello stato di
     operatività standard.
 
-In ogni momento della procedura di CCS, l'auto A rimane in ascolto di messaggi FCT. In
-caso di ricezione di tale messaggio, e in caso in cui il Pardoned Address del messaggio
-sia diverso da quello dell'auto A, la procedura viene interrotta e ripresa dopo un
-tempo di 2X sommato a un backoff casuale compreso tra 1 e Z millisecondi.
-
-
-Ogni altra auto nell'incrocio, alla ricezione del CCS di A:
-
- 1. Determina se attualmente è impegnata in una procedura di CCS con un qualsiasi peer.
-     a. Se sì e se quel peer non è A, oppure se sì e se il CCS non era per questa auto,
-        allora risponde in broadcast con un FCT con specificato l'indirizzo del peer con
-        cui è in corso la procedura già avviata.
-     b. Se no, determina se il CCS era destinato a lei.
-          i. Se no, termina
-         ii. Se sì, attende X secondi da quando ha rilevato il CCS, quindi entra
-             nella fase di rilevamento della frequenza tramite sensori IR.
-             L'auto si aspetta di osservare per una durata di altri X secondi una frequenza
-             di K Hz su uno o più sensori. Contemporaneamente, inizia anch'essa a far
-             lampeggiare i led con una frequenza di K Hz per una durata di X secondi.
-
-Durante tutto il tempo in cui si trova nello stato 1.b.ii., l'auto rimane in ascolto di
-messaggi FCT. In caso di ricezione di tale messaggio, e in caso in cui il Pardoned Address
-del messaggio sia diverso da quello dell'auto corrente, la procedura viene interrotta.
 
 -----------------------------------------------------------------------------------------
+
 
 ## Packet Format
 
