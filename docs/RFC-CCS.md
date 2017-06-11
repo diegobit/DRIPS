@@ -27,7 +27,7 @@ and the implementation can be found in the following list:
  * X: TIMESPAN_X
  * Z: TIMESPAN_MAX_BACKOFF
 
- ### Messages
+### Messages
 
  Three types of messages are defined:
   
