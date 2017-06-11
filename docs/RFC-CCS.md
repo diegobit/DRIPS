@@ -68,26 +68,48 @@ While waiting, _A_ may receive CCS and FCT messages:
 
 ### State: Wait_to_blink
 
-The vehicle remains in this state for a time of *X*. During this time, the
-vehicle listens to non-pardoned FCT messages which will abort the CCS procedure.
-By "non-pardoned" we mean a FCT message that doesn't include the address of the
-receiver in the "Pardoned Addr" field (so the same message can be pardoned for some
-and non-pardoned for others).
+The vehicle remains in this state for a time of _X_ milliseconds. During this time, the
+vehicle waits to make sure that nobody else is currently engaged in a CCS, and also to
+ensure that nobody else starts a new CCS procedure in the meantime.
 
-If a non-pardoned FCT is received, it means that another CCS procedure was already
-active between some other vehicles. A random backoff time _B_ (between 1 and _Z_ milliseconds)
-must be set. The procedure is aborted and the vehicle can send a new CCS request only after
-_2X + B_ milliseconds.
+In the following, by "non-pardoned FCT message" we mean a FCT message that does not
+include the address of the receiver in the "Pardoned Addr" field (i.e. the same message
+can be pardoned for some and non-pardoned for others).
 
-If a CCS is received such that the request is not for us or the sender is different than
-the peer we're currently interacting with, then a broadcast FCT message must be sent. The
-pardoned address of the FCT message must be the one of the peer we're interacting with.
+While in this state, the vehicle may receive CCS and FCT messages:
 
-If no FCT is received during this time, the vehicle goes to the `Blink` state.
+ - If a non-pardoned FCT is received, it means that another CCS procedure was already
+   active between some other vehicles. A random backoff time _B_ (between 1 and _Z_ milliseconds)
+   must be set. The procedure is aborted (jump to the `Begin` state) and the vehicle can
+   send a new CCS request only after _2X + B_ milliseconds.
+ - If a CCS is received such that the request is not for us or the sender is different than
+   the peer we're currently interacting with, then a broadcast FCT message must be sent. The
+   pardoned address of the FCT message must be the one of the peer we're interacting with.
+
+If the procedure has not been aborted, after _X_ milliseconds have passed the vehicle goes
+to the `Blink` state.
 
 ### State: Blink
 
-TODO
+The vehicle remains in this state for a time of _X_ milliseconds. During this time, the
+vehicle must blink its IR emitters at a frequency of 1 KHz.
+
+In addition, after _X/2_ milliseconds have passed, the vehicle must sample the signal
+on the IR receivers. The values must be save in order to make them available to the
+`Interpretate` state.
+
+While in this state, the vehicle may receive CCS and FCT messages:
+
+ - If a non-pardoned FCT is received, it means that another CCS procedure was already
+   active between some other vehicles. A random backoff time _B_ (between 1 and _Z_ milliseconds)
+   must be set. The procedure is aborted (jump to the `Begin` state) and the vehicle can
+   send a new CCS request only after _2X + B_ milliseconds.
+ - If a CCS is received such that the request is not for us or the sender is different than
+   the peer we're currently interacting with, then a broadcast FCT message must be sent. The
+   pardoned address of the FCT message must be the one of the peer we're interacting with.
+
+If the procedure has not been aborted, after _X_ milliseconds have passed the vehicle goes
+to the `Interpretate` state.
 
 ### State: Interpretate
 
