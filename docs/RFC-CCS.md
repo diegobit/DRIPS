@@ -42,6 +42,14 @@ and the implementation can be found in the following list:
 
 ## Protocol description
 
+During the entire procedure we can receive KeepAlive messages. We use these to update
+the cache of the vehicles in the network. Each vehicle in the cache must expire after
+a specific interval of time which must obviously be greater than the interval at which
+KeepAlive messages are sent.
+
+The cache expiration time and the interval at which KeepAlive messages are sent are
+left as implementation choices.
+
 Let's suppose the following:
 
   1. the vehicle _A_ has detected with the visual subsystem all the other
@@ -117,7 +125,7 @@ to the `Interpretate` state.
 ### State: Interpretate
 
 The vehicle can now use the data acquired in the `Blink` state to determine the position
-of the peer and combine the information obtained through the vision subsystem.
+of the peer and combine the information obtained through the visual subsystem.
 
 While in this state, the vehicle may receive messages from the network:
 
